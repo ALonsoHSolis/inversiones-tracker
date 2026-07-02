@@ -55,6 +55,7 @@ export type Database = {
           id: string
           monto: number
           nota: string | null
+          snapshot_id: string | null
           tasa_cambio: number | null
           tipo: string
         }
@@ -65,6 +66,7 @@ export type Database = {
           id?: string
           monto: number
           nota?: string | null
+          snapshot_id?: string | null
           tasa_cambio?: number | null
           tipo: string
         }
@@ -75,6 +77,7 @@ export type Database = {
           id?: string
           monto?: number
           nota?: string | null
+          snapshot_id?: string | null
           tasa_cambio?: number | null
           tipo?: string
         }
@@ -91,6 +94,13 @@ export type Database = {
             columns: ["cuenta_id"]
             isOneToOne: false
             referencedRelation: "cuentas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "movimientos_snapshot_id_fkey"
+            columns: ["snapshot_id"]
+            isOneToOne: false
+            referencedRelation: "snapshots"
             referencedColumns: ["id"]
           },
         ]
@@ -224,6 +234,17 @@ export type Database = {
           p_plataforma: string
           p_tasa_cambio?: number
           p_tipo: string
+        }
+        Returns: string
+      }
+      guardar_snapshot_con_movimiento: {
+        Args: {
+          p_cuenta_id: string
+          p_fecha: string
+          p_movimiento_monto?: number
+          p_movimiento_tipo?: string
+          p_tasa_cambio?: number
+          p_valor: number
         }
         Returns: string
       }

@@ -32,9 +32,13 @@ create table snapshots (
 
 -- movimientos: aportes y retiros, en moneda nativa. separados del valor para
 -- poder calcular rendimiento real. misma regla de tasa_cambio que snapshots.
+-- snapshot_id: nullable, solo se usa cuando el movimiento se registro junto a
+-- un snapshot desde la pantalla de carga (ver guardar_snapshot_con_movimiento).
+-- el aporte inicial de crear_cuenta_con_aporte_inicial deja esto en null.
 create table movimientos (
   id uuid primary key default gen_random_uuid(),
   cuenta_id uuid not null references cuentas(id) on delete cascade,
+  snapshot_id uuid references snapshots(id) on delete cascade,
   fecha date not null,
   tipo text not null check (tipo in ('aporte', 'retiro')),
   monto numeric(14,2) not null check (monto > 0),
@@ -45,6 +49,11 @@ create table movimientos (
 
 create index idx_snapshots_cuenta_fecha on snapshots (cuenta_id, fecha desc);
 create index idx_movimientos_cuenta_fecha on movimientos (cuenta_id, fecha desc);
+
+-- a lo sumo un movimiento por snapshot: permite que guardar_snapshot_con_movimiento
+-- haga upsert (on conflict (snapshot_id)) en vez de duplicar el aporte cada vez
+-- que el usuario re-guarda el mismo snapshot del dia con el toggle marcado.
+create unique index movimientos_snapshot_id_unique on movimientos (snapshot_id) where snapshot_id is not null;
 
 -- integridad: tasa_cambio obligatoria para cuentas no-clp, prohibida para cuentas clp.
 -- se valida con trigger porque el check depende de otra tabla (cuentas.moneda).
@@ -132,6 +141,53 @@ begin
   end if;
 
   return v_cuenta_id;
+end;
+$$;
+
+-- funcion: guarda (upsert) el snapshot de hoy de una cuenta y, opcionalmente,
+-- un movimiento (aporte/retiro) atado a ese mismo snapshot, todo en una sola
+-- transaccion. el frontend SIEMPRE debe usar esto desde la pantalla de carga
+-- masiva, nunca insertar snapshot y movimiento por separado, para no dejar un
+-- snapshot sin su aporte si el segundo insert fallara.
+-- si el usuario re-guarda el snapshot del mismo dia con el toggle de aporte
+-- marcado, esto actualiza el movimiento existente (atado por snapshot_id) en
+-- vez de duplicarlo. si re-guarda sin el toggle marcado, borra el movimiento
+-- que hubiera quedado de una edicion anterior (evita aportes fantasma).
+create or replace function guardar_snapshot_con_movimiento(
+  p_cuenta_id uuid,
+  p_fecha date,
+  p_valor numeric,
+  p_tasa_cambio numeric default null,
+  p_movimiento_tipo text default null,
+  p_movimiento_monto numeric default null
+)
+returns uuid
+language plpgsql
+security invoker
+as $$
+declare
+  v_snapshot_id uuid;
+begin
+  insert into snapshots (cuenta_id, fecha, valor, tasa_cambio)
+  values (p_cuenta_id, p_fecha, p_valor, p_tasa_cambio)
+  on conflict (cuenta_id, fecha) do update
+    set valor = excluded.valor, tasa_cambio = excluded.tasa_cambio
+  returning id into v_snapshot_id;
+
+  if p_movimiento_tipo is not null then
+    if p_movimiento_monto is null or p_movimiento_monto <= 0 then
+      raise exception 'el monto del movimiento debe ser mayor a cero';
+    end if;
+
+    insert into movimientos (cuenta_id, fecha, tipo, monto, tasa_cambio, snapshot_id, nota)
+    values (p_cuenta_id, p_fecha, p_movimiento_tipo, p_movimiento_monto, p_tasa_cambio, v_snapshot_id, 'registrado junto al snapshot')
+    on conflict (snapshot_id) where snapshot_id is not null
+      do update set tipo = excluded.tipo, monto = excluded.monto, tasa_cambio = excluded.tasa_cambio;
+  else
+    delete from movimientos where snapshot_id = v_snapshot_id;
+  end if;
+
+  return v_snapshot_id;
 end;
 $$;
 

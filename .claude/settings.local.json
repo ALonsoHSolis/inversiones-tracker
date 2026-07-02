@@ -5,7 +5,10 @@
       "Bash(npm run *)",
       "Bash(curl -s -b /tmp/cookies.txt http://localhost:3000/ -o /tmp/dashboard.html)",
       "Read(//tmp/**)",
-      "PowerShell($conn = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($conn\\) { Stop-Process -Id $conn.OwningProcess -Force }; \"done\")"
+      "PowerShell($conn = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($conn\\) { Stop-Process -Id $conn.OwningProcess -Force }; \"done\")",
+      "Bash(mv src/types/database.ts src/types/database.ts.bak)",
+      "Bash(mv src/types/database.ts.new src/types/database.ts)",
+      "Bash(rm -f err.log)"
     ]
   }
 }

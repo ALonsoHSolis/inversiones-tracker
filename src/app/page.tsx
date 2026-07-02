@@ -2,12 +2,13 @@ import { createClient } from "@/lib/supabase/server";
 import { PortfolioSummary } from "@/components/PortfolioSummary";
 import { AccountRow } from "@/components/AccountRow";
 import { SnapshotForm } from "@/components/SnapshotForm";
-import type { Cuenta, RendimientoActual } from "@/types/database";
+import type { Cuenta, RendimientoActual, TipoMovimiento } from "@/types/database";
 import { logout } from "./actions";
 import Link from "next/link";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+  const hoy = new Date().toISOString().slice(0, 10);
 
   const [
     {
@@ -15,11 +16,29 @@ export default async function DashboardPage() {
     },
     { data: cuentas },
     { data: rendimientos },
+    { data: snapshotsHoy },
   ] = await Promise.all([
     supabase.auth.getUser(),
     supabase.from("cuentas").select("*").eq("activa", true).order("created_at"),
     supabase.from("rendimiento_actual").select("*"),
+    supabase.from("snapshots").select("id, cuenta_id").eq("fecha", hoy),
   ]);
+
+  // caso mas comun: todavia no hay ningun snapshot guardado hoy (primera carga
+  // del dia). en ese caso no hay que consultar movimientos en absoluto — evita
+  // mandar un .in() con arreglo vacio.
+  const snapshotIdsHoy = (snapshotsHoy ?? []).map((s) => s.id);
+  const { data: movimientosHoyRaw } =
+    snapshotIdsHoy.length > 0
+      ? await supabase.from("movimientos").select("tipo, monto, snapshot_id").in("snapshot_id", snapshotIdsHoy)
+      : { data: [] as { tipo: string; monto: number; snapshot_id: string | null }[] };
+
+  const snapshotIdACuenta = new Map((snapshotsHoy ?? []).map((s) => [s.id, s.cuenta_id]));
+  const movimientosHoy: Record<string, { tipo: TipoMovimiento; monto: number }> = {};
+  (movimientosHoyRaw ?? []).forEach((m) => {
+    const cuentaId = m.snapshot_id ? snapshotIdACuenta.get(m.snapshot_id) : undefined;
+    if (cuentaId) movimientosHoy[cuentaId] = { tipo: m.tipo as TipoMovimiento, monto: m.monto };
+  });
 
   const rendimientoPorCuenta = new Map<string, RendimientoActual>(
     (rendimientos ?? [])
@@ -68,7 +87,7 @@ export default async function DashboardPage() {
         )}
       </div>
       <div className="mt-8">
-        <SnapshotForm cuentas={cuentas ?? []} />
+        <SnapshotForm cuentas={cuentas ?? []} movimientosHoy={movimientosHoy} />
       </div>
     </main>
   );
