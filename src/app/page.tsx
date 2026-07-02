@@ -4,6 +4,7 @@ import { AccountRow } from "@/components/AccountRow";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import type { Cuenta, RendimientoActual } from "@/types/database";
 import { logout } from "./actions";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -52,14 +53,18 @@ export default async function DashboardPage() {
         </form>
       </div>
       <PortfolioSummary valorTotal={valorTotal} valorTotalAnterior={valorTotalAnterior} />
-      <div className="mt-8 flex flex-col gap-2">
+      <div className="mt-8 flex items-center justify-between">
+        <p className="text-sm font-medium">tus cuentas</p>
+        <Link href="/cuentas/nueva" className="text-sm text-gray-900 underline">
+          + agregar cuenta
+        </Link>
+      </div>
+      <div className="mt-2 flex flex-col gap-2">
         {cuentasConDatos.map(({ cuenta, rendimiento }) => (
           <AccountRow key={cuenta.id} cuenta={cuenta} rendimiento={rendimiento} />
         ))}
         {cuentasConDatos.length === 0 && (
-          <p className="text-sm text-gray-500">
-            todavia no hay cuentas. agregalas directo en supabase mientras armamos la pantalla de crud.
-          </p>
+          <p className="text-sm text-gray-500">todavia no hay cuentas.</p>
         )}
       </div>
       <div className="mt-8">
