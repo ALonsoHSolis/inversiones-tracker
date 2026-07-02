@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { PortfolioSummary } from "@/components/PortfolioSummary";
+import { CapitalSummary } from "@/components/CapitalSummary";
 import { AccountRow } from "@/components/AccountRow";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import type { Cuenta, RendimientoActual, TipoMovimiento } from "@/types/database";
@@ -17,11 +18,13 @@ export default async function DashboardPage() {
     { data: cuentas },
     { data: rendimientos },
     { data: snapshotsHoy },
+    { data: capitalPorCuenta },
   ] = await Promise.all([
     supabase.auth.getUser(),
     supabase.from("cuentas").select("*").eq("activa", true).order("created_at"),
     supabase.from("rendimiento_actual").select("*"),
     supabase.from("snapshots").select("id, cuenta_id").eq("fecha", hoy),
+    supabase.from("capital_por_cuenta").select("*"),
   ]);
 
   // caso mas comun: todavia no hay ningun snapshot guardado hoy (primera carga
@@ -60,6 +63,14 @@ export default async function DashboardPage() {
     0
   );
 
+  // capital_aportado_clp y valor_actual_clp vienen de una vista, asi que el
+  // tipo generado los marca nullable aunque el sql ya haga coalesce en el
+  // primero — igual se defiende aca con ?? 0 antes de sumar (una cuenta sin
+  // snapshots todavia trae valor_actual_clp null, y sumar null contamina
+  // todo el total con NaN).
+  const capitalAportadoClp = (capitalPorCuenta ?? []).reduce((acc, c) => acc + (c.capital_aportado_clp ?? 0), 0);
+  const valorActualClp = (capitalPorCuenta ?? []).reduce((acc, c) => acc + (c.valor_actual_clp ?? 0), 0);
+
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
       <div className="flex items-center justify-between mb-6">
@@ -72,6 +83,13 @@ export default async function DashboardPage() {
         </form>
       </div>
       <PortfolioSummary valorTotal={valorTotal} valorTotalAnterior={valorTotalAnterior} />
+      <div className="mt-3">
+        <CapitalSummary
+          capitalAportadoClp={capitalAportadoClp}
+          valorActualClp={valorActualClp}
+          hayCuentas={cuentasConDatos.length > 0}
+        />
+      </div>
       <div className="mt-8 flex items-center justify-between">
         <p className="text-sm font-medium">tus cuentas</p>
         <Link href="/cuentas/nueva" className="text-sm text-gray-900 underline">

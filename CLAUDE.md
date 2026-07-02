@@ -44,3 +44,5 @@ API publica y gratuita del Banco Central de Chile: `https://mindicador.cl/api/{u
 ## Verificacion
 
 Corre `npm run build` despues de cada paso antes de seguir al siguiente. Si algo en las reglas de negocio de arriba no calza con lo que estas por construir, para y pregunta antes de improvisar una solucion distinta.
+
+Cualquier cambio que toque RLS, policies o vistas debe probarse con **al menos dos usuarios de prueba con datos simultaneos** en la base, no uno a la vez. Una fuga de datos entre usuarios es invisible si en el momento de probar solo hay un usuario con filas — asi paso con `rendimiento_semanal`, `rendimiento_actual` y `capital_por_cuenta`: las tres vistas fueron creadas por el rol `postgres` sin `security_invoker = true`, lo que hacia que row level security se evaluara como el dueño de la vista (que hace bypass de rls) y no como el usuario autenticado, filtrando cuentas de todos los usuarios a cualquiera. El bug paso inadvertido en varias verificaciones porque cada prueba limpiaba sus datos antes de crear el siguiente usuario de prueba.

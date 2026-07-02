@@ -195,7 +195,13 @@ $$;
 -- cuenta (para que el % de una cuenta en usd refleje su desempeno real en
 -- dolares, sin ruido de tipo de cambio). incluye valor_clp para poder sumar
 -- cuentas de distinta moneda en el total del portafolio.
-create view rendimiento_semanal as
+-- security_invoker = true es obligatorio: sin esto, postgres evalua row level
+-- security como si el DUEÑO de la vista (postgres, que hace bypass de rls)
+-- estuviera corriendo la consulta, no el usuario autenticado que la pide via
+-- postgrest. eso filtra las cuentas de TODOS los usuarios a cualquiera.
+create view rendimiento_semanal
+with (security_invoker = true)
+as
 with snapshots_clp as (
   select
     s.id,
@@ -250,7 +256,10 @@ left join movimientos_periodo mp on mp.cuenta_id = o.cuenta_id and mp.fecha = o.
 where o.valor_anterior is not null;
 
 -- vista: solo el rendimiento mas reciente por cuenta (la que usa el dashboard)
-create view rendimiento_actual as
+-- security_invoker = true: mismo motivo que rendimiento_semanal arriba.
+create view rendimiento_actual
+with (security_invoker = true)
+as
 select distinct on (cuenta_id)
   cuenta_id,
   nombre,
@@ -272,7 +281,10 @@ order by cuenta_id, fecha desc;
 -- la tasa del snapshot mas reciente. asi la ganancia_total_clp refleja tanto
 -- el rendimiento real como el efecto del tipo de cambio, que es lo que un
 -- inversionista en pesos efectivamente experimenta.
-create view capital_por_cuenta as
+-- security_invoker = true: mismo motivo que rendimiento_semanal arriba.
+create view capital_por_cuenta
+with (security_invoker = true)
+as
 with ultimo_snapshot as (
   select distinct on (cuenta_id)
     cuenta_id, valor as valor_actual, tasa_cambio as tasa_cambio_actual
