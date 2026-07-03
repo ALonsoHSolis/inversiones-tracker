@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { PortfolioSummary } from "@/components/PortfolioSummary";
 import { CapitalSummary } from "@/components/CapitalSummary";
+import { PortfolioChart } from "@/components/PortfolioChart";
 import { AccountRow } from "@/components/AccountRow";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import type { Cuenta, RendimientoActual, TipoMovimiento } from "@/types/database";
@@ -19,12 +20,14 @@ export default async function DashboardPage() {
     { data: rendimientos },
     { data: snapshotsHoy },
     { data: capitalPorCuenta },
+    { data: evolucionPortafolio },
   ] = await Promise.all([
     supabase.auth.getUser(),
     supabase.from("cuentas").select("*").eq("activa", true).order("created_at"),
     supabase.from("rendimiento_actual").select("*"),
     supabase.from("snapshots").select("id, cuenta_id").eq("fecha", hoy),
     supabase.from("capital_por_cuenta").select("*"),
+    supabase.from("evolucion_portafolio").select("*"),
   ]);
 
   // caso mas comun: todavia no hay ningun snapshot guardado hoy (primera carga
@@ -113,6 +116,9 @@ export default async function DashboardPage() {
           valorActualClp={valorActualClp}
           hayCuentas={cuentasConDatos.length > 0}
         />
+      </div>
+      <div className="mt-3">
+        <PortfolioChart datos={evolucionPortafolio ?? []} />
       </div>
       <div className="mt-8 flex items-center justify-between">
         <p className="text-sm font-medium">tus cuentas</p>

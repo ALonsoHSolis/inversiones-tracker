@@ -161,6 +161,13 @@ export type Database = {
         }
         Relationships: []
       }
+      evolucion_portafolio: {
+        Row: {
+          fecha: string | null
+          valor_total_clp: number | null
+        }
+        Relationships: []
+      }
       rendimiento_actual: {
         Row: {
           aportes_netos: number | null
@@ -390,3 +397,4 @@ export type Snapshot = Tables<"snapshots">
 export type Movimiento = Tables<"movimientos">
 export type RendimientoActual = Tables<"rendimiento_actual">
 export type CapitalPorCuenta = Tables<"capital_por_cuenta">
+export type EvolucionPortafolio = Tables<"evolucion_portafolio">

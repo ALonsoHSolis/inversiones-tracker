@@ -311,3 +311,40 @@ from cuentas c
 left join ultimo_snapshot us on us.cuenta_id = c.id
 left join aportes a on a.cuenta_id = c.id
 where c.activa = true;
+
+-- vista: valor total del portafolio en CLP para cada fecha en la que exista
+-- al menos un snapshot de alguna cuenta activa. para cuentas sin snapshot
+-- exactamente en esa fecha, se usa su ultimo valor conocido a esa fecha o
+-- antes (forward-fill) — asi el total de una fecha no ignora cuentas que
+-- simplemente no se actualizaron ese dia. cada valor se convierte con la
+-- tasa_cambio de SU PROPIO snapshot (nunca la tasa de hoy), mismo patron que
+-- rendimiento_semanal y capital_por_cuenta.
+-- security_invoker = true: mismo motivo que las otras vistas — sin esto, rls
+-- se evalua como el dueño de la vista (bypass) y no como el usuario real.
+create view evolucion_portafolio
+with (security_invoker = true)
+as
+with fechas as (
+  select distinct s.fecha
+  from snapshots s
+  join cuentas c on c.id = s.cuenta_id
+  where c.activa = true
+)
+select
+  f.fecha,
+  sum(coalesce(
+    case when c.moneda = 'CLP' then u.valor else u.valor * u.tasa_cambio end,
+    0
+  )) as valor_total_clp
+from fechas f
+cross join cuentas c
+left join lateral (
+  select valor, tasa_cambio
+  from snapshots s
+  where s.cuenta_id = c.id and s.fecha <= f.fecha
+  order by s.fecha desc
+  limit 1
+) u on true
+where c.activa = true
+group by f.fecha
+order by f.fecha;
