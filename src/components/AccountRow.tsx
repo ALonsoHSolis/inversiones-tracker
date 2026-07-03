@@ -29,6 +29,10 @@ export function AccountRow({ cuenta, rendimiento }: AccountRowProps) {
             <Link href={`/cuentas/${cuenta.id}/editar`} className="underline">
               editar
             </Link>
+            {" · "}
+            <Link href={`/cuentas/${cuenta.id}/historial`} className="underline">
+              historial
+            </Link>
           </p>
         </div>
         <div className="text-right">

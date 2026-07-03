@@ -144,15 +144,24 @@ begin
 end;
 $$;
 
--- funcion: guarda (upsert) el snapshot de hoy de una cuenta y, opcionalmente,
--- un movimiento (aporte/retiro) atado a ese mismo snapshot, todo en una sola
--- transaccion. el frontend SIEMPRE debe usar esto desde la pantalla de carga
--- masiva, nunca insertar snapshot y movimiento por separado, para no dejar un
--- snapshot sin su aporte si el segundo insert fallara.
--- si el usuario re-guarda el snapshot del mismo dia con el toggle de aporte
--- marcado, esto actualiza el movimiento existente (atado por snapshot_id) en
--- vez de duplicarlo. si re-guarda sin el toggle marcado, borra el movimiento
--- que hubiera quedado de una edicion anterior (evita aportes fantasma).
+-- funcion: guarda (upsert) el snapshot de una fecha (hoy, desde la carga
+-- masiva, o un dia pasado, desde el historial de una cuenta) y, opcionalmente,
+-- un movimiento (aporte/retiro) atado a esa misma fecha, todo en una sola
+-- transaccion. el frontend SIEMPRE debe usar esto para cargar o corregir
+-- snapshots, nunca insertar snapshot y movimiento por separado, para no dejar
+-- un snapshot sin su aporte si el segundo insert fallara.
+-- si el usuario re-guarda el snapshot de la misma fecha con el toggle de
+-- aporte marcado, esto actualiza el movimiento existente en vez de
+-- duplicarlo. si re-guarda sin el toggle marcado, borra el movimiento que
+-- hubiera quedado de una edicion anterior (evita aportes fantasma).
+--
+-- el movimiento existente se busca por cuenta_id+fecha, no solo por
+-- snapshot_id: el aporte inicial que crea crear_cuenta_con_aporte_inicial
+-- queda con snapshot_id null (nunca lo liga a un snapshot), asi que buscar
+-- solo por snapshot_id nunca lo encuentra y un "incluye aporte" marcado en el
+-- dia 1 insertaria un SEGUNDO movimiento, duplicando el aporte inicial. al
+-- encontrar ese huerfano por fecha se lo actualiza y se le asigna
+-- snapshot_id, "adoptandolo" en vez de duplicarlo.
 create or replace function guardar_snapshot_con_movimiento(
   p_cuenta_id uuid,
   p_fecha date,
@@ -167,6 +176,7 @@ security invoker
 as $$
 declare
   v_snapshot_id uuid;
+  v_movimiento_id uuid;
 begin
   insert into snapshots (cuenta_id, fecha, valor, tasa_cambio)
   values (p_cuenta_id, p_fecha, p_valor, p_tasa_cambio)
@@ -174,17 +184,29 @@ begin
     set valor = excluded.valor, tasa_cambio = excluded.tasa_cambio
   returning id into v_snapshot_id;
 
+  select id into v_movimiento_id
+  from movimientos
+  where cuenta_id = p_cuenta_id and fecha = p_fecha
+    and (snapshot_id = v_snapshot_id or snapshot_id is null)
+  order by snapshot_id nulls last
+  limit 1;
+
   if p_movimiento_tipo is not null then
     if p_movimiento_monto is null or p_movimiento_monto <= 0 then
       raise exception 'el monto del movimiento debe ser mayor a cero';
     end if;
 
-    insert into movimientos (cuenta_id, fecha, tipo, monto, tasa_cambio, snapshot_id, nota)
-    values (p_cuenta_id, p_fecha, p_movimiento_tipo, p_movimiento_monto, p_tasa_cambio, v_snapshot_id, 'registrado junto al snapshot')
-    on conflict (snapshot_id) where snapshot_id is not null
-      do update set tipo = excluded.tipo, monto = excluded.monto, tasa_cambio = excluded.tasa_cambio;
-  else
-    delete from movimientos where snapshot_id = v_snapshot_id;
+    if v_movimiento_id is not null then
+      update movimientos
+        set tipo = p_movimiento_tipo, monto = p_movimiento_monto, tasa_cambio = p_tasa_cambio,
+            snapshot_id = v_snapshot_id
+        where id = v_movimiento_id;
+    else
+      insert into movimientos (cuenta_id, fecha, tipo, monto, tasa_cambio, snapshot_id, nota)
+      values (p_cuenta_id, p_fecha, p_movimiento_tipo, p_movimiento_monto, p_tasa_cambio, v_snapshot_id, 'registrado junto al snapshot');
+    end if;
+  elsif v_movimiento_id is not null then
+    delete from movimientos where id = v_movimiento_id;
   end if;
 
   return v_snapshot_id;
