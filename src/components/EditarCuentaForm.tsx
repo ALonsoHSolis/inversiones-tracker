@@ -41,6 +41,29 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
     router.refresh();
   }
 
+  async function darDeBaja() {
+    const confirmado = window.confirm(
+      "¿Dar de baja esta cuenta? No se borra el historial, pero dejará de aparecer en el portafolio."
+    );
+    if (!confirmado) return;
+
+    setErrorGuardado(null);
+    setGuardando(true);
+    const supabase = createClient();
+
+    const { error } = await supabase.from("cuentas").update({ activa: false }).eq("id", cuenta.id);
+
+    setGuardando(false);
+
+    if (error) {
+      setErrorGuardado(error.message);
+      return;
+    }
+
+    router.push("/");
+    router.refresh();
+  }
+
   return (
     <div className="rounded-lg border border-gray-200 p-4">
       <div className="flex flex-col gap-3">
@@ -98,6 +121,15 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
           className="mt-2 w-full rounded bg-gray-900 text-white text-sm py-2 disabled:opacity-50"
         >
           {guardando ? "guardando..." : "guardar cambios"}
+        </button>
+
+        <button
+          type="button"
+          onClick={darDeBaja}
+          disabled={guardando}
+          className="text-xs text-red-700 underline disabled:opacity-50"
+        >
+          dar de baja esta cuenta
         </button>
       </div>
     </div>
