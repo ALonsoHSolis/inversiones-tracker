@@ -1,3 +1,5 @@
+import { Ayuda } from "@/components/Ayuda";
+
 interface CapitalSummaryProps {
   capitalAportadoClp: number;
   valorActualClp: number;
@@ -31,7 +33,14 @@ export function CapitalSummary({ capitalAportadoClp, valorActualClp, hayCuentas 
 
   return (
     <div className="rounded-lg border border-gray-200 p-4">
-      <p className="text-sm font-medium mb-3">capital vs. ganancia (acumulado)</p>
+      <div className="mb-3">
+        <p className="text-sm font-medium">capital vs. ganancia (acumulado)</p>
+        <Ayuda>
+          "capital aportado" es todo lo que depositaste menos lo que retiraste, sumando todas tus
+          cuentas desde que las creaste. "valor actual" es cuánto valen hoy. "ganancia total" es
+          la diferencia real entre ambos — no es lo mismo que el capital aportado.
+        </Ayuda>
+      </div>
       <div className="grid grid-cols-3 gap-3">
         <div>
           <p className="text-xs text-gray-500">capital aportado</p>

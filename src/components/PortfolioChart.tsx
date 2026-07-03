@@ -1,6 +1,7 @@
 "use client";
 
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Ayuda } from "@/components/Ayuda";
 import type { EvolucionPortafolio } from "@/types/database";
 
 interface PortfolioChartProps {
@@ -41,7 +42,14 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
 
   return (
     <div className="rounded-lg border border-gray-200 p-4">
-      <p className="text-sm font-medium mb-3">evolucion del portafolio</p>
+      <div className="mb-3">
+        <p className="text-sm font-medium">evolucion del portafolio</p>
+        <Ayuda>
+          Valor total de todas tus cuentas activas, en pesos, a lo largo del tiempo. Si una cuenta
+          no tiene un registro justo en una fecha, se usa su último valor conocido hasta ese
+          momento.
+        </Ayuda>
+      </div>
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={puntos} margin={{ top: 5, right: 10, bottom: 0, left: 0 }}>

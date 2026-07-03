@@ -1,3 +1,5 @@
+import { Ayuda } from "@/components/Ayuda";
+
 interface Plataforma {
   nombre: string;
   capitalAportadoClp: number;
@@ -21,7 +23,13 @@ export function PlatformBreakdown({ plataformas }: PlatformBreakdownProps) {
 
   return (
     <div className="rounded-lg border border-gray-200 p-4">
-      <p className="text-sm font-medium mb-3">por plataforma</p>
+      <div className="mb-3">
+        <p className="text-sm font-medium">por plataforma</p>
+        <Ayuda>
+          Agrupa tus cuentas por banco o corredora para ver cuánto tienes en cada una, sumando el
+          capital aportado y el valor actual de las cuentas de esa plataforma.
+        </Ayuda>
+      </div>
       <div className="flex flex-col gap-3">
         {plataformas.map((p) => {
           const ganancia = p.valorActualClp - p.capitalAportadoClp;
