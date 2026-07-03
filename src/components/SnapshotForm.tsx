@@ -114,6 +114,9 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
       pendientes.map(async (cuenta) => {
         const fila = filas[cuenta.id];
 
+        if (Number(fila.valor) < 0) {
+          throw new Error("el valor no puede ser negativo");
+        }
         if (cuenta.moneda !== "CLP" && fila.tasaCambio == null) {
           throw new Error("falta la tasa de cambio");
         }
@@ -175,6 +178,7 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
                   type="number"
                   inputMode="decimal"
                   placeholder="0"
+                  min={0}
                   className="w-32 rounded border border-gray-300 px-2 py-1 text-right"
                   value={fila.valor}
                   onChange={(e) => actualizarFila(cuenta.id, { valor: e.target.value })}

@@ -60,6 +60,10 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
   async function guardarFila(fila: FilaHistorial) {
     const estado = estados[fila.snapshotId];
 
+    if (Number(estado.valor) < 0) {
+      actualizarFila(fila.snapshotId, { resultado: "el valor no puede ser negativo" });
+      return;
+    }
     if (cuenta.moneda !== "CLP" && !estado.tasaCambio) {
       actualizarFila(fila.snapshotId, { resultado: "falta la tasa de cambio" });
       return;
@@ -109,6 +113,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
               <input
                 type="number"
                 inputMode="decimal"
+                min={0}
                 className="w-32 rounded border border-gray-300 px-2 py-1 text-right"
                 value={estado.valor}
                 onChange={(e) => actualizarFila(fila.snapshotId, { valor: e.target.value })}

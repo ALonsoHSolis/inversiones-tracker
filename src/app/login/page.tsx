@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { login } from "./actions";
+import { SubmitButton } from "@/components/SubmitButton";
 
 export default async function LoginPage({
   searchParams,
@@ -31,12 +32,7 @@ export default async function LoginPage({
           />
         </label>
         {error && <p className="text-xs text-red-700">{error}</p>}
-        <button
-          type="submit"
-          className="mt-2 w-full rounded bg-gray-900 text-white text-sm py-2"
-        >
-          entrar
-        </button>
+        <SubmitButton labelInactivo="entrar" labelActivo="entrando..." />
       </form>
       <p className="text-sm text-gray-500 mt-4">
         no tienes cuenta?{" "}

@@ -17,12 +17,15 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
   const [plataforma, setPlataforma] = useState(cuenta.plataforma);
   const [tipo, setTipo] = useState<TipoCuenta>(cuenta.tipo as TipoCuenta);
 
-  const [guardando, setGuardando] = useState(false);
+  // accion separada por boton (en vez de un solo "guardando" compartido): con
+  // un solo booleano, dar de baja hacia que el boton de "guardar cambios"
+  // mostrara "guardando..." aunque esa no fuera la accion en curso.
+  const [accion, setAccion] = useState<"guardar" | "baja" | null>(null);
   const [errorGuardado, setErrorGuardado] = useState<string | null>(null);
 
   async function guardarCambios() {
     setErrorGuardado(null);
-    setGuardando(true);
+    setAccion("guardar");
     const supabase = createClient();
 
     const { error } = await supabase
@@ -30,9 +33,8 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
       .update({ nombre, plataforma, tipo })
       .eq("id", cuenta.id);
 
-    setGuardando(false);
-
     if (error) {
+      setAccion(null);
       setErrorGuardado(error.message);
       return;
     }
@@ -48,14 +50,13 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
     if (!confirmado) return;
 
     setErrorGuardado(null);
-    setGuardando(true);
+    setAccion("baja");
     const supabase = createClient();
 
     const { error } = await supabase.from("cuentas").update({ activa: false }).eq("id", cuenta.id);
 
-    setGuardando(false);
-
     if (error) {
+      setAccion(null);
       setErrorGuardado(error.message);
       return;
     }
@@ -117,19 +118,19 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
         <button
           type="button"
           onClick={guardarCambios}
-          disabled={guardando}
+          disabled={accion !== null}
           className="mt-2 w-full rounded bg-gray-900 text-white text-sm py-2 disabled:opacity-50"
         >
-          {guardando ? "guardando..." : "guardar cambios"}
+          {accion === "guardar" ? "guardando..." : "guardar cambios"}
         </button>
 
         <button
           type="button"
           onClick={darDeBaja}
-          disabled={guardando}
+          disabled={accion !== null}
           className="text-xs text-red-700 underline disabled:opacity-50"
         >
-          dar de baja esta cuenta
+          {accion === "baja" ? "dando de baja..." : "dar de baja esta cuenta"}
         </button>
       </div>
     </div>
