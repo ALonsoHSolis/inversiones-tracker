@@ -162,6 +162,17 @@ $$;
 -- dia 1 insertaria un SEGUNDO movimiento, duplicando el aporte inicial. al
 -- encontrar ese huerfano por fecha se lo actualiza y se le asigna
 -- snapshot_id, "adoptandolo" en vez de duplicarlo.
+--
+-- OJO: el huerfano solo se busca (y se adopta) cuando p_movimiento_tipo no es
+-- null -- es decir, cuando el usuario esta activamente marcando el toggle.
+-- si el toggle viene desmarcado, solo se borra un movimiento que ya estuviera
+-- LIGADO a este snapshot_id (uno que esta misma funcion adopto o creo antes).
+-- nunca se borra un huerfano solo porque coincide la fecha: SnapshotForm
+-- (la carga del dia a dia) nunca le muestra ese huerfano al usuario -- su
+-- checkbox nace desmarcado sin saber que existe -- asi que desmarcado ahi
+-- nunca debe interpretarse como "quiero borrar el aporte inicial". sin este
+-- guard, actualizar el valor de una cuenta el mismo dia que se creo (con el
+-- toggle desmarcado, el caso normal) borraba el aporte inicial en silencio.
 create or replace function guardar_snapshot_con_movimiento(
   p_cuenta_id uuid,
   p_fecha date,
@@ -187,7 +198,7 @@ begin
   select id into v_movimiento_id
   from movimientos
   where cuenta_id = p_cuenta_id and fecha = p_fecha
-    and (snapshot_id = v_snapshot_id or snapshot_id is null)
+    and (snapshot_id = v_snapshot_id or (p_movimiento_tipo is not null and snapshot_id is null))
   order by snapshot_id nulls last
   limit 1;
 
