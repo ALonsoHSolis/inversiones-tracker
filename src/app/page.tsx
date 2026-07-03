@@ -3,9 +3,11 @@ import { PortfolioSummary } from "@/components/PortfolioSummary";
 import { CapitalSummary } from "@/components/CapitalSummary";
 import { PlatformBreakdown } from "@/components/PlatformBreakdown";
 import { PortfolioChart } from "@/components/PortfolioChart";
+import { MarketBenchmark } from "@/components/MarketBenchmark";
 import { AccountRow } from "@/components/AccountRow";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import type { Cuenta, RendimientoActual, TipoMovimiento } from "@/types/database";
+import { obtenerCambioSp500 } from "@/lib/mercado";
 import { logout } from "./actions";
 import Link from "next/link";
 
@@ -30,6 +32,12 @@ export default async function DashboardPage() {
     supabase.from("capital_por_cuenta").select("*"),
     supabase.from("evolucion_portafolio").select("*"),
   ]);
+
+  // fuera del Promise.all a proposito: es un servicio externo opcional, no
+  // datos del usuario -- si yahoo esta lento o caido, nunca debe bloquear ni
+  // romper la carga del resto del dashboard (obtenerCambioSp500 ya nunca
+  // lanza, el catch de aca es la segunda red de seguridad).
+  const benchmark = await obtenerCambioSp500().catch(() => null);
 
   // caso mas comun: todavia no hay ningun snapshot guardado hoy (primera carga
   // del dia). en ese caso no hay que consultar movimientos en absoluto — evita
@@ -133,6 +141,7 @@ export default async function DashboardPage() {
         </form>
       </div>
       <PortfolioSummary valorTotal={valorTotal} valorTotalAnterior={valorTotalAnterior} />
+      <MarketBenchmark datos={benchmark} />
       <div className="mt-3">
         <CapitalSummary
           capitalAportadoClp={capitalAportadoClp}
