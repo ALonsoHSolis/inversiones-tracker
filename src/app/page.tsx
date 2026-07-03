@@ -49,6 +49,16 @@ export default async function DashboardPage() {
       .map((r) => [r.cuenta_id, r])
   );
 
+  // capital_por_cuenta trae el valor actual desde el primer snapshot que
+  // exista (no exige dos, a diferencia de rendimiento_actual) — se usa como
+  // respaldo para que "valor total del portafolio" no quede en $0 el primer
+  // dia de una cuenta.
+  const capitalPorCuentaMap = new Map(
+    (capitalPorCuenta ?? [])
+      .filter((c): c is typeof c & { cuenta_id: string } => c.cuenta_id !== null)
+      .map((c) => [c.cuenta_id, c])
+  );
+
   const cuentasConDatos = (cuentas ?? []).map((cuenta: Cuenta) => ({
     cuenta,
     rendimiento: rendimientoPorCuenta.get(cuenta.id) ?? null,
@@ -57,11 +67,25 @@ export default async function DashboardPage() {
   // se suma valor_clp, no valor a secas: valor esta en la moneda nativa de
   // cada cuenta (usd, uf, clp), y no se pueden sumar monedas distintas sin
   // convertir primero. valor_clp ya viene convertido desde la vista sql.
-  const valorTotal = cuentasConDatos.reduce((acc, c) => acc + (c.rendimiento?.valor_clp ?? 0), 0);
-  const valorTotalAnterior = cuentasConDatos.reduce(
-    (acc, c) => acc + (c.rendimiento?.valor_clp_anterior ?? c.rendimiento?.valor_clp ?? 0),
-    0
-  );
+  //
+  // si una cuenta todavia no tiene fila en rendimiento_actual (le falta un
+  // segundo snapshot en otra fecha para poder comparar semana contra semana),
+  // se usa valor_actual_clp de capital_por_cuenta como respaldo para el total
+  // — y ESE MISMO valor se usa tambien como "anterior" para esa cuenta, para
+  // que su aporte de capital no aparezca como ganancia de la semana (regla de
+  // negocio: nunca confundir un aporte con rendimiento).
+  const valorTotal = cuentasConDatos.reduce((acc, c) => {
+    const valorClp = c.rendimiento?.valor_clp ?? capitalPorCuentaMap.get(c.cuenta.id)?.valor_actual_clp ?? 0;
+    return acc + valorClp;
+  }, 0);
+  const valorTotalAnterior = cuentasConDatos.reduce((acc, c) => {
+    const valorAnteriorClp =
+      c.rendimiento?.valor_clp_anterior ??
+      c.rendimiento?.valor_clp ??
+      capitalPorCuentaMap.get(c.cuenta.id)?.valor_actual_clp ??
+      0;
+    return acc + valorAnteriorClp;
+  }, 0);
 
   // capital_aportado_clp y valor_actual_clp vienen de una vista, asi que el
   // tipo generado los marca nullable aunque el sql ya haga coalesce en el
