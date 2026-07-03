@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { PortfolioSummary } from "@/components/PortfolioSummary";
 import { CapitalSummary } from "@/components/CapitalSummary";
+import { PlatformBreakdown } from "@/components/PlatformBreakdown";
 import { PortfolioChart } from "@/components/PortfolioChart";
 import { AccountRow } from "@/components/AccountRow";
 import { SnapshotForm } from "@/components/SnapshotForm";
@@ -98,6 +99,28 @@ export default async function DashboardPage() {
   const capitalAportadoClp = (capitalPorCuenta ?? []).reduce((acc, c) => acc + (c.capital_aportado_clp ?? 0), 0);
   const valorActualClp = (capitalPorCuenta ?? []).reduce((acc, c) => acc + (c.valor_actual_clp ?? 0), 0);
 
+  // agrupa por plataforma (texto libre, no enum) para ver cuanto hay en cada
+  // banco/corredora. la clave se normaliza (trim + minusculas) para que un
+  // despiste de tipeo no genere dos grupos separados, pero el nombre que se
+  // muestra usa el texto tal cual lo escribio el usuario la primera vez.
+  const plataformasMap = new Map<
+    string,
+    { nombre: string; capitalAportadoClp: number; valorActualClp: number }
+  >();
+  (cuentas ?? []).forEach((cuenta) => {
+    const clave = cuenta.plataforma.trim().toLowerCase();
+    const datos = capitalPorCuentaMap.get(cuenta.id);
+    const grupo = plataformasMap.get(clave) ?? {
+      nombre: cuenta.plataforma.trim(),
+      capitalAportadoClp: 0,
+      valorActualClp: 0,
+    };
+    grupo.capitalAportadoClp += datos?.capital_aportado_clp ?? 0;
+    grupo.valorActualClp += datos?.valor_actual_clp ?? 0;
+    plataformasMap.set(clave, grupo);
+  });
+  const plataformas = Array.from(plataformasMap.values()).sort((a, b) => b.valorActualClp - a.valorActualClp);
+
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
       <div className="flex items-center justify-between mb-6">
@@ -116,6 +139,9 @@ export default async function DashboardPage() {
           valorActualClp={valorActualClp}
           hayCuentas={cuentasConDatos.length > 0}
         />
+      </div>
+      <div className="mt-3">
+        <PlatformBreakdown plataformas={plataformas} />
       </div>
       <div className="mt-3">
         <PortfolioChart datos={evolucionPortafolio ?? []} />

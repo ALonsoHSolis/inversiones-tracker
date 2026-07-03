@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Cuenta, RendimientoActual } from "@/types/database";
 
 interface AccountRowProps {
@@ -22,7 +23,13 @@ export function AccountRow({ cuenta, rendimiento }: AccountRowProps) {
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-sm font-medium">{cuenta.nombre}</p>
-          <p className="text-xs text-gray-500">{cuenta.plataforma}</p>
+          <p className="text-xs text-gray-500">
+            {cuenta.plataforma}
+            {" · "}
+            <Link href={`/cuentas/${cuenta.id}/editar`} className="underline">
+              editar
+            </Link>
+          </p>
         </div>
         <div className="text-right">
           <p className="text-sm font-medium">
