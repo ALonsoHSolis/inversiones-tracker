@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { obtenerTasaCambio } from "@/lib/mindicador";
+import { Ayuda } from "@/components/Ayuda";
 import type { Cuenta, Moneda, TipoMovimiento } from "@/types/database";
 
 interface SnapshotFormProps {
@@ -166,7 +167,14 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
 
   return (
     <div className="rounded-lg border border-gray-200 p-4">
-      <p className="text-sm font-medium mb-3">actualizar valores de hoy</p>
+      <div className="mb-3">
+        <p className="text-sm font-medium">actualizar valores de hoy</p>
+        <Ayuda>
+          Escribe el valor de hoy de cada cuenta (lo que ves en el banco o corredora). Si además
+          depositaste o retiraste plata desde el último registro — no una variación de mercado —
+          marca "esto incluye un aporte o retiro" para que ese monto no se cuente como ganancia.
+        </Ayuda>
+      </div>
       <div className="flex flex-col gap-3">
         {cuentas.map((cuenta) => {
           const fila = filas[cuenta.id] ?? filaInicial();

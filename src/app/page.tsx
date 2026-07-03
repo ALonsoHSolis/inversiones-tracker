@@ -4,6 +4,7 @@ import { CapitalSummary } from "@/components/CapitalSummary";
 import { PlatformBreakdown } from "@/components/PlatformBreakdown";
 import { PortfolioChart } from "@/components/PortfolioChart";
 import { MarketBenchmark } from "@/components/MarketBenchmark";
+import { Ayuda } from "@/components/Ayuda";
 import { AccountRow } from "@/components/AccountRow";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import type { Cuenta, RendimientoActual, TipoMovimiento } from "@/types/database";
@@ -155,15 +156,27 @@ export default async function DashboardPage() {
       <div className="mt-3">
         <PortfolioChart datos={evolucionPortafolio ?? []} />
       </div>
-      <div className="mt-8 flex items-center justify-between">
-        <p className="text-sm font-medium">tus cuentas</p>
-        <Link href="/cuentas/nueva" className="text-sm text-gray-900 underline">
-          + agregar cuenta
-        </Link>
+      <div className="mt-8">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium">tus cuentas</p>
+          <Link href="/cuentas/nueva" className="text-sm text-gray-900 underline">
+            + agregar cuenta
+          </Link>
+        </div>
+        <Ayuda>
+          Cada cuenta muestra su valor más reciente. El % aparece una vez que haya al menos dos
+          registros para comparar, y ya viene descontando cualquier aporte o retiro — no es
+          ganancia hasta que no se compare registro contra registro.
+        </Ayuda>
       </div>
       <div className="mt-2 flex flex-col gap-2">
         {cuentasConDatos.map(({ cuenta, rendimiento }) => (
-          <AccountRow key={cuenta.id} cuenta={cuenta} rendimiento={rendimiento} />
+          <AccountRow
+            key={cuenta.id}
+            cuenta={cuenta}
+            rendimiento={rendimiento}
+            valorActualFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null}
+          />
         ))}
         {cuentasConDatos.length === 0 && (
           <p className="text-sm text-gray-500">todavia no hay cuentas.</p>
