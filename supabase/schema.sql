@@ -173,13 +173,26 @@ $$;
 -- nunca debe interpretarse como "quiero borrar el aporte inicial". sin este
 -- guard, actualizar el valor de una cuenta el mismo dia que se creo (con el
 -- toggle desmarcado, el caso normal) borraba el aporte inicial en silencio.
+--
+-- p_permitir_quitar_movimiento: por defecto true (comportamiento historico,
+-- usado por el historial de la cuenta, donde borrar un movimiento es una
+-- correccion deliberada). SnapshotForm (la carga del dia a dia) SIEMPRE debe
+-- llamar esto con false: un aporte que ya quedo adoptado/ligado a un
+-- snapshot (por ejemplo, el aporte inicial de una cuenta creada hoy mismo)
+-- aparece con el checkbox marcado la proxima vez que el usuario entra a
+-- "actualizar valores de hoy" -- y es un error muy natural desmarcarlo
+-- pensando "no estoy depositando plata ahora mismo", sin darse cuenta que
+-- eso borra un aporte real ya registrado. con este parametro en false, la
+-- carga del dia a dia puede agregar o corregir el monto de un aporte, pero
+-- nunca borrarlo -- borrar uno existente queda solo en el historial.
 create or replace function guardar_snapshot_con_movimiento(
   p_cuenta_id uuid,
   p_fecha date,
   p_valor numeric,
   p_tasa_cambio numeric default null,
   p_movimiento_tipo text default null,
-  p_movimiento_monto numeric default null
+  p_movimiento_monto numeric default null,
+  p_permitir_quitar_movimiento boolean default true
 )
 returns uuid
 language plpgsql
@@ -216,7 +229,7 @@ begin
       insert into movimientos (cuenta_id, fecha, tipo, monto, tasa_cambio, snapshot_id, nota)
       values (p_cuenta_id, p_fecha, p_movimiento_tipo, p_movimiento_monto, p_tasa_cambio, v_snapshot_id, 'registrado junto al snapshot');
     end if;
-  elsif v_movimiento_id is not null then
+  elsif v_movimiento_id is not null and p_permitir_quitar_movimiento then
     delete from movimientos where id = v_movimiento_id;
   end if;
 

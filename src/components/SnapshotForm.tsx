@@ -132,6 +132,12 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
           p_tasa_cambio: cuenta.moneda === "CLP" ? undefined : (fila.tasaCambio ?? undefined),
           p_movimiento_tipo: fila.incluyeMovimiento ? fila.movimientoTipo : undefined,
           p_movimiento_monto: fila.incluyeMovimiento ? Number(fila.movimientoMonto) : undefined,
+          // la carga del dia a dia nunca debe poder borrar un aporte/retiro ya
+          // registrado (por ejemplo, el aporte inicial de una cuenta creada
+          // hoy mismo) -- desmarcar la casilla pensando "no estoy depositando
+          // ahora" es un error muy facil de cometer. borrar uno existente
+          // queda solo para el historial de la cuenta, una accion deliberada.
+          p_permitir_quitar_movimiento: false,
         });
 
         if (error) throw new Error(error.message);

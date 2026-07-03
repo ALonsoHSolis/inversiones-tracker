@@ -83,6 +83,10 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
       p_tasa_cambio: cuenta.moneda === "CLP" ? undefined : Number(estado.tasaCambio),
       p_movimiento_tipo: estado.incluyeMovimiento ? estado.movimientoTipo : undefined,
       p_movimiento_monto: estado.incluyeMovimiento ? Number(estado.movimientoMonto) : undefined,
+      // a diferencia de SnapshotForm (la carga del dia a dia), el historial es
+      // exactamente el lugar pensado para corregir/quitar un movimiento a
+      // proposito -- aca si se permite.
+      p_permitir_quitar_movimiento: true,
     });
 
     if (error) {
