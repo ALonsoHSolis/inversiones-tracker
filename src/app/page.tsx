@@ -25,6 +25,7 @@ export default async function DashboardPage() {
     { data: snapshotsHoy },
     { data: capitalPorCuenta },
     { data: evolucionPortafolio },
+    { count: cuentasInactivasCount },
   ] = await Promise.all([
     supabase.auth.getUser(),
     supabase.from("cuentas").select("*").eq("activa", true).order("created_at"),
@@ -32,6 +33,7 @@ export default async function DashboardPage() {
     supabase.from("snapshots").select("id, cuenta_id").eq("fecha", hoy),
     supabase.from("capital_por_cuenta").select("*"),
     supabase.from("evolucion_portafolio").select("*"),
+    supabase.from("cuentas").select("id", { count: "exact", head: true }).eq("activa", false),
   ]);
 
   // fuera del Promise.all a proposito: es un servicio externo opcional, no
@@ -182,6 +184,13 @@ export default async function DashboardPage() {
           <p className="text-sm text-gray-500">todavia no hay cuentas.</p>
         )}
       </div>
+      {(cuentasInactivasCount ?? 0) > 0 && (
+        <div className="mt-2">
+          <Link href="/cuentas/inactivas" className="text-xs text-gray-500 underline">
+            ver cuentas dadas de baja
+          </Link>
+        </div>
+      )}
       <div className="mt-8">
         <SnapshotForm cuentas={cuentas ?? []} movimientosHoy={movimientosHoy} />
       </div>
