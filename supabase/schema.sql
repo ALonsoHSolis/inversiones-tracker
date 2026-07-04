@@ -185,6 +185,16 @@ $$;
 -- eso borra un aporte real ya registrado. con este parametro en false, la
 -- carga del dia a dia puede agregar o corregir el monto de un aporte, pero
 -- nunca borrarlo -- borrar uno existente queda solo en el historial.
+--
+-- el drop de abajo es necesario porque "create or replace" NO reemplaza una
+-- funcion cuando cambia la lista de parametros -- crea un overload nuevo y
+-- deja el viejo vivo y llamable. sin este drop, la version anterior (sin
+-- p_permitir_quitar_movimiento, equivalente a "siempre true") seguia
+-- existiendo en la base en paralelo a esta, un riesgo real dado que ese
+-- comportamiento es justamente el que causo la perdida de datos que este
+-- parametro corrige.
+drop function if exists guardar_snapshot_con_movimiento(uuid, date, numeric, numeric, text, numeric);
+
 create or replace function guardar_snapshot_con_movimiento(
   p_cuenta_id uuid,
   p_fecha date,

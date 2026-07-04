@@ -250,6 +250,7 @@ export type Database = {
           p_fecha: string
           p_movimiento_monto?: number
           p_movimiento_tipo?: string
+          p_permitir_quitar_movimiento?: boolean
           p_tasa_cambio?: number
           p_valor: number
         }
