@@ -1,3 +1,5 @@
+import { Ayuda } from "@/components/Ayuda";
+
 interface PortfolioSummaryProps {
   valorTotal: number;
   valorTotalAnterior: number;
@@ -28,6 +30,11 @@ export function PortfolioSummary({ valorTotal, valorTotalAnterior }: PortfolioSu
           {esPositivo ? "+" : ""}
           {formatoPesos(cambio)} ({cambioPct.toFixed(1)}%)
         </p>
+        <Ayuda>
+          "Nominal" incluye cualquier aporte o retiro que hayas hecho esta semana — no es tu
+          ganancia real. Para la ganancia neta de aportes, mira el % de cada cuenta más abajo o la
+          tarjeta "capital vs. ganancia (acumulado)".
+        </Ayuda>
       </div>
     </div>
   );

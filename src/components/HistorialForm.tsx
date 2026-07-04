@@ -129,7 +129,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
       actualizarFila(fila.snapshotId, { resultado: "el valor no puede ser negativo" });
       return;
     }
-    if (cuenta.moneda !== "CLP" && !estado.tasaCambio) {
+    if (cuenta.moneda !== "CLP" && !(Number(estado.tasaCambio) > 0)) {
       actualizarFila(fila.snapshotId, { resultado: "falta la tasa de cambio" });
       return;
     }

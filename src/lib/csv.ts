@@ -2,7 +2,7 @@
 // envuelve en comillas dobles y las comillas internas se duplican (regla
 // estandar de csv, no una convencion propia).
 function escaparCelda(valor: string): string {
-  if (/[",\n]/.test(valor)) {
+  if (/["\r\n,]/.test(valor)) {
     return `"${valor.replace(/"/g, '""')}"`;
   }
   return valor;

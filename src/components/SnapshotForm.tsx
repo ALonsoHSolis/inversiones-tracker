@@ -216,7 +216,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
         if (Number(fila.valor) < 0) {
           throw new Error("el valor no puede ser negativo");
         }
-        if (cuenta.moneda !== "CLP" && fila.tasaCambio == null) {
+        if (cuenta.moneda !== "CLP" && !(Number(fila.tasaCambio) > 0)) {
           throw new Error("falta la tasa de cambio");
         }
         if (fila.incluyeMovimiento && !(Number(fila.movimientoMonto) > 0)) {

@@ -94,13 +94,21 @@ alter table movimientos enable row level security;
 create policy "cuentas propias" on cuentas
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+-- with check explicito (no solo using): aunque postgres reusa using como
+-- with check por defecto cuando falta, dejarlo explicito evita que alguien
+-- edite esta policy mas adelante asumiendo que ya esta ahi y la deje afuera
+-- sin querer -- ver el incidente de rls documentado mas abajo.
 create policy "snapshots de cuentas propias" on snapshots
   for all using (exists (
+    select 1 from cuentas where cuentas.id = snapshots.cuenta_id and cuentas.user_id = auth.uid()
+  )) with check (exists (
     select 1 from cuentas where cuentas.id = snapshots.cuenta_id and cuentas.user_id = auth.uid()
   ));
 
 create policy "movimientos de cuentas propias" on movimientos
   for all using (exists (
+    select 1 from cuentas where cuentas.id = movimientos.cuenta_id and cuentas.user_id = auth.uid()
+  )) with check (exists (
     select 1 from cuentas where cuentas.id = movimientos.cuenta_id and cuentas.user_id = auth.uid()
   ));
 
