@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { InputMonto } from "@/components/InputMonto";
 import type { Cuenta, TipoMovimiento } from "@/types/database";
 
 interface FilaHistorial {
@@ -208,15 +209,10 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
 
             <div className="flex items-center justify-between gap-3 text-sm">
               <span className="text-gray-600">valor</span>
-              <input
-                type="number"
-                inputMode="decimal"
-                min={0}
+              <InputMonto
                 className="w-32 rounded border border-gray-300 px-2 py-1 text-right"
                 value={estado.valor}
-                onChange={(e) =>
-                  actualizarFila(fila.snapshotId, { valor: e.target.value, valorEditadoManualmente: true })
-                }
+                onChange={(valor) => actualizarFila(fila.snapshotId, { valor, valorEditadoManualmente: true })}
               />
             </div>
 
@@ -255,13 +251,11 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                   <option value="aporte">aporte</option>
                   <option value="retiro">retiro</option>
                 </select>
-                <input
-                  type="number"
-                  inputMode="decimal"
+                <InputMonto
                   placeholder="monto"
                   className="flex-1 rounded border border-gray-300 px-2 py-1 text-right text-sm"
                   value={estado.movimientoMonto}
-                  onChange={(e) => actualizarMovimiento(fila, { movimientoMonto: e.target.value })}
+                  onChange={(movimientoMonto) => actualizarMovimiento(fila, { movimientoMonto })}
                 />
               </div>
             )}

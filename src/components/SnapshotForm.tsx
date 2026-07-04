@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { obtenerTasaCambio } from "@/lib/mindicador";
 import { Ayuda } from "@/components/Ayuda";
+import { InputMonto } from "@/components/InputMonto";
 import type { Cuenta, Moneda, TipoMovimiento } from "@/types/database";
 
 interface SnapshotFormProps {
@@ -281,7 +282,12 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
         </Ayuda>
       </div>
       <p className="text-[11.5px] text-[#A0A7B2] mb-4">Fecha de hoy: {formatoFecha(new Date().toISOString())}</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {/* una sola columna a proposito, sin breakpoint de viewport: este
+          formulario vive dentro de un sidebar angosto (ver page.tsx), y
+          sm:grid-cols-2 se activaba por el ancho de la ventana, no del
+          contenedor -- con dos columnas ahi el select+monto de cada card no
+          alcanzaban a caber y se desbordaban sobre la tarjeta vecina. */}
+      <div className="flex flex-col gap-3">
         {cuentas.map((cuenta) => {
           const fila = filas[cuenta.id] ?? filaInicial();
           const anterior = valorAnteriorPorCuenta[cuenta.id];
@@ -302,16 +308,11 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                 )}
               </div>
 
-              <input
-                type="number"
-                inputMode="decimal"
+              <InputMonto
                 placeholder="0"
-                min={0}
                 className="mt-2.5 w-full h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)]"
                 value={fila.valor}
-                onChange={(e) =>
-                  actualizarFila(cuenta.id, { valor: e.target.value, valorEditadoManualmente: true })
-                }
+                onChange={(valor) => actualizarFila(cuenta.id, { valor, valorEditadoManualmente: true })}
               />
 
               {cuenta.moneda !== "CLP" && (
@@ -362,7 +363,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                 </button>
               ) : (
                 <div className="mt-2.5 rounded-[10px] bg-[#F7F8FA] p-2.5 flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <span className="text-[11px] font-medium text-[#6B7280]">esto incluye un aporte o retiro</span>
                     <button
                       type="button"
@@ -372,24 +373,27 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                       quitar
                     </button>
                   </div>
+                  {fila.tieneMovimientoOriginal && (
+                    <span className="self-start text-[10px] font-medium text-[#8A929E] bg-white border border-[#E2E5EA] rounded px-1.5 py-px">
+                      ya registrado hoy
+                    </span>
+                  )}
                   <div className="flex items-center gap-2">
                     <select
                       value={fila.movimientoTipo}
                       onChange={(e) =>
                         actualizarMovimiento(cuenta, { movimientoTipo: e.target.value as TipoMovimiento })
                       }
-                      className="h-9 px-2 rounded-lg border border-[#DFE2E8] text-[13px] bg-white"
+                      className="h-9 px-2 rounded-lg border border-[#DFE2E8] text-[13px] bg-white shrink-0"
                     >
                       <option value="aporte">aporte</option>
                       <option value="retiro">retiro</option>
                     </select>
-                    <input
-                      type="number"
-                      inputMode="decimal"
+                    <InputMonto
                       placeholder="monto"
-                      className="flex-1 h-9 px-2.5 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular bg-white focus:outline-none focus:border-[var(--accent)]"
+                      className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular bg-white focus:outline-none focus:border-[var(--accent)]"
                       value={fila.movimientoMonto}
-                      onChange={(e) => actualizarMovimiento(cuenta, { movimientoMonto: e.target.value })}
+                      onChange={(movimientoMonto) => actualizarMovimiento(cuenta, { movimientoMonto })}
                     />
                   </div>
                 </div>

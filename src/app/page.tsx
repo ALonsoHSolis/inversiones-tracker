@@ -6,6 +6,7 @@ import { PortfolioChart } from "@/components/PortfolioChart";
 import { MarketBenchmark } from "@/components/MarketBenchmark";
 import { Ayuda } from "@/components/Ayuda";
 import { AccountRow } from "@/components/AccountRow";
+import { CargaRapida } from "@/components/CargaRapida";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import { ExportarDatos } from "@/components/ExportarDatos";
 import { PrivacyShell, PrivacyToggleButton } from "@/components/PrivacyShell";
@@ -260,12 +261,24 @@ export default async function DashboardPage() {
             )}
           </section>
 
-          <div className="lg:sticky lg:top-5">
-            <SnapshotForm
+          <div className="lg:sticky lg:top-5 flex flex-col gap-4">
+            <CargaRapida
               cuentas={cuentas ?? []}
               movimientosHoy={movimientosHoy}
               valorAnteriorPorCuenta={valorAnteriorPorCuenta}
             />
+            <details className="group">
+              <summary className="text-[12.5px] font-semibold text-[var(--accent)] cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                actualizar varias cuentas de una vez
+              </summary>
+              <div className="mt-3">
+                <SnapshotForm
+                  cuentas={cuentas ?? []}
+                  movimientosHoy={movimientosHoy}
+                  valorAnteriorPorCuenta={valorAnteriorPorCuenta}
+                />
+              </div>
+            </details>
           </div>
         </div>
 
