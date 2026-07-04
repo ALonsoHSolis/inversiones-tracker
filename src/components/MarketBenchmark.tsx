@@ -2,27 +2,34 @@ import { Ayuda } from "@/components/Ayuda";
 import type { CambioIndice } from "@/lib/mercado";
 
 interface MarketBenchmarkProps {
-  datos: CambioIndice | null;
+  sp500: CambioIndice | null;
+  uf: CambioIndice | null;
 }
 
-export function MarketBenchmark({ datos }: MarketBenchmarkProps) {
-  if (!datos) return null;
-
+function Linea({ etiqueta, datos }: { etiqueta: string; datos: CambioIndice }) {
   const esPositivo = datos.pct >= 0;
+  return (
+    <p className="text-xs text-gray-500">
+      {etiqueta}:{" "}
+      <span className={esPositivo ? "text-green-700" : "text-red-700"}>
+        {esPositivo ? "+" : ""}
+        {datos.pct.toFixed(1)}%
+      </span>
+    </p>
+  );
+}
+
+export function MarketBenchmark({ sp500, uf }: MarketBenchmarkProps) {
+  if (!sp500 && !uf) return null;
 
   return (
     <div className="mt-2">
-      <p className="text-xs text-gray-500">
-        S&amp;P 500 (últimos 5 días hábiles):{" "}
-        <span className={esPositivo ? "text-green-700" : "text-red-700"}>
-          {esPositivo ? "+" : ""}
-          {datos.pct.toFixed(1)}%
-        </span>
-      </p>
+      {uf && <Linea etiqueta="UF, inflación (últimos 5 días)" datos={uf} />}
+      {sp500 && <Linea etiqueta="S&P 500 (últimos 5 días hábiles)" datos={sp500} />}
       <Ayuda>
-        Referencia de cómo se movió el mercado bursátil de EE.UU. en los últimos días hábiles — no
-        es el mismo período exacto que "cambio nominal esta semana", es solo para comparar a
-        grandes rasgos si conviene estar invertido versus el mercado en general.
+        Referencias de mercado para comparar a grandes rasgos si conviene estar invertido: la UF
+        mide si le ganas a la inflación chilena, el S&P 500 cómo se movió el mercado bursátil de
+        EE.UU. Ninguna de las dos usa el mismo período exacto que "cambio nominal esta semana".
       </Ayuda>
     </div>
   );
