@@ -1,6 +1,65 @@
 @import "tailwindcss";
 
+:root {
+  --accent: #14508c;
+  --pos: #0b7a54;
+  --neg: #c0392b;
+}
+
 body {
-  background-color: #fafafa;
-  color: #111827;
+  background-color: #f5f6f8;
+  color: #171a20;
+  font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-mono-tabular {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes drawLine {
+  from {
+    stroke-dashoffset: 1400;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+/* modo privacidad: oculta montos sin ocultar el layout -- el toggle en el
+   header agrega/quita .privacy-on en un ancestro (PrivacyShell), y cualquier
+   monto marcado con .money-value se difumina, sin que cada componente
+   servidor necesite saber si la privacidad esta activa. */
+.privacy-on .money-value {
+  filter: blur(9px);
+}
+
+/* revelacion progresiva en "tus cuentas": el % anualizado aparece con
+   fade-in suave solo al pasar el cursor sobre esa fila especifica. */
+.acct-row .anual-line {
+  opacity: 0;
+  transform: translateY(-2px);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease;
+}
+.acct-row:hover .anual-line {
+  opacity: 1;
+  transform: none;
 }

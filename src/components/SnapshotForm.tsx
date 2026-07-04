@@ -270,31 +270,32 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
   const algunaCargandoTasa = Object.values(filas).some((f) => f.cargandoTasa);
 
   return (
-    <div className="rounded-lg border border-gray-200 p-4">
-      <div className="mb-3">
-        <p className="text-sm font-medium">actualizar valores de hoy</p>
+    <section className="bg-white border border-[#E7E9EE] rounded-2xl p-5 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
+      <div className="flex items-center gap-1.5 mb-1">
+        <p className="text-[13.5px] font-semibold">Actualizar valores de hoy</p>
         <Ayuda>
-          Escribe el valor de hoy de cada cuenta (lo que ves en el banco o corredora), o usa "sin
-          cambios" si sigue igual que el último registro. Si además depositaste o retiraste plata
-          — no una variación de mercado — usa "+ añadir aporte o retiro" para que ese monto no se
-          cuente como ganancia.
+          Escribe el valor de hoy de cada cuenta (lo que ves en el banco o corredora), o usa &quot;sin
+          cambios&quot; si sigue igual que el último registro. Si además depositaste o retiraste plata
+          — no una variación de mercado — usa &quot;+ añadir aporte o retiro&quot; para que ese monto no
+          se cuente como ganancia.
         </Ayuda>
       </div>
+      <p className="text-[11.5px] text-[#A0A7B2] mb-4">Fecha de hoy: {formatoFecha(new Date().toISOString())}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {cuentas.map((cuenta) => {
           const fila = filas[cuenta.id] ?? filaInicial();
           const anterior = valorAnteriorPorCuenta[cuenta.id];
           return (
-            <div key={cuenta.id} className="rounded border border-gray-200 p-3 flex flex-col">
+            <div key={cuenta.id} className="rounded-xl border border-[#ECEEF2] p-3.5 flex flex-col">
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm text-gray-600 truncate">{cuenta.nombre}</span>
+                <span className="text-[13px] font-medium text-[#2C333B] truncate">{cuenta.nombre}</span>
                 {anterior != null && (
                   <button
                     type="button"
                     onClick={() =>
                       actualizarFila(cuenta.id, { valor: String(anterior), valorEditadoManualmente: true })
                     }
-                    className="text-xs text-gray-400 underline shrink-0"
+                    className="text-[11px] text-[#98A0AB] border-b border-[#E2E5EA] shrink-0"
                   >
                     sin cambios
                   </button>
@@ -306,7 +307,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                 inputMode="decimal"
                 placeholder="0"
                 min={0}
-                className="mt-2 w-full rounded border border-gray-300 px-2 py-1 text-right"
+                className="mt-2.5 w-full h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)]"
                 value={fila.valor}
                 onChange={(e) =>
                   actualizarFila(cuenta.id, { valor: e.target.value, valorEditadoManualmente: true })
@@ -314,14 +315,14 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
               />
 
               {cuenta.moneda !== "CLP" && (
-                <div className="mt-2 flex flex-col gap-1 text-sm">
+                <div className="mt-2.5 flex flex-col gap-1">
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs text-gray-500">tasa de cambio</span>
+                    <span className="text-[11px] font-semibold text-[#6B7280]">tasa de cambio</span>
                     <input
                       type="number"
                       inputMode="decimal"
                       step="0.01"
-                      className="w-28 rounded border border-gray-300 px-2 py-1 text-right"
+                      className="w-28 h-8 px-2 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)]"
                       value={fila.tasaCambio ?? ""}
                       onChange={(e) =>
                         editarTasaManualmente(cuenta.id, e.target.value ? Number(e.target.value) : null)
@@ -329,15 +330,15 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                     />
                   </div>
                   {fila.cargandoTasa && (
-                    <span className="text-xs text-gray-500 text-right">buscando tasa en mindicador.cl...</span>
+                    <span className="text-[11px] text-[#A0A7B2] text-right">buscando tasa en mindicador.cl…</span>
                   )}
                   {!fila.cargandoTasa && fila.tasaFecha && (
-                    <span className="text-xs text-gray-500 text-right">
-                      segun Banco Central, {formatoFecha(fila.tasaFecha)}
+                    <span className="text-[11px] text-[#A0A7B2] text-right">
+                      según Banco Central, {formatoFecha(fila.tasaFecha)}
                     </span>
                   )}
                   {fila.errorTasa && (
-                    <span className="text-xs text-red-700 flex items-center justify-end gap-2">
+                    <span className="text-[11px] text-[var(--neg)] flex items-center justify-end gap-2">
                       {fila.errorTasa}
                       <button type="button" onClick={() => cargarTasa(cuenta)} className="underline shrink-0">
                         reintentar
@@ -355,18 +356,18 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                 <button
                   type="button"
                   onClick={() => actualizarMovimiento(cuenta, { incluyeMovimiento: true })}
-                  className="mt-2 self-start text-xs text-gray-500 underline"
+                  className="mt-2.5 self-start text-[11.5px] font-semibold text-[var(--accent)]"
                 >
                   + añadir aporte o retiro
                 </button>
               ) : (
-                <div className="mt-2 rounded bg-gray-50 p-2 flex flex-col gap-2">
+                <div className="mt-2.5 rounded-[10px] bg-[#F7F8FA] p-2.5 flex flex-col gap-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-600">esto incluye un aporte o retiro</span>
+                    <span className="text-[11px] font-medium text-[#6B7280]">esto incluye un aporte o retiro</span>
                     <button
                       type="button"
                       onClick={() => actualizarMovimiento(cuenta, { incluyeMovimiento: false })}
-                      className="text-xs text-gray-400 underline shrink-0"
+                      className="text-[11px] text-[#98A0AB] border-b border-[#E2E5EA] shrink-0"
                     >
                       quitar
                     </button>
@@ -377,7 +378,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                       onChange={(e) =>
                         actualizarMovimiento(cuenta, { movimientoTipo: e.target.value as TipoMovimiento })
                       }
-                      className="rounded border border-gray-300 px-2 py-1 text-sm bg-white"
+                      className="h-9 px-2 rounded-lg border border-[#DFE2E8] text-[13px] bg-white"
                     >
                       <option value="aporte">aporte</option>
                       <option value="retiro">retiro</option>
@@ -386,7 +387,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                       type="number"
                       inputMode="decimal"
                       placeholder="monto"
-                      className="flex-1 rounded border border-gray-300 px-2 py-1 text-right text-sm bg-white"
+                      className="flex-1 h-9 px-2.5 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular bg-white focus:outline-none focus:border-[var(--accent)]"
                       value={fila.movimientoMonto}
                       onChange={(e) => actualizarMovimiento(cuenta, { movimientoMonto: e.target.value })}
                     />
@@ -394,9 +395,11 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                 </div>
               )}
 
-              {fila.resultado === "ok" && <p className="mt-2 text-xs text-green-700">guardado</p>}
+              {fila.resultado === "ok" && (
+                <p className="mt-2 text-[11.5px] font-semibold text-[var(--pos)]">✓ guardado</p>
+              )}
               {fila.resultado && fila.resultado !== "ok" && (
-                <p className="mt-2 text-xs text-red-700">{fila.resultado}</p>
+                <p className="mt-2 text-[11.5px] text-[var(--neg)]">{fila.resultado}</p>
               )}
             </div>
           );
@@ -405,11 +408,11 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
       <button
         onClick={guardarSnapshots}
         disabled={guardando || algunaCargandoTasa}
-        className="mt-4 w-full rounded bg-gray-900 text-white text-sm py-2 disabled:opacity-50"
+        className="w-full h-[42px] mt-4 rounded-[11px] bg-[var(--accent)] text-white text-[13.5px] font-semibold disabled:opacity-50 hover:brightness-[1.08]"
       >
-        {guardando ? "guardando..." : "guardar"}
+        {guardando ? "Guardando…" : "Guardar registros"}
       </button>
-      {resumen && <p className="text-xs text-gray-500 mt-2">{resumen}</p>}
-    </div>
+      {resumen && <p className="text-[12px] font-semibold text-center text-[#40474F] mt-2.5">{resumen}</p>}
+    </section>
   );
 }

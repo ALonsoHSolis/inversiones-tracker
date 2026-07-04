@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { PortfolioSummary } from "@/components/PortfolioSummary";
-import { CapitalSummary } from "@/components/CapitalSummary";
+import { Hero } from "@/components/Hero";
 import { PlatformBreakdown } from "@/components/PlatformBreakdown";
 import { AssetTypeBreakdown } from "@/components/AssetTypeBreakdown";
 import { PortfolioChart } from "@/components/PortfolioChart";
@@ -9,6 +8,7 @@ import { Ayuda } from "@/components/Ayuda";
 import { AccountRow } from "@/components/AccountRow";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import { ExportarDatos } from "@/components/ExportarDatos";
+import { PrivacyShell, PrivacyToggleButton } from "@/components/PrivacyShell";
 import { TIPOS } from "@/lib/tipos-cuenta";
 import type { Cuenta, RendimientoActual, TipoCuenta, TipoMovimiento } from "@/types/database";
 import { obtenerCambioSp500, obtenerCambioUf } from "@/lib/mercado";
@@ -35,7 +35,7 @@ export default async function DashboardPage() {
     supabase.from("rendimiento_actual").select("*"),
     supabase.from("snapshots").select("id, cuenta_id").eq("fecha", hoy),
     supabase.from("capital_por_cuenta").select("*"),
-    supabase.from("evolucion_portafolio").select("*"),
+    supabase.from("evolucion_portafolio").select("*").order("fecha"),
     supabase.from("cuentas").select("id", { count: "exact", head: true }).eq("activa", false),
   ]);
 
@@ -166,85 +166,113 @@ export default async function DashboardPage() {
   });
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-10">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-medium">Mi portafolio</h1>
-        <div className="flex flex-col items-end gap-1">
-          <form action={logout} className="flex items-center gap-3">
-            <span className="text-xs text-gray-500">{user?.email}</span>
-            <button type="submit" className="text-xs text-gray-500 underline">
-              cerrar sesion
-            </button>
-          </form>
-          <ExportarDatos />
-        </div>
-      </div>
-      <PortfolioSummary
-        valorTotal={valorTotal}
-        valorTotalAnterior={valorTotalAnterior}
-        capitalAportadoClp={capitalAportadoClp}
-      />
-      <MarketBenchmark sp500={benchmarkSp500} uf={benchmarkUf} />
-      <div className="mt-3">
-        <CapitalSummary
+    <PrivacyShell>
+      <main className="max-w-[1160px] mx-auto px-6 pt-[26px] pb-16">
+        <header className="flex items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[var(--accent)] flex items-end justify-center gap-[3px] px-[9px] py-2.5">
+              <span className="w-1 h-2 bg-white/55 rounded-[1px]" />
+              <span className="w-1 h-[13px] bg-white/80 rounded-[1px]" />
+              <span className="w-1 h-[18px] bg-white rounded-[1px]" />
+            </div>
+            <div>
+              <p className="text-[15px] font-semibold tracking-[-0.01em]">Mi portafolio</p>
+              <p className="mt-0.5 text-xs text-[#8A929E]">Rendimiento real · consolidado en CLP</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <PrivacyToggleButton />
+            <ExportarDatos />
+            <div className="w-px h-[22px] bg-[#E1E4EA] mx-1" />
+            <div className="text-right leading-tight">
+              <p className="text-[12.5px] font-medium text-[#40474F]">{user?.email}</p>
+              <form action={logout}>
+                <button
+                  type="submit"
+                  className="text-[11.5px] text-[#8A929E] border-b border-[#DADEE4]"
+                >
+                  cerrar sesión
+                </button>
+              </form>
+            </div>
+          </div>
+        </header>
+
+        <Hero
+          valorTotal={valorTotal}
+          valorTotalAnterior={valorTotalAnterior}
           capitalAportadoClp={capitalAportadoClp}
           valorActualClp={valorActualClp}
-          hayCuentas={cuentasConDatos.length > 0}
+          chart={<PortfolioChart datos={evolucionPortafolio ?? []} />}
+          benchmark={<MarketBenchmark sp500={benchmarkSp500} uf={benchmarkUf} />}
         />
-      </div>
-      <div className="mt-3">
-        <PlatformBreakdown plataformas={plataformas} />
-      </div>
-      <div className="mt-3">
-        <AssetTypeBreakdown tipos={tipos} />
-      </div>
-      <div className="mt-3">
-        <PortfolioChart datos={evolucionPortafolio ?? []} />
-      </div>
-      <div className="mt-8">
-        <div className="flex items-center justify-between">
-          <p className="text-sm font-medium">tus cuentas</p>
-          <Link href="/cuentas/nueva" className="text-sm text-gray-900 underline">
-            + agregar cuenta
-          </Link>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <PlatformBreakdown plataformas={plataformas} />
+          <AssetTypeBreakdown tipos={tipos} />
         </div>
-        <Ayuda>
-          Cada cuenta muestra su valor más reciente. El % "real" aparece una vez que haya al menos
-          dos registros para comparar, y ya viene descontando cualquier aporte o retiro — no es
-          ganancia hasta que no se compare registro contra registro. El % "anualizado" proyecta la
-          ganancia acumulada desde que se creó la cuenta a una tasa equivalente por año (aparece
-          desde el mes de antigüedad) — es una aproximación simple, no ajusta por el momento exacto
-          de cada aporte dentro del período.
-        </Ayuda>
-      </div>
-      <div className="mt-2 flex flex-col gap-2">
-        {cuentasConDatos.map(({ cuenta, rendimiento }) => (
-          <AccountRow
-            key={cuenta.id}
-            cuenta={cuenta}
-            rendimiento={rendimiento}
-            valorActualFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null}
-            capitalAportadoFallback={capitalPorCuentaMap.get(cuenta.id)?.capital_aportado ?? null}
-          />
-        ))}
-        {cuentasConDatos.length === 0 && (
-          <p className="text-sm text-gray-500">todavia no hay cuentas.</p>
-        )}
-      </div>
-      {(cuentasInactivasCount ?? 0) > 0 && (
-        <div className="mt-2">
-          <Link href="/cuentas/inactivas" className="text-xs text-gray-500 underline">
-            ver cuentas dadas de baja
-          </Link>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4 mt-4 items-start">
+          <section className="bg-white border border-[#E7E9EE] rounded-2xl p-5 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-[13.5px] font-semibold">Tus cuentas</p>
+              <Link
+                href="/cuentas/nueva"
+                className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] no-underline"
+              >
+                + agregar cuenta
+              </Link>
+            </div>
+            <div className="flex items-center gap-1.5 mb-3.5">
+              <p className="text-[11.5px] text-[#A0A7B2]">
+                Rendimiento en moneda nativa · ya descuenta aportes y retiros
+              </p>
+              <Ayuda>
+                El % &quot;real&quot; aparece una vez que haya al menos dos registros para comparar, y ya
+                viene descontando cualquier aporte o retiro — no es ganancia hasta que no se compare
+                registro contra registro. El % &quot;anualizado&quot; proyecta la ganancia acumulada desde
+                que se creó la cuenta a una tasa equivalente por año (aparece desde el mes de
+                antigüedad) — es una aproximación simple, no ajusta por el momento exacto de cada
+                aporte dentro del período.
+              </Ayuda>
+            </div>
+            <div className="flex flex-col gap-[9px]">
+              {cuentasConDatos.map(({ cuenta, rendimiento }) => (
+                <AccountRow
+                  key={cuenta.id}
+                  cuenta={cuenta}
+                  rendimiento={rendimiento}
+                  valorActualFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null}
+                  capitalAportadoFallback={capitalPorCuentaMap.get(cuenta.id)?.capital_aportado ?? null}
+                />
+              ))}
+              {cuentasConDatos.length === 0 && (
+                <p className="text-[13px] text-[#A0A7B2]">todavía no hay cuentas.</p>
+              )}
+            </div>
+            {(cuentasInactivasCount ?? 0) > 0 && (
+              <Link
+                href="/cuentas/inactivas"
+                className="inline-block mt-3 text-[11.5px] text-[#A0A7B2] border-b border-[#E2E5EA]"
+              >
+                ver cuentas dadas de baja
+              </Link>
+            )}
+          </section>
+
+          <div className="lg:sticky lg:top-5">
+            <SnapshotForm
+              cuentas={cuentas ?? []}
+              movimientosHoy={movimientosHoy}
+              valorAnteriorPorCuenta={valorAnteriorPorCuenta}
+            />
+          </div>
         </div>
-      )}
-      <div className="mt-8">
-        <SnapshotForm
-          cuentas={cuentas ?? []}
-          movimientosHoy={movimientosHoy}
-          valorAnteriorPorCuenta={valorAnteriorPorCuenta}
-        />
-      </div>
-    </main>
+
+        <p className="mt-6 text-[11px] text-[#B4BAC3] text-center">
+          El % real aparece cuando hay al menos dos registros para comparar
+        </p>
+      </main>
+    </PrivacyShell>
   );
 }

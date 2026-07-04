@@ -85,11 +85,11 @@ export function ExportarDatos() {
         type="button"
         onClick={exportar}
         disabled={exportando}
-        className="text-xs text-gray-500 underline disabled:opacity-50"
+        className="h-[34px] px-3.5 rounded-[9px] border border-[#E1E4EA] bg-white text-[13px] font-medium text-[#40474F] disabled:opacity-50 hover:border-[#C9CDD5]"
       >
-        {exportando ? "exportando..." : "descargar mis datos (CSV)"}
+        {exportando ? "Exportando…" : "Exportar"}
       </button>
-      {error && <p className="text-xs text-red-700 mt-1">{error}</p>}
+      {error && <p className="text-xs text-[var(--neg)] mt-1">{error}</p>}
     </div>
   );
 }
