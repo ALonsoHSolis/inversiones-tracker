@@ -7,6 +7,7 @@ import { MarketBenchmark } from "@/components/MarketBenchmark";
 import { Ayuda } from "@/components/Ayuda";
 import { AccountRow } from "@/components/AccountRow";
 import { SnapshotForm } from "@/components/SnapshotForm";
+import { ExportarDatos } from "@/components/ExportarDatos";
 import type { Cuenta, RendimientoActual, TipoMovimiento } from "@/types/database";
 import { obtenerCambioSp500 } from "@/lib/mercado";
 import { logout } from "./actions";
@@ -144,12 +145,15 @@ export default async function DashboardPage() {
     <main className="mx-auto max-w-2xl px-4 py-10">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-medium">Mi portafolio</h1>
-        <form action={logout} className="flex items-center gap-3">
-          <span className="text-xs text-gray-500">{user?.email}</span>
-          <button type="submit" className="text-xs text-gray-500 underline">
-            cerrar sesion
-          </button>
-        </form>
+        <div className="flex flex-col items-end gap-1">
+          <form action={logout} className="flex items-center gap-3">
+            <span className="text-xs text-gray-500">{user?.email}</span>
+            <button type="submit" className="text-xs text-gray-500 underline">
+              cerrar sesion
+            </button>
+          </form>
+          <ExportarDatos />
+        </div>
       </div>
       <PortfolioSummary valorTotal={valorTotal} valorTotalAnterior={valorTotalAnterior} />
       <MarketBenchmark datos={benchmark} />
