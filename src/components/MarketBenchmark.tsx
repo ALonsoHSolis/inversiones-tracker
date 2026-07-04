@@ -6,16 +6,19 @@ interface MarketBenchmarkProps {
   uf: CambioIndice | null;
 }
 
-function Linea({ etiqueta, datos }: { etiqueta: string; datos: CambioIndice }) {
+function Chip({ etiqueta, datos }: { etiqueta: string; datos: CambioIndice }) {
   const esPositivo = datos.pct >= 0;
   return (
-    <p className="text-xs text-gray-500">
-      {etiqueta}:{" "}
-      <span className={esPositivo ? "text-green-700" : "text-red-700"}>
-        {esPositivo ? "+" : ""}
-        {datos.pct.toFixed(1)}%
+    <div className="inline-flex items-center gap-1.5 py-1.5 px-2.5 rounded-lg bg-[#F3F4F7]">
+      <span className="text-[11px] font-medium text-[#6B7280]">{etiqueta}</span>
+      <span
+        className="font-mono-tabular text-xs font-semibold"
+        style={{ color: esPositivo ? "var(--pos)" : "var(--neg)" }}
+      >
+        {esPositivo ? "+" : "−"}
+        {Math.abs(datos.pct).toFixed(1)}%
       </span>
-    </p>
+    </div>
   );
 }
 
@@ -23,13 +26,14 @@ export function MarketBenchmark({ sp500, uf }: MarketBenchmarkProps) {
   if (!sp500 && !uf) return null;
 
   return (
-    <div className="mt-2">
-      {uf && <Linea etiqueta="UF, inflación (últimos 5 días)" datos={uf} />}
-      {sp500 && <Linea etiqueta="S&P 500 (últimos 5 días hábiles)" datos={sp500} />}
+    <div className="flex items-center gap-2 mt-3.5">
+      {uf && <Chip etiqueta="UF · inflación (5d)" datos={uf} />}
+      {sp500 && <Chip etiqueta="S&P 500 (5d)" datos={sp500} />}
       <Ayuda>
         Referencias de mercado para comparar a grandes rasgos si conviene estar invertido: la UF
         mide si le ganas a la inflación chilena, el S&P 500 cómo se movió el mercado bursátil de
-        EE.UU. Ninguna de las dos usa el mismo período exacto que "cambio nominal esta semana".
+        EE.UU. Ninguna de las dos usa el mismo período exacto que &quot;cambio nominal esta
+        semana&quot;.
       </Ayuda>
     </div>
   );
