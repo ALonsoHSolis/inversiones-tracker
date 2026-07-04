@@ -58,6 +58,27 @@ function calcularValorSugerido(valorAnterior: number | null, monto: string, tipo
   return String(sugerido);
 }
 
+const UMBRAL_RENDIMIENTO_IMPLAUSIBLE = 80;
+
+// misma formula que la vista rendimiento_semanal (schema.sql): ganancia_real =
+// valor - valor_anterior - aportes_netos, dividido por (valor_anterior +
+// aportes_netos) cuando esa base es positiva. se estima aca ANTES de guardar
+// para poder advertir si el numero que resultaria es implausible.
+function estimarRendimientoPct(
+  valorAnterior: number | null,
+  valorNuevo: number,
+  incluyeMovimiento: boolean,
+  tipo: TipoMovimiento,
+  monto: string
+): number | null {
+  if (valorAnterior == null) return null;
+  const aportesNetos = incluyeMovimiento ? (tipo === "aporte" ? Number(monto) || 0 : -(Number(monto) || 0)) : 0;
+  const base = valorAnterior + aportesNetos;
+  if (base <= 0) return null;
+  const gananciaReal = valorNuevo - valorAnterior - aportesNetos;
+  return (gananciaReal / base) * 100;
+}
+
 function formatoFecha(fechaIso: string) {
   return new Date(fechaIso).toLocaleDateString("es-CL", {
     day: "2-digit",
@@ -144,22 +165,42 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
 
     if (pendientes.length === 0) return;
 
-    // si el valor no cambio respecto al ultimo registro pero hay un
-    // aporte/retiro marcado, confirmar antes de guardar -- es la situacion
-    // exacta que puede esconder un aporte que nunca quedo sumado al valor.
+    // dos chequeos antes de guardar, del mas especifico al mas general -- si
+    // el primero aplica, no se muestra tambien el segundo por el mismo
+    // problema de fondo:
+    // 1) valor sin cambio pero con aporte/retiro marcado -- probablemente el
+    //    aporte nunca quedo sumado al valor.
+    // 2) el % de rendimiento que resultaria es implausible (ej. -95%) --
+    //    probablemente un typo en el valor o en el monto del aporte.
     const aGuardar = pendientes.filter((cuenta) => {
       const fila = filas[cuenta.id];
       const anterior = valorAnteriorPorCuenta[cuenta.id];
       const valorSinCambio = fila.incluyeMovimiento && anterior != null && Number(fila.valor) === anterior;
-      if (!valorSinCambio) return true;
 
-      const confirma = window.confirm(
-        `El valor de "${cuenta.nombre}" no cambió respecto al último registro, pero marcaste un aporte/retiro. ¿El valor ya incluye ese movimiento? Cancela para revisar el campo "valor".`
-      );
-      if (!confirma) {
-        actualizarFila(cuenta.id, { resultado: "no guardado: revisa el valor" });
+      if (valorSinCambio) {
+        const confirma = window.confirm(
+          `El valor de "${cuenta.nombre}" no cambió respecto al último registro, pero marcaste un aporte/retiro. ¿El valor ya incluye ese movimiento? Cancela para revisar el campo "valor".`
+        );
+        if (!confirma) actualizarFila(cuenta.id, { resultado: "no guardado: revisa el valor" });
+        return confirma;
       }
-      return confirma;
+
+      const pct = estimarRendimientoPct(
+        anterior,
+        Number(fila.valor),
+        fila.incluyeMovimiento,
+        fila.movimientoTipo,
+        fila.movimientoMonto
+      );
+      if (pct != null && Math.abs(pct) >= UMBRAL_RENDIMIENTO_IMPLAUSIBLE) {
+        const confirma = window.confirm(
+          `Con este valor, el rendimiento de "${cuenta.nombre}" sería de ${pct.toFixed(1)}% respecto al registro anterior — ¿el valor es correcto? Cancela para revisarlo.`
+        );
+        if (!confirma) actualizarFila(cuenta.id, { resultado: "no guardado: revisa el valor" });
+        return confirma;
+      }
+
+      return true;
     });
 
     if (aGuardar.length === 0) return;

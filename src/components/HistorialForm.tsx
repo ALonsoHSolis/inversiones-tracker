@@ -56,6 +56,27 @@ function calcularValorSugerido(valorAnterior: number | null, monto: string, tipo
   return String(sugerido);
 }
 
+const UMBRAL_RENDIMIENTO_IMPLAUSIBLE = 80;
+
+// misma formula que la vista rendimiento_semanal (schema.sql): ganancia_real =
+// valor - valor_anterior - aportes_netos, dividido por (valor_anterior +
+// aportes_netos) cuando esa base es positiva. se estima aca ANTES de guardar
+// para poder advertir si el numero que resultaria es implausible.
+function estimarRendimientoPct(
+  valorAnterior: number | null,
+  valorNuevo: number,
+  incluyeMovimiento: boolean,
+  tipo: TipoMovimiento,
+  monto: string
+): number | null {
+  if (valorAnterior == null) return null;
+  const aportesNetos = incluyeMovimiento ? (tipo === "aporte" ? Number(monto) || 0 : -(Number(monto) || 0)) : 0;
+  const base = valorAnterior + aportesNetos;
+  if (base <= 0) return null;
+  const gananciaReal = valorNuevo - valorAnterior - aportesNetos;
+  return (gananciaReal / base) * 100;
+}
+
 function formatoFecha(fechaIso: string) {
   return new Date(fechaIso).toLocaleDateString("es-CL", {
     day: "2-digit",
@@ -126,6 +147,23 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
       if (!confirma) {
         actualizarFila(fila.snapshotId, { resultado: "no guardado: revisa el valor" });
         return;
+      }
+    } else {
+      const pct = estimarRendimientoPct(
+        anterior,
+        Number(estado.valor),
+        estado.incluyeMovimiento,
+        estado.movimientoTipo,
+        estado.movimientoMonto
+      );
+      if (pct != null && Math.abs(pct) >= UMBRAL_RENDIMIENTO_IMPLAUSIBLE) {
+        const confirma = window.confirm(
+          `Con este valor, el rendimiento sería de ${pct.toFixed(1)}% respecto al registro anterior — ¿el valor es correcto? Cancela para revisarlo.`
+        );
+        if (!confirma) {
+          actualizarFila(fila.snapshotId, { resultado: "no guardado: revisa el valor" });
+          return;
+        }
       }
     }
 
