@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { TIPOS } from "@/components/CuentaForm";
+import { TIPOS } from "@/lib/tipos-cuenta";
 import type { Cuenta, TipoCuenta } from "@/types/database";
 
 interface EditarCuentaFormProps {

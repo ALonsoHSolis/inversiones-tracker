@@ -2,13 +2,15 @@ import { createClient } from "@/lib/supabase/server";
 import { PortfolioSummary } from "@/components/PortfolioSummary";
 import { CapitalSummary } from "@/components/CapitalSummary";
 import { PlatformBreakdown } from "@/components/PlatformBreakdown";
+import { AssetTypeBreakdown } from "@/components/AssetTypeBreakdown";
 import { PortfolioChart } from "@/components/PortfolioChart";
 import { MarketBenchmark } from "@/components/MarketBenchmark";
 import { Ayuda } from "@/components/Ayuda";
 import { AccountRow } from "@/components/AccountRow";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import { ExportarDatos } from "@/components/ExportarDatos";
-import type { Cuenta, RendimientoActual, TipoMovimiento } from "@/types/database";
+import { TIPOS } from "@/lib/tipos-cuenta";
+import type { Cuenta, RendimientoActual, TipoCuenta, TipoMovimiento } from "@/types/database";
 import { obtenerCambioSp500, obtenerCambioUf } from "@/lib/mercado";
 import { logout } from "./actions";
 import Link from "next/link";
@@ -136,6 +138,25 @@ export default async function DashboardPage() {
   });
   const plataformas = Array.from(plataformasMap.values()).sort((a, b) => b.valorActualClp - a.valorActualClp);
 
+  // agrupa por tipo de activo (fondo_mutuo, acciones, etc. -- un enum fijo,
+  // no texto libre como plataforma, asi que no hace falta normalizar la
+  // clave). TIPOS ya trae la etiqueta legible de cada valor, reusada de
+  // CuentaForm.tsx en vez de duplicar la lista de nombres una tercera vez.
+  const etiquetaPorTipo = new Map(TIPOS.map((t) => [t.value, t.label]));
+  const tiposMap = new Map<string, { nombre: string; capitalAportadoClp: number; valorActualClp: number }>();
+  (cuentas ?? []).forEach((cuenta) => {
+    const datos = capitalPorCuentaMap.get(cuenta.id);
+    const grupo = tiposMap.get(cuenta.tipo) ?? {
+      nombre: etiquetaPorTipo.get(cuenta.tipo as TipoCuenta) ?? cuenta.tipo,
+      capitalAportadoClp: 0,
+      valorActualClp: 0,
+    };
+    grupo.capitalAportadoClp += datos?.capital_aportado_clp ?? 0;
+    grupo.valorActualClp += datos?.valor_actual_clp ?? 0;
+    tiposMap.set(cuenta.tipo, grupo);
+  });
+  const tipos = Array.from(tiposMap.values()).sort((a, b) => b.valorActualClp - a.valorActualClp);
+
   // valor_actual (moneda nativa, no clp) de capital_por_cuenta -- el ultimo
   // valor conocido de cada cuenta, usado por SnapshotForm para sugerir el
   // valor de hoy al marcar un aporte/retiro y para advertir si no cambio.
@@ -169,6 +190,9 @@ export default async function DashboardPage() {
       </div>
       <div className="mt-3">
         <PlatformBreakdown plataformas={plataformas} />
+      </div>
+      <div className="mt-3">
+        <AssetTypeBreakdown tipos={tipos} />
       </div>
       <div className="mt-3">
         <PortfolioChart datos={evolucionPortafolio ?? []} />
