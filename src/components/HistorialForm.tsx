@@ -25,6 +25,14 @@ interface FilaState {
   movimientoMonto: string;
   guardando: boolean;
   resultado: "ok" | string | null;
+  // true si el usuario escribio directo en "valor" -- una vez en true, la
+  // sugerencia automatica deja de tocar el campo (nunca pisa una edicion manual).
+  valorEditadoManualmente: boolean;
+  // true si esta fila ya tenia un aporte/retiro asociado al cargar la
+  // pantalla -- la sugerencia automatica nunca se activa aca, porque "valor"
+  // probablemente ya lo refleja de un guardado anterior y recalcularlo
+  // podria pisar un numero correcto (ej. solo se quiere corregir el monto).
+  tieneMovimientoOriginal: boolean;
 }
 
 function filaInicial(fila: FilaHistorial): FilaState {
@@ -36,7 +44,16 @@ function filaInicial(fila: FilaHistorial): FilaState {
     movimientoMonto: fila.movimiento ? String(fila.movimiento.monto) : "",
     guardando: false,
     resultado: null,
+    valorEditadoManualmente: false,
+    tieneMovimientoOriginal: !!fila.movimiento,
   };
+}
+
+function calcularValorSugerido(valorAnterior: number | null, monto: string, tipo: TipoMovimiento): string {
+  const base = valorAnterior ?? 0;
+  const montoNum = Number(monto) || 0;
+  const sugerido = tipo === "aporte" ? base + montoNum : base - montoNum;
+  return String(sugerido);
 }
 
 function formatoFecha(fechaIso: string) {
@@ -53,8 +70,35 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
     Object.fromEntries(filas.map((f) => [f.snapshotId, filaInicial(f)]))
   );
 
+  // filas viene ordenado por fecha descendente -- el valor anterior de la
+  // fila i es el valor de la fila i+1 (la siguiente en el arreglo es
+  // cronologicamente anterior). la primera fecha del historial no tiene
+  // anterior (null).
+  const valorAnteriorPorFila: Record<string, number | null> = {};
+  filas.forEach((f, i) => {
+    valorAnteriorPorFila[f.snapshotId] = filas[i + 1]?.valor ?? null;
+  });
+
   function actualizarFila(snapshotId: string, patch: Partial<FilaState>) {
     setEstados((prev) => ({ ...prev, [snapshotId]: { ...prev[snapshotId], ...patch } }));
+  }
+
+  // la sugerencia solo aplica a un aporte/retiro NUEVO en esta edicion: si la
+  // fila ya tenia un movimiento asociado, o el usuario ya edito "valor" a
+  // mano, nunca se recalcula solo.
+  function actualizarMovimiento(fila: FilaHistorial, patch: Partial<FilaState>) {
+    const estado = estados[fila.snapshotId];
+    const siguiente = { ...estado, ...patch };
+    const debeSugerir =
+      siguiente.incluyeMovimiento && !estado.tieneMovimientoOriginal && !estado.valorEditadoManualmente;
+    if (debeSugerir) {
+      patch.valor = calcularValorSugerido(
+        valorAnteriorPorFila[fila.snapshotId] ?? null,
+        siguiente.movimientoMonto,
+        siguiente.movimientoTipo
+      );
+    }
+    actualizarFila(fila.snapshotId, patch);
   }
 
   async function guardarFila(fila: FilaHistorial) {
@@ -71,6 +115,18 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
     if (estado.incluyeMovimiento && !(Number(estado.movimientoMonto) > 0)) {
       actualizarFila(fila.snapshotId, { resultado: "el monto del aporte/retiro debe ser mayor a cero" });
       return;
+    }
+
+    const anterior = valorAnteriorPorFila[fila.snapshotId];
+    const valorSinCambio = estado.incluyeMovimiento && anterior != null && Number(estado.valor) === anterior;
+    if (valorSinCambio) {
+      const confirma = window.confirm(
+        `El valor no cambió respecto al registro anterior, pero marcaste un aporte/retiro. ¿El valor ya incluye ese movimiento? Cancela para revisar el campo "valor".`
+      );
+      if (!confirma) {
+        actualizarFila(fila.snapshotId, { resultado: "no guardado: revisa el valor" });
+        return;
+      }
     }
 
     actualizarFila(fila.snapshotId, { guardando: true, resultado: null });
@@ -120,7 +176,9 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                 min={0}
                 className="w-32 rounded border border-gray-300 px-2 py-1 text-right"
                 value={estado.valor}
-                onChange={(e) => actualizarFila(fila.snapshotId, { valor: e.target.value })}
+                onChange={(e) =>
+                  actualizarFila(fila.snapshotId, { valor: e.target.value, valorEditadoManualmente: true })
+                }
               />
             </div>
 
@@ -142,7 +200,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
               <input
                 type="checkbox"
                 checked={estado.incluyeMovimiento}
-                onChange={(e) => actualizarFila(fila.snapshotId, { incluyeMovimiento: e.target.checked })}
+                onChange={(e) => actualizarMovimiento(fila, { incluyeMovimiento: e.target.checked })}
               />
               esto incluye un aporte o retiro
             </label>
@@ -152,7 +210,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                 <select
                   value={estado.movimientoTipo}
                   onChange={(e) =>
-                    actualizarFila(fila.snapshotId, { movimientoTipo: e.target.value as TipoMovimiento })
+                    actualizarMovimiento(fila, { movimientoTipo: e.target.value as TipoMovimiento })
                   }
                   className="rounded border border-gray-300 px-2 py-1 text-sm bg-white"
                 >
@@ -165,7 +223,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                   placeholder="monto"
                   className="flex-1 rounded border border-gray-300 px-2 py-1 text-right text-sm"
                   value={estado.movimientoMonto}
-                  onChange={(e) => actualizarFila(fila.snapshotId, { movimientoMonto: e.target.value })}
+                  onChange={(e) => actualizarMovimiento(fila, { movimientoMonto: e.target.value })}
                 />
               </div>
             )}

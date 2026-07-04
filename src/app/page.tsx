@@ -132,6 +132,14 @@ export default async function DashboardPage() {
   });
   const plataformas = Array.from(plataformasMap.values()).sort((a, b) => b.valorActualClp - a.valorActualClp);
 
+  // valor_actual (moneda nativa, no clp) de capital_por_cuenta -- el ultimo
+  // valor conocido de cada cuenta, usado por SnapshotForm para sugerir el
+  // valor de hoy al marcar un aporte/retiro y para advertir si no cambio.
+  const valorAnteriorPorCuenta: Record<string, number | null> = {};
+  (cuentas ?? []).forEach((cuenta) => {
+    valorAnteriorPorCuenta[cuenta.id] = capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null;
+  });
+
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
       <div className="flex items-center justify-between mb-6">
@@ -192,7 +200,11 @@ export default async function DashboardPage() {
         </div>
       )}
       <div className="mt-8">
-        <SnapshotForm cuentas={cuentas ?? []} movimientosHoy={movimientosHoy} />
+        <SnapshotForm
+          cuentas={cuentas ?? []}
+          movimientosHoy={movimientosHoy}
+          valorAnteriorPorCuenta={valorAnteriorPorCuenta}
+        />
       </div>
     </main>
   );

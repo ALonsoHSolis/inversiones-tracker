@@ -9,6 +9,10 @@ import type { Cuenta, Moneda, TipoMovimiento } from "@/types/database";
 interface SnapshotFormProps {
   cuentas: Cuenta[];
   movimientosHoy: Record<string, { tipo: TipoMovimiento; monto: number }>;
+  // valor_actual (moneda nativa) de capital_por_cuenta -- se usa para sugerir
+  // el valor de hoy al marcar un aporte/retiro nuevo, y para advertir si el
+  // valor no cambio pese a haber uno marcado.
+  valorAnteriorPorCuenta: Record<string, number | null>;
 }
 
 interface FilaState {
@@ -21,6 +25,14 @@ interface FilaState {
   movimientoTipo: TipoMovimiento;
   movimientoMonto: string;
   resultado: "ok" | string | null;
+  // true si el usuario escribio directo en "valor" -- una vez en true, la
+  // sugerencia automatica deja de tocar el campo (nunca pisa una edicion manual).
+  valorEditadoManualmente: boolean;
+  // true si esta fila ya tenia un aporte/retiro guardado al cargar la
+  // pantalla (viene de movimientosHoy) -- la sugerencia automatica nunca se
+  // activa en estos casos, porque "valor" probablemente ya lo refleja de un
+  // guardado anterior y recalcularlo podria pisar un numero correcto.
+  tieneMovimientoOriginal: boolean;
 }
 
 function filaInicial(seed?: { tipo: TipoMovimiento; monto: number }): FilaState {
@@ -34,7 +46,16 @@ function filaInicial(seed?: { tipo: TipoMovimiento; monto: number }): FilaState 
     movimientoTipo: seed?.tipo ?? "aporte",
     movimientoMonto: seed ? String(seed.monto) : "",
     resultado: null,
+    valorEditadoManualmente: false,
+    tieneMovimientoOriginal: !!seed,
   };
+}
+
+function calcularValorSugerido(valorAnterior: number | null, monto: string, tipo: TipoMovimiento): string {
+  const base = valorAnterior ?? 0;
+  const montoNum = Number(monto) || 0;
+  const sugerido = tipo === "aporte" ? base + montoNum : base - montoNum;
+  return String(sugerido);
 }
 
 function formatoFecha(fechaIso: string) {
@@ -46,7 +67,7 @@ function formatoFecha(fechaIso: string) {
   });
 }
 
-export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
+export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }: SnapshotFormProps) {
   const [filas, setFilas] = useState<Record<string, FilaState>>(() =>
     Object.fromEntries(cuentas.map((c) => [c.id, filaInicial(movimientosHoy[c.id])]))
   );
@@ -58,6 +79,24 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
       ...prev,
       [cuentaId]: { ...filaInicial(), ...prev[cuentaId], ...patch },
     }));
+  }
+
+  // la sugerencia solo aplica a un aporte/retiro NUEVO en esta edicion: si la
+  // fila ya tenia un movimiento al cargar la pantalla, o el usuario ya edito
+  // "valor" a mano, nunca se recalcula solo.
+  function actualizarMovimiento(cuenta: Cuenta, patch: Partial<FilaState>) {
+    const fila = filas[cuenta.id];
+    const siguiente = { ...fila, ...patch };
+    const debeSugerir =
+      siguiente.incluyeMovimiento && !fila.tieneMovimientoOriginal && !fila.valorEditadoManualmente;
+    if (debeSugerir) {
+      patch.valor = calcularValorSugerido(
+        valorAnteriorPorCuenta[cuenta.id] ?? null,
+        siguiente.movimientoMonto,
+        siguiente.movimientoTipo
+      );
+    }
+    actualizarFila(cuenta.id, patch);
   }
 
   // mismo patron anti-condicion-de-carrera que CuentaForm.tsx (tasaRequestId),
@@ -99,20 +138,38 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
   }, []);
 
   async function guardarSnapshots() {
-    setGuardando(true);
     setResumen(null);
-    const supabase = createClient();
-    const hoy = new Date().toISOString().slice(0, 10);
 
     const pendientes = cuentas.filter((c) => (filas[c.id]?.valor ?? "").trim() !== "");
 
-    if (pendientes.length === 0) {
-      setGuardando(false);
-      return;
-    }
+    if (pendientes.length === 0) return;
+
+    // si el valor no cambio respecto al ultimo registro pero hay un
+    // aporte/retiro marcado, confirmar antes de guardar -- es la situacion
+    // exacta que puede esconder un aporte que nunca quedo sumado al valor.
+    const aGuardar = pendientes.filter((cuenta) => {
+      const fila = filas[cuenta.id];
+      const anterior = valorAnteriorPorCuenta[cuenta.id];
+      const valorSinCambio = fila.incluyeMovimiento && anterior != null && Number(fila.valor) === anterior;
+      if (!valorSinCambio) return true;
+
+      const confirma = window.confirm(
+        `El valor de "${cuenta.nombre}" no cambió respecto al último registro, pero marcaste un aporte/retiro. ¿El valor ya incluye ese movimiento? Cancela para revisar el campo "valor".`
+      );
+      if (!confirma) {
+        actualizarFila(cuenta.id, { resultado: "no guardado: revisa el valor" });
+      }
+      return confirma;
+    });
+
+    if (aGuardar.length === 0) return;
+
+    setGuardando(true);
+    const supabase = createClient();
+    const hoy = new Date().toISOString().slice(0, 10);
 
     const resultados = await Promise.allSettled(
-      pendientes.map(async (cuenta) => {
+      aGuardar.map(async (cuenta) => {
         const fila = filas[cuenta.id];
 
         if (Number(fila.valor) < 0) {
@@ -149,7 +206,7 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
     let fallidas = 0;
 
     resultados.forEach((res, i) => {
-      const cuentaId = pendientes[i].id;
+      const cuentaId = aGuardar[i].id;
       if (res.status === "fulfilled") {
         ok++;
         actualizarFila(cuentaId, { valor: "", incluyeMovimiento: false, movimientoMonto: "", resultado: "ok" });
@@ -195,7 +252,9 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
                   min={0}
                   className="w-32 rounded border border-gray-300 px-2 py-1 text-right"
                   value={fila.valor}
-                  onChange={(e) => actualizarFila(cuenta.id, { valor: e.target.value })}
+                  onChange={(e) =>
+                    actualizarFila(cuenta.id, { valor: e.target.value, valorEditadoManualmente: true })
+                  }
                 />
               </div>
 
@@ -237,7 +296,7 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
                 <input
                   type="checkbox"
                   checked={fila.incluyeMovimiento}
-                  onChange={(e) => actualizarFila(cuenta.id, { incluyeMovimiento: e.target.checked })}
+                  onChange={(e) => actualizarMovimiento(cuenta, { incluyeMovimiento: e.target.checked })}
                 />
                 esto incluye un aporte o retiro
               </label>
@@ -247,7 +306,7 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
                   <select
                     value={fila.movimientoTipo}
                     onChange={(e) =>
-                      actualizarFila(cuenta.id, { movimientoTipo: e.target.value as TipoMovimiento })
+                      actualizarMovimiento(cuenta, { movimientoTipo: e.target.value as TipoMovimiento })
                     }
                     className="rounded border border-gray-300 px-2 py-1 text-sm bg-white"
                   >
@@ -260,7 +319,7 @@ export function SnapshotForm({ cuentas, movimientosHoy }: SnapshotFormProps) {
                     placeholder="monto"
                     className="flex-1 rounded border border-gray-300 px-2 py-1 text-right text-sm"
                     value={fila.movimientoMonto}
-                    onChange={(e) => actualizarFila(cuenta.id, { movimientoMonto: e.target.value })}
+                    onChange={(e) => actualizarMovimiento(cuenta, { movimientoMonto: e.target.value })}
                   />
                 </div>
               )}
