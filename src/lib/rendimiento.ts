@@ -29,3 +29,27 @@ export function calcularRendimiento(
 
   return { gananciaReal, aportesNetos, rendimientoPct };
 }
+
+// dias minimos desde la creacion de la cuenta antes de mostrar un rendimiento
+// anualizado: con pocos dias de historial, elevar el retorno a 365/dias lo
+// dispara a numeros absurdos (ej. +2% en 5 dias -> cientos de % anualizado).
+const DIAS_MINIMOS_ANUALIZADO = 30;
+
+// aproxima el rendimiento anualizado (cagr) de una cuenta usando su capital
+// aportado y valor actual acumulados desde que se creo (capital_por_cuenta),
+// sin ajustar por el momento exacto de cada aporte dentro del periodo -- ese
+// ajuste (metodo dietz modificado) esta fuera de alcance para esta version
+// (ver CLAUDE.md), la formula simple ya definida es suficiente.
+export function calcularRendimientoAnualizado(
+  capitalAportado: number,
+  valorActual: number,
+  diasTranscurridos: number
+): number | null {
+  if (capitalAportado <= 0 || diasTranscurridos < DIAS_MINIMOS_ANUALIZADO) return null;
+
+  const retornoTotal = (valorActual - capitalAportado) / capitalAportado;
+  const base = 1 + retornoTotal;
+  if (base < 0) return null;
+
+  return (Math.pow(base, 365 / diasTranscurridos) - 1) * 100;
+}

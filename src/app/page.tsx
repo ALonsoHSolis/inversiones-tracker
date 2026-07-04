@@ -205,9 +205,12 @@ export default async function DashboardPage() {
           </Link>
         </div>
         <Ayuda>
-          Cada cuenta muestra su valor más reciente. El % aparece una vez que haya al menos dos
-          registros para comparar, y ya viene descontando cualquier aporte o retiro — no es
-          ganancia hasta que no se compare registro contra registro.
+          Cada cuenta muestra su valor más reciente. El % "real" aparece una vez que haya al menos
+          dos registros para comparar, y ya viene descontando cualquier aporte o retiro — no es
+          ganancia hasta que no se compare registro contra registro. El % "anualizado" proyecta la
+          ganancia acumulada desde que se creó la cuenta a una tasa equivalente por año (aparece
+          desde el mes de antigüedad) — es una aproximación simple, no ajusta por el momento exacto
+          de cada aporte dentro del período.
         </Ayuda>
       </div>
       <div className="mt-2 flex flex-col gap-2">
@@ -217,6 +220,7 @@ export default async function DashboardPage() {
             cuenta={cuenta}
             rendimiento={rendimiento}
             valorActualFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null}
+            capitalAportadoFallback={capitalPorCuentaMap.get(cuenta.id)?.capital_aportado ?? null}
           />
         ))}
         {cuentasConDatos.length === 0 && (

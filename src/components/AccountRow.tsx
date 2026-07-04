@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { calcularRendimientoAnualizado } from "@/lib/rendimiento";
 import type { Cuenta, Moneda, RendimientoActual } from "@/types/database";
 
 interface AccountRowProps {
@@ -11,6 +12,9 @@ interface AccountRowProps {
   // una cuenta que sí tiene un valor, solo que todavía no tiene con qué
   // compararlo.
   valorActualFallback: number | null;
+  // capital_aportado de capital_por_cuenta (moneda nativa): junto con
+  // cuenta.created_at, permite estimar el rendimiento anualizado acumulado.
+  capitalAportadoFallback: number | null;
 }
 
 // el símbolo de moneda importa: rendimiento.valor y aportes_netos vienen en
@@ -28,10 +32,17 @@ function formatoValor(valor: number, moneda: Moneda) {
   return valor.toLocaleString("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 });
 }
 
-export function AccountRow({ cuenta, rendimiento, valorActualFallback }: AccountRowProps) {
+export function AccountRow({ cuenta, rendimiento, valorActualFallback, capitalAportadoFallback }: AccountRowProps) {
   const valor = rendimiento?.valor ?? valorActualFallback;
   const tieneAporte = (rendimiento?.aportes_netos ?? 0) !== 0;
   const esPositivo = (rendimiento?.rendimiento_pct ?? 0) >= 0;
+
+  const diasTranscurridos = (Date.now() - new Date(cuenta.created_at).getTime()) / (1000 * 60 * 60 * 24);
+  const rendimientoAnualizado =
+    valor != null && capitalAportadoFallback != null
+      ? calcularRendimientoAnualizado(capitalAportadoFallback, valor, diasTranscurridos)
+      : null;
+  const anualizadoEsPositivo = (rendimientoAnualizado ?? 0) >= 0;
 
   return (
     <div className="rounded-lg border border-gray-200 px-4 py-3">
@@ -58,6 +69,12 @@ export function AccountRow({ cuenta, rendimiento, valorActualFallback }: Account
             <p className={`text-xs mt-0.5 ${esPositivo ? "text-green-700" : "text-red-700"}`}>
               {esPositivo ? "+" : ""}
               {rendimiento.rendimiento_pct.toFixed(1)}% real
+            </p>
+          )}
+          {rendimientoAnualizado != null && (
+            <p className={`text-xs mt-0.5 ${anualizadoEsPositivo ? "text-green-700" : "text-red-700"}`}>
+              {anualizadoEsPositivo ? "+" : ""}
+              {rendimientoAnualizado.toFixed(1)}% anualizado
             </p>
           )}
         </div>
