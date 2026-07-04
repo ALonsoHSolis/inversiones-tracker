@@ -274,30 +274,44 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
       <div className="mb-3">
         <p className="text-sm font-medium">actualizar valores de hoy</p>
         <Ayuda>
-          Escribe el valor de hoy de cada cuenta (lo que ves en el banco o corredora). Si además
-          depositaste o retiraste plata desde el último registro — no una variación de mercado —
-          marca "esto incluye un aporte o retiro" para que ese monto no se cuente como ganancia.
+          Escribe el valor de hoy de cada cuenta (lo que ves en el banco o corredora), o usa "sin
+          cambios" si sigue igual que el último registro. Si además depositaste o retiraste plata
+          — no una variación de mercado — usa "+ añadir aporte o retiro" para que ese monto no se
+          cuente como ganancia.
         </Ayuda>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {cuentas.map((cuenta) => {
           const fila = filas[cuenta.id] ?? filaInicial();
+          const anterior = valorAnteriorPorCuenta[cuenta.id];
           return (
-            <div key={cuenta.id} className="rounded border border-gray-200 p-3">
-              <div className="flex items-center justify-between gap-3 text-sm">
-                <span className="text-gray-600">{cuenta.nombre}</span>
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  placeholder="0"
-                  min={0}
-                  className="w-32 rounded border border-gray-300 px-2 py-1 text-right"
-                  value={fila.valor}
-                  onChange={(e) =>
-                    actualizarFila(cuenta.id, { valor: e.target.value, valorEditadoManualmente: true })
-                  }
-                />
+            <div key={cuenta.id} className="rounded border border-gray-200 p-3 flex flex-col">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm text-gray-600 truncate">{cuenta.nombre}</span>
+                {anterior != null && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      actualizarFila(cuenta.id, { valor: String(anterior), valorEditadoManualmente: true })
+                    }
+                    className="text-xs text-gray-400 underline shrink-0"
+                  >
+                    sin cambios
+                  </button>
+                )}
               </div>
+
+              <input
+                type="number"
+                inputMode="decimal"
+                placeholder="0"
+                min={0}
+                className="mt-2 w-full rounded border border-gray-300 px-2 py-1 text-right"
+                value={fila.valor}
+                onChange={(e) =>
+                  actualizarFila(cuenta.id, { valor: e.target.value, valorEditadoManualmente: true })
+                }
+              />
 
               {cuenta.moneda !== "CLP" && (
                 <div className="mt-2 flex flex-col gap-1 text-sm">
@@ -307,7 +321,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                       type="number"
                       inputMode="decimal"
                       step="0.01"
-                      className="w-32 rounded border border-gray-300 px-2 py-1 text-right"
+                      className="w-28 rounded border border-gray-300 px-2 py-1 text-right"
                       value={fila.tasaCambio ?? ""}
                       onChange={(e) =>
                         editarTasaManualmente(cuenta.id, e.target.value ? Number(e.target.value) : null)
@@ -333,35 +347,50 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                 </div>
               )}
 
-              <label className="mt-2 flex items-center gap-2 text-xs text-gray-600">
-                <input
-                  type="checkbox"
-                  checked={fila.incluyeMovimiento}
-                  onChange={(e) => actualizarMovimiento(cuenta, { incluyeMovimiento: e.target.checked })}
-                />
-                esto incluye un aporte o retiro
-              </label>
-
-              {fila.incluyeMovimiento && (
-                <div className="mt-2 flex items-center gap-2">
-                  <select
-                    value={fila.movimientoTipo}
-                    onChange={(e) =>
-                      actualizarMovimiento(cuenta, { movimientoTipo: e.target.value as TipoMovimiento })
-                    }
-                    className="rounded border border-gray-300 px-2 py-1 text-sm bg-white"
-                  >
-                    <option value="aporte">aporte</option>
-                    <option value="retiro">retiro</option>
-                  </select>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    placeholder="monto"
-                    className="flex-1 rounded border border-gray-300 px-2 py-1 text-right text-sm"
-                    value={fila.movimientoMonto}
-                    onChange={(e) => actualizarMovimiento(cuenta, { movimientoMonto: e.target.value })}
-                  />
+              {/* revelacion progresiva: el aporte/retiro empieza oculto detras
+                  de un boton secundario -- por defecto solo se ve el input de
+                  valor, para no saturar la pantalla cuando la mayoria de los
+                  dias no hay ningun movimiento que registrar. */}
+              {!fila.incluyeMovimiento ? (
+                <button
+                  type="button"
+                  onClick={() => actualizarMovimiento(cuenta, { incluyeMovimiento: true })}
+                  className="mt-2 self-start text-xs text-gray-500 underline"
+                >
+                  + añadir aporte o retiro
+                </button>
+              ) : (
+                <div className="mt-2 rounded bg-gray-50 p-2 flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-600">esto incluye un aporte o retiro</span>
+                    <button
+                      type="button"
+                      onClick={() => actualizarMovimiento(cuenta, { incluyeMovimiento: false })}
+                      className="text-xs text-gray-400 underline shrink-0"
+                    >
+                      quitar
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={fila.movimientoTipo}
+                      onChange={(e) =>
+                        actualizarMovimiento(cuenta, { movimientoTipo: e.target.value as TipoMovimiento })
+                      }
+                      className="rounded border border-gray-300 px-2 py-1 text-sm bg-white"
+                    >
+                      <option value="aporte">aporte</option>
+                      <option value="retiro">retiro</option>
+                    </select>
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      placeholder="monto"
+                      className="flex-1 rounded border border-gray-300 px-2 py-1 text-right text-sm bg-white"
+                      value={fila.movimientoMonto}
+                      onChange={(e) => actualizarMovimiento(cuenta, { movimientoMonto: e.target.value })}
+                    />
+                  </div>
                 </div>
               )}
 

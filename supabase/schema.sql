@@ -377,12 +377,18 @@ left join aportes a on a.cuenta_id = c.id
 where c.activa = true;
 
 -- vista: valor total del portafolio en CLP para cada fecha en la que exista
--- al menos un snapshot de alguna cuenta activa. para cuentas sin snapshot
--- exactamente en esa fecha, se usa su ultimo valor conocido a esa fecha o
--- antes (forward-fill) — asi el total de una fecha no ignora cuentas que
--- simplemente no se actualizaron ese dia. cada valor se convierte con la
--- tasa_cambio de SU PROPIO snapshot (nunca la tasa de hoy), mismo patron que
--- rendimiento_semanal y capital_por_cuenta.
+-- al menos un snapshot de alguna cuenta activa, junto con el capital
+-- aportado acumulado (en CLP) hasta esa misma fecha -- para poder graficar
+-- "cuanto es capital vs. cuanto es ganancia real" a lo largo del tiempo, no
+-- solo el valor total. para cuentas sin snapshot exactamente en esa fecha,
+-- se usa su ultimo valor conocido a esa fecha o antes (forward-fill) — asi
+-- el total de una fecha no ignora cuentas que simplemente no se actualizaron
+-- ese dia. cada valor (snapshot o movimiento) se convierte con SU PROPIA
+-- tasa_cambio historica (nunca la de hoy), mismo patron que rendimiento_semanal
+-- y capital_por_cuenta. ganancia_acumulada_clp = valor_total_clp -
+-- capital_aportado_acumulado_clp se calcula en el cliente (misma convencion
+-- ya usada en CapitalSummary/PlatformBreakdown: la resta simple de dos
+-- columnas ya correctas no necesita vivir tambien en sql).
 -- security_invoker = true: mismo motivo que las otras vistas — sin esto, rls
 -- se evalua como el dueño de la vista (bypass) y no como el usuario real.
 create view evolucion_portafolio
@@ -399,7 +405,8 @@ select
   sum(coalesce(
     case when c.moneda = 'CLP' then u.valor else u.valor * u.tasa_cambio end,
     0
-  )) as valor_total_clp
+  )) as valor_total_clp,
+  sum(coalesce(m.capital_aportado_clp, 0)) as capital_aportado_acumulado_clp
 from fechas f
 cross join cuentas c
 left join lateral (
@@ -409,6 +416,14 @@ left join lateral (
   order by s.fecha desc
   limit 1
 ) u on true
+left join lateral (
+  select sum(
+    (case when mo.tipo = 'aporte' then mo.monto else -mo.monto end)
+    * (case when c.moneda = 'CLP' then 1 else coalesce(mo.tasa_cambio, 1) end)
+  ) as capital_aportado_clp
+  from movimientos mo
+  where mo.cuenta_id = c.id and mo.fecha <= f.fecha
+) m on true
 where c.activa = true
 group by f.fecha
 order by f.fecha;

@@ -1,11 +1,17 @@
 "use client";
 
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Ayuda } from "@/components/Ayuda";
 import type { EvolucionPortafolio } from "@/types/database";
 
 interface PortfolioChartProps {
   datos: EvolucionPortafolio[];
+}
+
+interface Punto {
+  fecha: string;
+  capitalAportadoClp: number;
+  gananciaClp: number;
 }
 
 function formatoPesos(valor: number) {
@@ -24,10 +30,48 @@ function formatoFecha(fechaIso: string) {
   });
 }
 
-export function PortfolioChart({ datos }: PortfolioChartProps) {
-  const puntos = datos.filter(
-    (d): d is { fecha: string; valor_total_clp: number } => d.fecha !== null && d.valor_total_clp !== null
+// tooltip propio en vez del formatter generico de recharts: necesitamos
+// mostrar capital aportado y ganancia por separado (con su propio color
+// segun signo), no solo el valor de la serie que esta bajo el cursor.
+function TooltipPersonalizado({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: { payload: Punto }[];
+}) {
+  if (!active || !payload || payload.length === 0) return null;
+  const punto = payload[0].payload;
+  const esPositivo = punto.gananciaClp >= 0;
+
+  return (
+    <div className="rounded border border-gray-200 bg-white px-3 py-2 text-xs shadow-sm">
+      <p className="text-gray-500 mb-1">{formatoFecha(punto.fecha)}</p>
+      <p>
+        capital aportado: <span className="font-medium">{formatoPesos(punto.capitalAportadoClp)}</span>
+      </p>
+      <p className={esPositivo ? "text-green-700" : "text-red-700"}>
+        ganancia:{" "}
+        <span className="font-medium">
+          {esPositivo ? "+" : ""}
+          {formatoPesos(punto.gananciaClp)}
+        </span>
+      </p>
+      <p className="text-gray-500 mt-1">
+        total: {formatoPesos(punto.capitalAportadoClp + punto.gananciaClp)}
+      </p>
+    </div>
   );
+}
+
+export function PortfolioChart({ datos }: PortfolioChartProps) {
+  const puntos: Punto[] = datos
+    .filter((d) => d.fecha !== null && d.valor_total_clp !== null && d.capital_aportado_acumulado_clp !== null)
+    .map((d) => ({
+      fecha: d.fecha!,
+      capitalAportadoClp: d.capital_aportado_acumulado_clp!,
+      gananciaClp: d.valor_total_clp! - d.capital_aportado_acumulado_clp!,
+    }));
 
   if (puntos.length < 2) {
     return (
@@ -40,19 +84,26 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
     );
   }
 
+  // color de la ganancia segun su signo actual (mismo criterio ya usado en
+  // AccountRow/CapitalSummary/PlatformBreakdown: un solo color para toda la
+  // serie basado en el ultimo dato, no un gradiente por punto -- el tooltip
+  // si distingue el signo correcto en cada fecha puntual).
+  const gananciaEsPositivaHoy = puntos[puntos.length - 1].gananciaClp >= 0;
+  const colorGanancia = gananciaEsPositivaHoy ? "#15803d" : "#b91c1c";
+
   return (
     <div className="rounded-lg border border-gray-200 p-4">
       <div className="mb-3">
         <p className="text-sm font-medium">evolucion del portafolio</p>
         <Ayuda>
-          Valor total de todas tus cuentas activas, en pesos, a lo largo del tiempo. Si una cuenta
-          no tiene un registro justo en una fecha, se usa su último valor conocido hasta ese
-          momento.
+          El area gris es el capital que has aportado, acumulado (crece en escalones, cuando haces
+          un aporte o retiro). El area verde o roja encima es tu ganancia o pérdida real sobre ese
+          capital. La suma de ambas es el valor total de tu portafolio en pesos ese día.
         </Ayuda>
       </div>
       <div className="h-56">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={puntos} margin={{ top: 5, right: 10, bottom: 0, left: 0 }}>
+          <AreaChart data={puntos} margin={{ top: 5, right: 10, bottom: 0, left: 0 }}>
             <XAxis
               dataKey="fecha"
               tickFormatter={formatoFecha}
@@ -67,13 +118,33 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
               tickLine={false}
               width={90}
             />
-            <Tooltip
-              formatter={(valor) => formatoPesos(Number(valor))}
-              labelFormatter={(fecha) => (typeof fecha === "string" ? formatoFecha(fecha) : fecha)}
-              contentStyle={{ fontSize: 12, borderRadius: 6, borderColor: "#e5e7eb" }}
+            <Tooltip content={<TooltipPersonalizado />} />
+            <Area
+              type="stepAfter"
+              dataKey="capitalAportadoClp"
+              stackId="portafolio"
+              name="capital aportado"
+              stroke="#9ca3af"
+              fill="#9ca3af"
+              fillOpacity={0.45}
             />
-            <Line type="monotone" dataKey="valor_total_clp" stroke="#111827" strokeWidth={2} dot={{ r: 3 }} />
-          </LineChart>
+            <Area
+              // mismo tipo de interpolacion que el area de abajo (stepAfter),
+              // a proposito: mezclar step con monotone en un area apilada
+              // hace que recharts dibuje el borde superior combinado con un
+              // "corte" visual en cada transicion, porque cada serie
+              // interpola distinto entre los mismos puntos. ademas, la
+              // ganancia tampoco se conoce de forma continua entre dos
+              // snapshots -- un escalon es mas honesto que una linea suave.
+              type="stepAfter"
+              dataKey="gananciaClp"
+              stackId="portafolio"
+              name="ganancia"
+              stroke={colorGanancia}
+              fill={colorGanancia}
+              fillOpacity={0.35}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>

@@ -163,6 +163,7 @@ export type Database = {
       }
       evolucion_portafolio: {
         Row: {
+          capital_aportado_acumulado_clp: number | null
           fecha: string | null
           valor_total_clp: number | null
         }

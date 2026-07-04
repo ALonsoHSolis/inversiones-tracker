@@ -1,4 +1,5 @@
 import { Ayuda } from "@/components/Ayuda";
+import { colorParaEtiqueta } from "@/lib/etiquetas";
 
 interface Plataforma {
   nombre: string;
@@ -27,7 +28,8 @@ export function PlatformBreakdown({ plataformas }: PlatformBreakdownProps) {
         <p className="text-sm font-medium">por plataforma</p>
         <Ayuda>
           Agrupa tus cuentas por banco o corredora para ver cuánto tienes en cada una, sumando el
-          capital aportado y el valor actual de las cuentas de esa plataforma.
+          capital aportado y el valor actual de las cuentas de esa plataforma. Toca o pasa el
+          cursor sobre la etiqueta para ver el detalle.
         </Ayuda>
       </div>
       <div className="flex flex-col gap-3">
@@ -35,20 +37,30 @@ export function PlatformBreakdown({ plataformas }: PlatformBreakdownProps) {
           const ganancia = p.valorActualClp - p.capitalAportadoClp;
           const gananciaPct = p.capitalAportadoClp > 0 ? (ganancia / p.capitalAportadoClp) * 100 : null;
           const esPositivo = ganancia >= 0;
+          const color = colorParaEtiqueta(p.nombre);
+          const detalle = `capital aportado: ${formatoPesos(p.capitalAportadoClp)} · valor actual: ${formatoPesos(p.valorActualClp)}`;
 
           return (
-            <div key={p.nombre} className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">{p.nombre}</span>
-              <div className="text-right">
-                <p className="font-medium">{formatoPesos(p.valorActualClp)}</p>
-                {gananciaPct !== null && (
-                  <p className={`text-xs ${esPositivo ? "text-green-700" : "text-red-700"}`}>
-                    {esPositivo ? "+" : ""}
-                    {formatoPesos(ganancia)} ({gananciaPct.toFixed(1)}%)
-                  </p>
-                )}
-              </div>
-            </div>
+            <details key={p.nombre} className="group">
+              <summary className="flex items-center justify-between text-sm cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <span
+                  title={detalle}
+                  className={`inline-flex items-center rounded-full ${color.bg} ${color.texto} text-xs font-medium px-2 py-0.5`}
+                >
+                  {p.nombre}
+                </span>
+                <div className="text-right">
+                  <p className="font-medium">{formatoPesos(p.valorActualClp)}</p>
+                  {gananciaPct !== null && (
+                    <p className={`text-xs ${esPositivo ? "text-green-700" : "text-red-700"}`}>
+                      {esPositivo ? "+" : ""}
+                      {formatoPesos(ganancia)} ({gananciaPct.toFixed(1)}%)
+                    </p>
+                  )}
+                </div>
+              </summary>
+              <p className="mt-1 text-xs text-gray-500">{detalle}</p>
+            </details>
           );
         })}
       </div>

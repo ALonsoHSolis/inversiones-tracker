@@ -179,7 +179,11 @@ export default async function DashboardPage() {
           <ExportarDatos />
         </div>
       </div>
-      <PortfolioSummary valorTotal={valorTotal} valorTotalAnterior={valorTotalAnterior} />
+      <PortfolioSummary
+        valorTotal={valorTotal}
+        valorTotalAnterior={valorTotalAnterior}
+        capitalAportadoClp={capitalAportadoClp}
+      />
       <MarketBenchmark sp500={benchmarkSp500} uf={benchmarkUf} />
       <div className="mt-3">
         <CapitalSummary
