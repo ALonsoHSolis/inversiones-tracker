@@ -17,6 +17,10 @@ interface AccountRowProps {
   // capital_aportado de capital_por_cuenta (moneda nativa): junto con
   // cuenta.created_at, permite estimar el rendimiento anualizado acumulado.
   capitalAportadoFallback: number | null;
+  // ultima_fecha de capital_por_cuenta (fecha del snapshot mas reciente).
+  // se toma de capital_por_cuenta y no de rendimiento a proposito: cubre
+  // tambien cuentas con un solo snapshot, que rendimiento_actual excluye.
+  ultimaFechaFallback: string | null;
 }
 
 const CHIP_COLORES: Record<string, { bg: string; fg: string }> = {
@@ -42,9 +46,24 @@ function formatoValor(valor: number, moneda: Moneda) {
   return valor.toLocaleString("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 });
 }
 
-export function AccountRow({ cuenta, rendimiento, valorActualFallback, capitalAportadoFallback }: AccountRowProps) {
+const UMBRAL_DATO_ANTIGUO_DIAS = 14;
+
+export function AccountRow({
+  cuenta,
+  rendimiento,
+  valorActualFallback,
+  capitalAportadoFallback,
+  ultimaFechaFallback,
+}: AccountRowProps) {
   const valor = rendimiento?.valor ?? valorActualFallback;
   const tieneAporte = (rendimiento?.aportes_netos ?? 0) !== 0;
+
+  // >14 dias (dos semanas) sin actualizar, no >=, para no marcar como
+  // antigua una cuenta actualizada exactamente hace dos semanas justas.
+  const diasDesdeUltimoDato = ultimaFechaFallback
+    ? (Date.now() - new Date(ultimaFechaFallback).getTime()) / (1000 * 60 * 60 * 24)
+    : null;
+  const esDatoAntiguo = diasDesdeUltimoDato != null && diasDesdeUltimoDato > UMBRAL_DATO_ANTIGUO_DIAS;
 
   const diasTranscurridos = (Date.now() - new Date(cuenta.created_at).getTime()) / (1000 * 60 * 60 * 24);
   const rendimientoAnualizado =
@@ -89,6 +108,17 @@ export function AccountRow({ cuenta, rendimiento, valorActualFallback, capitalAp
             >
               historial
             </Link>
+            {esDatoAntiguo && (
+              <>
+                {" · "}
+                <span
+                  className="px-[6px] py-[1px] rounded-md text-[10.5px] font-medium"
+                  style={{ background: CHIP_DEFAULT.bg, color: CHIP_DEFAULT.fg }}
+                >
+                  hace {Math.floor(diasDesdeUltimoDato!)} días
+                </span>
+              </>
+            )}
           </p>
         </div>
         <div className="text-right whitespace-nowrap">

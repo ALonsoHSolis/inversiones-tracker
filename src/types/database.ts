@@ -156,6 +156,7 @@ export type Database = {
           cuenta_id: string | null
           moneda: string | null
           nombre: string | null
+          ultima_fecha: string | null
           valor_actual: number | null
           valor_actual_clp: number | null
         }

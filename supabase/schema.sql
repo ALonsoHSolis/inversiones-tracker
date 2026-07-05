@@ -360,7 +360,11 @@ with (security_invoker = true)
 as
 with ultimo_snapshot as (
   select distinct on (cuenta_id)
-    cuenta_id, valor as valor_actual, tasa_cambio as tasa_cambio_actual
+    -- ultima_fecha: fecha de ese ultimo snapshot, expuesta para poder avisar
+    -- en el dashboard cuando el dato de una cuenta lleva mucho sin
+    -- actualizarse (evolucion_portafolio hace forward-fill de cuentas
+    -- atrasadas sin ningun indicio visual de eso hoy).
+    cuenta_id, valor as valor_actual, tasa_cambio as tasa_cambio_actual, fecha as ultima_fecha
   from snapshots
   order by cuenta_id, fecha desc
 ),
@@ -379,7 +383,8 @@ select
   coalesce(a.capital_aportado, 0) as capital_aportado,
   us.valor_actual,
   case when c.moneda = 'CLP' then coalesce(a.capital_aportado, 0) else coalesce(a.capital_aportado_clp, 0) end as capital_aportado_clp,
-  case when c.moneda = 'CLP' then us.valor_actual else us.valor_actual * us.tasa_cambio_actual end as valor_actual_clp
+  case when c.moneda = 'CLP' then us.valor_actual else us.valor_actual * us.tasa_cambio_actual end as valor_actual_clp,
+  us.ultima_fecha
 from cuentas c
 left join ultimo_snapshot us on us.cuenta_id = c.id
 left join aportes a on a.cuenta_id = c.id

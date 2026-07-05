@@ -245,6 +245,7 @@ export default async function DashboardPage() {
                   rendimiento={rendimiento}
                   valorActualFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null}
                   capitalAportadoFallback={capitalPorCuentaMap.get(cuenta.id)?.capital_aportado ?? null}
+                  ultimaFechaFallback={capitalPorCuentaMap.get(cuenta.id)?.ultima_fecha ?? null}
                 />
               ))}
               {cuentasConDatos.length === 0 && (
