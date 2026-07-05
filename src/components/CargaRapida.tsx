@@ -60,6 +60,18 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
   const [cuentaId, setCuentaId] = useState(cuentas[0]?.id ?? "");
   const cuenta = cuentas.find((c) => c.id === cuentaId) ?? null;
 
+  // busqueda: filtra que opciones se ven dentro del <select> nativo (via
+  // display:none en cada <option>) en vez de armar un combobox propio -- asi
+  // se mantiene la navegacion por teclado y el picker nativo de mobile del
+  // select, solo se acota la lista cuando hay muchas cuentas.
+  const [busquedaCuenta, setBusquedaCuenta] = useState("");
+  function coincideBusqueda(c: Cuenta): boolean {
+    const texto = busquedaCuenta.trim().toLowerCase();
+    if (texto === "") return true;
+    return `${c.nombre} ${c.plataforma}`.toLowerCase().includes(texto);
+  }
+  const hayCoincidencias = cuentas.some(coincideBusqueda);
+
   const [valor, setValor] = useState("");
   const [valorEditadoManualmente, setValorEditadoManualmente] = useState(false);
   const [tasaCambio, setTasaCambio] = useState<number | null>(null);
@@ -232,13 +244,23 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
 
       <label className="flex flex-col gap-1">
         <span className="text-[11px] font-semibold text-[#6B7280]">Cuenta</span>
+        {cuentas.length > 5 && (
+          <input
+            type="text"
+            placeholder="Buscar por nombre o plataforma…"
+            value={busquedaCuenta}
+            onChange={(e) => setBusquedaCuenta(e.target.value)}
+            className="h-9 px-3 mb-1.5 rounded-[10px] border border-[#DFE2E8] text-[13px] bg-white focus:outline-none focus:border-[var(--accent)]"
+          />
+        )}
         <select
           value={cuentaId}
           onChange={(e) => setCuentaId(e.target.value)}
           className="h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-[13px] bg-white focus:outline-none focus:border-[var(--accent)]"
         >
+          {!hayCoincidencias && <option disabled>ninguna cuenta coincide</option>}
           {cuentas.map((c) => (
-            <option key={c.id} value={c.id}>
+            <option key={c.id} value={c.id} style={{ display: coincideBusqueda(c) ? undefined : "none" }}>
               {c.nombre} · {c.plataforma}
             </option>
           ))}
