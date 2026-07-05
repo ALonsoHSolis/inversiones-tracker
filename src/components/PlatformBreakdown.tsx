@@ -11,6 +11,11 @@ interface PlatformBreakdownProps {
   plataformas: Plataforma[];
 }
 
+// a partir de este % del total, se marca como alta concentracion -- solo
+// informativo (control patrimonial), nunca una recomendacion de compra o
+// venta, y a proposito con tono calmado (punto ambar, no rojo).
+const UMBRAL_CONCENTRACION = 40;
+
 export function PlatformBreakdown({ plataformas }: PlatformBreakdownProps) {
   if (plataformas.length === 0) return null;
   const total = plataformas.reduce((acc, p) => acc + p.valorActualClp, 0);
@@ -31,6 +36,7 @@ export function PlatformBreakdown({ plataformas }: PlatformBreakdownProps) {
           const gananciaPct = p.capitalAportadoClp > 0 ? (ganancia / p.capitalAportadoClp) * 100 : null;
           const esPositivo = ganancia >= 0;
           const share = total > 0 ? (p.valorActualClp / total) * 100 : 0;
+          const altaConcentracion = share >= UMBRAL_CONCENTRACION;
 
           return (
             <details key={p.nombre} className="group">
@@ -45,8 +51,11 @@ export function PlatformBreakdown({ plataformas }: PlatformBreakdownProps) {
                   <div className="h-full rounded bg-[var(--accent)]" style={{ width: `${share}%` }} />
                 </div>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-[11px] text-[#A0A7B2] font-mono-tabular">
+                  <span className="text-[11px] text-[#A0A7B2] font-mono-tabular inline-flex items-center gap-1">
                     {share.toFixed(1)}% del total
+                    {altaConcentracion && (
+                      <span aria-hidden="true" className="inline-block w-1.5 h-1.5 rounded-full bg-[#D9A441]" />
+                    )}
                   </span>
                   {gananciaPct !== null && (
                     <span
@@ -60,6 +69,14 @@ export function PlatformBreakdown({ plataformas }: PlatformBreakdownProps) {
               </summary>
               <p className="mt-1.5 text-[11px] text-[#A0A7B2]">
                 {formatoPesos(p.capitalAportadoClp)} aportado · {formatoPesosSigned(ganancia)} de ganancia
+                {altaConcentracion && (
+                  <>
+                    {" · "}
+                    <span className="text-[#9A6B12]">
+                      más del {UMBRAL_CONCENTRACION}% de tu patrimonio está acá
+                    </span>
+                  </>
+                )}
               </p>
             </details>
           );
