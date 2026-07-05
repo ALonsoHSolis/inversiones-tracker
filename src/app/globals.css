@@ -50,27 +50,3 @@ body {
   filter: blur(9px);
 }
 
-/* revelacion progresiva en "tus cuentas": el % anualizado aparece con
-   fade-in suave al pasar el cursor sobre esa fila especifica -- pero SOLO en
-   dispositivos con hover real (mouse). visible siempre por defecto: un
-   celular nunca dispara :hover, y ocultarlo sin alternativa dejaba el %
-   anualizado permanentemente invisible en el dispositivo principal de esta
-   app, violando el mismo principio ya documentado en Ayuda.tsx (nada de
-   informacion que dependa solo de hover). */
-.acct-row .anual-line {
-  opacity: 1;
-  transform: none;
-}
-@media (hover: hover) and (pointer: fine) {
-  .acct-row .anual-line {
-    opacity: 0;
-    transform: translateY(-2px);
-    transition:
-      opacity 0.22s ease,
-      transform 0.22s ease;
-  }
-  .acct-row:hover .anual-line {
-    opacity: 1;
-    transform: none;
-  }
-}

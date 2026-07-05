@@ -133,31 +133,35 @@ export function AccountRow({
               {formatoPct(rendimiento.rendimiento_pct)} <span className="text-[#B4BAC3] font-medium">real</span>
             </p>
           )}
-          {efectoTipoCambio != null && (
+          {(rendimientoAnualizado != null || efectoTipoCambio != null) && (
             <details className="mt-[3px] group">
               <summary className="list-none [&::-webkit-details-marker]:hidden inline-flex items-center justify-center w-4 h-4 rounded-full border border-[#DADEE4] text-[10px] font-medium text-[#A0A7B2] cursor-pointer select-none ml-auto group-hover:border-[#C9CDD5] group-hover:text-[#6B7280]">
-                ⇄
+                ▾
               </summary>
-              <p className="mt-1.5 text-[11px] leading-relaxed text-[#98A0AB] text-left whitespace-normal max-w-[190px] ml-auto">
-                Rendimiento del activo:{" "}
-                <strong style={{ color: (rendimiento?.rendimiento_pct ?? 0) >= 0 ? "var(--pos)" : "var(--neg)" }}>
-                  {rendimiento?.rendimiento_pct != null ? formatoPct(rendimiento.rendimiento_pct) : "—"}
-                </strong>
-                {" · "}
-                Efecto tipo de cambio:{" "}
-                <strong style={{ color: efectoTipoCambio >= 0 ? "var(--pos)" : "var(--neg)" }}>
-                  {formatoPct(efectoTipoCambio)}
-                </strong>
-              </p>
+              <div className="mt-1.5 flex flex-col gap-1 text-left max-w-[190px] ml-auto">
+                {rendimientoAnualizado != null && (
+                  <p className="text-[11px] leading-relaxed text-[#98A0AB] whitespace-normal">
+                    Rendimiento anualizado:{" "}
+                    <strong style={{ color: rendimientoAnualizado >= 0 ? "var(--pos)" : "var(--neg)" }}>
+                      {formatoPct(rendimientoAnualizado)}
+                    </strong>
+                  </p>
+                )}
+                {efectoTipoCambio != null && (
+                  <p className="text-[11px] leading-relaxed text-[#98A0AB] whitespace-normal">
+                    Rendimiento del activo:{" "}
+                    <strong style={{ color: (rendimiento?.rendimiento_pct ?? 0) >= 0 ? "var(--pos)" : "var(--neg)" }}>
+                      {rendimiento?.rendimiento_pct != null ? formatoPct(rendimiento.rendimiento_pct) : "—"}
+                    </strong>
+                    {" · "}
+                    Efecto tipo de cambio:{" "}
+                    <strong style={{ color: efectoTipoCambio >= 0 ? "var(--pos)" : "var(--neg)" }}>
+                      {formatoPct(efectoTipoCambio)}
+                    </strong>
+                  </p>
+                )}
+              </div>
             </details>
-          )}
-          {rendimientoAnualizado != null && (
-            <p
-              className="anual-line mt-[1px] text-[11px]"
-              style={{ color: rendimientoAnualizado >= 0 ? "var(--pos)" : "var(--neg)" }}
-            >
-              {formatoPct(rendimientoAnualizado)} <span className="text-[#C2C7CF]">anualizado</span>
-            </p>
           )}
         </div>
       </div>
