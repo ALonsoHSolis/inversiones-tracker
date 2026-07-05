@@ -178,6 +178,8 @@ export type Database = {
           moneda: string | null
           nombre: string | null
           rendimiento_pct: number | null
+          tasa_cambio: number | null
+          tasa_cambio_anterior: number | null
           valor: number | null
           valor_anterior: number | null
           valor_clp: number | null
@@ -209,6 +211,8 @@ export type Database = {
           moneda: string | null
           nombre: string | null
           rendimiento_pct: number | null
+          tasa_cambio: number | null
+          tasa_cambio_anterior: number | null
           valor: number | null
           valor_anterior: number | null
           valor_clp: number | null

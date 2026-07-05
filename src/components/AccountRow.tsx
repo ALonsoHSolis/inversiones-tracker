@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { calcularRendimientoAnualizado } from "@/lib/rendimiento";
+import { calcularEfectoTipoCambio, calcularRendimientoAnualizado } from "@/lib/rendimiento";
 import { formatoPct } from "@/lib/formato";
 import { TIPOS } from "@/lib/tipos-cuenta";
 import type { Cuenta, Moneda, RendimientoActual } from "@/types/database";
@@ -52,6 +52,14 @@ export function AccountRow({ cuenta, rendimiento, valorActualFallback, capitalAp
       ? calcularRendimientoAnualizado(capitalAportadoFallback, valor, diasTranscurridos)
       : null;
 
+  // solo tiene sentido para cuentas no-clp, y solo cuando ya hay una tasa
+  // anterior con la que comparar (cuenta con un solo snapshot -> null, se
+  // oculta el desglose en vez de mostrar un efecto calculado sobre nada).
+  const efectoTipoCambio =
+    cuenta.moneda !== "CLP"
+      ? calcularEfectoTipoCambio(rendimiento?.tasa_cambio ?? null, rendimiento?.tasa_cambio_anterior ?? null)
+      : null;
+
   const chip = CHIP_COLORES[cuenta.tipo] ?? CHIP_DEFAULT;
   const tipoLabel = TIPOS.find((t) => t.value === cuenta.tipo)?.label ?? cuenta.tipo;
 
@@ -94,6 +102,24 @@ export function AccountRow({ cuenta, rendimiento, valorActualFallback, capitalAp
             >
               {formatoPct(rendimiento.rendimiento_pct)} <span className="text-[#B4BAC3] font-medium">real</span>
             </p>
+          )}
+          {efectoTipoCambio != null && (
+            <details className="mt-[3px] group">
+              <summary className="list-none [&::-webkit-details-marker]:hidden inline-flex items-center justify-center w-4 h-4 rounded-full border border-[#DADEE4] text-[10px] font-medium text-[#A0A7B2] cursor-pointer select-none ml-auto group-hover:border-[#C9CDD5] group-hover:text-[#6B7280]">
+                ⇄
+              </summary>
+              <p className="mt-1.5 text-[11px] leading-relaxed text-[#98A0AB] text-left whitespace-normal max-w-[190px] ml-auto">
+                Rendimiento del activo:{" "}
+                <strong style={{ color: (rendimiento?.rendimiento_pct ?? 0) >= 0 ? "var(--pos)" : "var(--neg)" }}>
+                  {rendimiento?.rendimiento_pct != null ? formatoPct(rendimiento.rendimiento_pct) : "—"}
+                </strong>
+                {" · "}
+                Efecto tipo de cambio:{" "}
+                <strong style={{ color: efectoTipoCambio >= 0 ? "var(--pos)" : "var(--neg)" }}>
+                  {formatoPct(efectoTipoCambio)}
+                </strong>
+              </p>
+            </details>
           )}
           {rendimientoAnualizado != null && (
             <p

@@ -53,3 +53,17 @@ export function calcularRendimientoAnualizado(
 
   return (Math.pow(base, 365 / diasTranscurridos) - 1) * 100;
 }
+
+// separa el "% real" de una cuenta no-clp en el desempeño del activo (ya es
+// rendimiento_pct, sin ruido cambiario por regla de negocio) y el efecto
+// puro del movimiento del tipo de cambio entre el snapshot actual y el
+// anterior. null cuando no hay tasa anterior con la que comparar (cuenta
+// con un solo snapshot) -- evita mostrar un % calculado sobre una base
+// inexistente o cero.
+export function calcularEfectoTipoCambio(
+  tasaCambio: number | null,
+  tasaCambioAnterior: number | null
+): number | null {
+  if (tasaCambio == null || tasaCambioAnterior == null || tasaCambioAnterior <= 0) return null;
+  return ((tasaCambio - tasaCambioAnterior) / tasaCambioAnterior) * 100;
+}

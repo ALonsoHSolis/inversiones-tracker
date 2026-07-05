@@ -284,7 +284,12 @@ ordenados as (
     *,
     lag(valor) over (partition by cuenta_id order by fecha) as valor_anterior,
     lag(valor_clp) over (partition by cuenta_id order by fecha) as valor_clp_anterior,
-    lag(fecha) over (partition by cuenta_id order by fecha) as fecha_anterior
+    lag(fecha) over (partition by cuenta_id order by fecha) as fecha_anterior,
+    -- tasa_cambio_anterior: junto con tasa_cambio (sin lag, ya viaja via
+    -- select * de snapshots_clp) permite separar, para cuentas no-clp, cuanto
+    -- del "% real" vino del activo vs. cuanto del movimiento del tipo de
+    -- cambio entre este snapshot y el anterior.
+    lag(tasa_cambio) over (partition by cuenta_id order by fecha) as tasa_cambio_anterior
   from snapshots_clp
 ),
 movimientos_periodo as (
@@ -314,7 +319,9 @@ select
     when (o.valor_anterior + coalesce(mp.aportes_netos, 0)) > 0
       then round((((o.valor - o.valor_anterior - coalesce(mp.aportes_netos, 0)) / (o.valor_anterior + coalesce(mp.aportes_netos, 0))) * 100)::numeric, 2)
     else null
-  end as rendimiento_pct
+  end as rendimiento_pct,
+  o.tasa_cambio,
+  o.tasa_cambio_anterior
 from ordenados o
 left join movimientos_periodo mp on mp.cuenta_id = o.cuenta_id and mp.fecha = o.fecha
 where o.valor_anterior is not null;
@@ -335,7 +342,9 @@ select distinct on (cuenta_id)
   valor_clp_anterior,
   aportes_netos,
   ganancia_real,
-  rendimiento_pct
+  rendimiento_pct,
+  tasa_cambio,
+  tasa_cambio_anterior
 from rendimiento_semanal
 order by cuenta_id, fecha desc;
 
