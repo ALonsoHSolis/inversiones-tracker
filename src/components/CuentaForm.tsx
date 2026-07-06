@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { track } from "@vercel/analytics";
 import { createClient } from "@/lib/supabase/client";
 import { obtenerTasaCambio } from "@/lib/mindicador";
 import { TIPOS } from "@/lib/tipos-cuenta";
@@ -110,6 +111,7 @@ export function CuentaForm() {
       return;
     }
 
+    track("cuenta_creada", { moneda, tipo });
     router.push("/dashboard");
     router.refresh();
   }
