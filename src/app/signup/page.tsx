@@ -32,6 +32,29 @@ export default async function SignupPage({
             className="rounded border border-gray-300 px-3 py-2"
           />
         </label>
+        <label className="flex items-start gap-2 text-sm text-gray-500">
+          <input type="checkbox" name="aceptaTerminos" required className="mt-0.5" />
+          <span>
+            acepto los{" "}
+            <Link
+              href="/terminos"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-900 underline"
+            >
+              terminos
+            </Link>{" "}
+            y la{" "}
+            <Link
+              href="/privacidad"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-900 underline"
+            >
+              politica de privacidad
+            </Link>
+          </span>
+        </label>
         {error && <p className="text-xs text-red-700">{error}</p>}
         {mensaje && <p className="text-xs text-gray-600">{mensaje}</p>}
         <SubmitButton labelInactivo="crear cuenta" labelActivo="creando cuenta..." />
