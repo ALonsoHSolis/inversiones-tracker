@@ -20,6 +20,14 @@ export default async function DashboardPage() {
   const supabase = await createClient();
   const hoy = new Date().toISOString().slice(0, 10);
 
+  // benchmarkSp500/benchmarkUf van en el mismo Promise.all que las consultas
+  // a supabase (no en uno aparte despues): son servicios externos opcionales,
+  // pero si se esperan en un batch separado y posterior, su latencia se SUMA
+  // a la del resto en vez de superponerse -- confirmado como parte de la
+  // demora reportada en el login (redirect -> dashboard). Van al final del
+  // arreglo (no antes) solo por prolijidad de lectura, el orden no afecta el
+  // paralelismo. Best-effort de todas formas: ambas funciones ya nunca
+  // lanzan, el catch de aca es la segunda red de seguridad.
   const [
     {
       data: { user },
@@ -30,6 +38,8 @@ export default async function DashboardPage() {
     { data: capitalPorCuenta },
     { data: evolucionPortafolio },
     { count: cuentasInactivasCount },
+    benchmarkSp500,
+    benchmarkUf,
   ] = await Promise.all([
     supabase.auth.getUser(),
     supabase.from("cuentas").select("*").eq("activa", true).order("created_at"),
@@ -38,13 +48,6 @@ export default async function DashboardPage() {
     supabase.from("capital_por_cuenta").select("*"),
     supabase.from("evolucion_portafolio").select("*").order("fecha"),
     supabase.from("cuentas").select("id", { count: "exact", head: true }).eq("activa", false),
-  ]);
-
-  // fuera del Promise.all a proposito: son servicios externos opcionales, no
-  // datos del usuario -- si yahoo o mindicador.cl estan lentos o caidos,
-  // nunca deben bloquear ni romper la carga del resto del dashboard (ambas
-  // funciones ya nunca lanzan, el catch de aca es la segunda red de seguridad).
-  const [benchmarkSp500, benchmarkUf] = await Promise.all([
     obtenerCambioSp500().catch(() => null),
     obtenerCambioUf().catch(() => null),
   ]);
