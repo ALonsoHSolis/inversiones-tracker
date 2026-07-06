@@ -27,7 +27,7 @@ export function CuentasInactivas({ cuentas }: CuentasInactivasProps) {
       return;
     }
 
-    router.push("/");
+    router.push("/dashboard");
     router.refresh();
   }
 

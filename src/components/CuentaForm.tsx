@@ -110,7 +110,7 @@ export function CuentaForm() {
       return;
     }
 
-    router.push("/");
+    router.push("/dashboard");
     router.refresh();
   }
 

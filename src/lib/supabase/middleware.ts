@@ -30,7 +30,11 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const esRutaPublica =
-    path.startsWith("/login") || path.startsWith("/signup") || path.startsWith("/auth");
+    path === "/" ||
+    path === "/como-funciona" ||
+    path.startsWith("/login") ||
+    path.startsWith("/signup") ||
+    path.startsWith("/auth");
 
   if (!user && !esRutaPublica) {
     const url = request.nextUrl.clone();
@@ -38,9 +42,12 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && (path.startsWith("/login") || path.startsWith("/signup"))) {
+  // "/como-funciona" es publica pero NO es solo-invitado: un usuario logueado
+  // tambien puede verla (es informativa, no un formulario de auth).
+  const esRutaSoloInvitado = path === "/" || path.startsWith("/login") || path.startsWith("/signup");
+  if (user && esRutaSoloInvitado) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 

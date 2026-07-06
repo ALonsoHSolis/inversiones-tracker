@@ -26,5 +26,5 @@ export async function signup(formData: FormData) {
     redirect(`/signup?mensaje=${encodeURIComponent("revisa tu correo para confirmar la cuenta")}`);
   }
 
-  redirect("/");
+  redirect("/dashboard");
 }

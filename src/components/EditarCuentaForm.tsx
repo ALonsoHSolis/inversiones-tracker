@@ -39,7 +39,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
       return;
     }
 
-    router.push("/");
+    router.push("/dashboard");
     router.refresh();
   }
 
@@ -61,7 +61,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
       return;
     }
 
-    router.push("/");
+    router.push("/dashboard");
     router.refresh();
   }
 
