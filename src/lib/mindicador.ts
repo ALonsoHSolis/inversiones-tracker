@@ -14,9 +14,16 @@ export interface TasaCambio {
 // devuelve serie[] vacio en fines de semana/feriados para fechas especificas,
 // mientras que el endpoint general siempre trae el dato disponible mas
 // reciente como serie[0], lo que resuelve el fallback gratis.
+// sin timeout, un mindicador.cl colgado deja cargandoTasa en true para
+// siempre -- y el boton "guardar" de SnapshotForm/CargaRapida/CuentaForm se
+// deshabilita mientras cargandoTasa es true, asi que quedaria imposible
+// guardar esa cuenta hasta que el fetch resuelva (el boton "reintentar" solo
+// aparece tras un error, nunca mientras esta pendiente).
+const TIMEOUT_MS = 5000;
+
 export async function obtenerTasaCambio(moneda: Exclude<Moneda, "CLP">): Promise<TasaCambio> {
   const codigo = CODIGO_MINDICADOR[moneda];
-  const res = await fetch(`https://mindicador.cl/api/${codigo}`);
+  const res = await fetch(`https://mindicador.cl/api/${codigo}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
 
   if (!res.ok) {
     throw new Error(`mindicador.cl respondio ${res.status}`);

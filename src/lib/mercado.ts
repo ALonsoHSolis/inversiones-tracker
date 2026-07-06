@@ -4,6 +4,15 @@ export interface CambioIndice {
   fechaFin: string;
 }
 
+// page.tsx espera (await) estas dos funciones antes de poder renderizar nada
+// -- "nunca deben romper la carga del dashboard" solo se cumplia para
+// errores de red, no para una respuesta lenta que nunca llega a fallar. sin
+// un limite explicito, un servicio externo colgado bloquea la pagina entera
+// (confirmado: se observaron cargas de varios minutos por esto). 5s alcanza
+// de sobra en condiciones normales y es consistente con que esta info ya se
+// presenta como "ultimos 5 dias", no como algo que necesite ser instantaneo.
+const TIMEOUT_MS = 5000;
+
 // fetch server-side: el endpoint de yahoo no manda Access-Control-Allow-Origin,
 // asi que un fetch directo desde el navegador (como hace mindicador.ts con
 // mindicador.cl) fallaria por CORS. "best effort": cualquier fallo devuelve
@@ -17,7 +26,7 @@ export async function obtenerCambioSp500(): Promise<CambioIndice | null> {
   try {
     const res = await fetch(
       "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=5d&interval=1d",
-      { headers: { "User-Agent": "Mozilla/5.0" } }
+      { headers: { "User-Agent": "Mozilla/5.0" }, signal: AbortSignal.timeout(TIMEOUT_MS) }
     );
     if (!res.ok) return null;
 
@@ -50,7 +59,7 @@ export async function obtenerCambioSp500(): Promise<CambioIndice | null> {
 // dashboard.
 export async function obtenerCambioUf(): Promise<CambioIndice | null> {
   try {
-    const res = await fetch("https://mindicador.cl/api/uf");
+    const res = await fetch("https://mindicador.cl/api/uf", { signal: AbortSignal.timeout(TIMEOUT_MS) });
     if (!res.ok) return null;
 
     const data = await res.json();
