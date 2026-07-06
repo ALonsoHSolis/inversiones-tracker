@@ -19,3 +19,20 @@ export async function login(formData: FormData) {
   revalidatePath("/", "layout");
   redirect("/dashboard");
 }
+
+export async function reenviarConfirmacion(formData: FormData) {
+  const supabase = await createClient();
+  const email = formData.get("email") as string;
+
+  const { error } = await supabase.auth.resend({ type: "signup", email });
+
+  if (error) {
+    redirect(`/login?confirmError=${encodeURIComponent(error.message)}`);
+  }
+
+  redirect(
+    `/login?confirmMensaje=${encodeURIComponent(
+      "si tu cuenta existe y no esta confirmada, te reenviamos el correo"
+    )}`
+  );
+}
