@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { obtenerTasaCambio } from "@/lib/mindicador";
 import { Ayuda } from "@/components/Ayuda";
@@ -57,6 +58,7 @@ function formatoFecha(fechaIso: string) {
 // misma logica de guardado, guardrails y rpc que SnapshotForm, solo que
 // aplicada a una cuenta elegida en un desplegable en vez de a todas a la vez.
 export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }: CargaRapidaProps) {
+  const router = useRouter();
   const [cuentaId, setCuentaId] = useState(cuentas[0]?.id ?? "");
   const cuenta = cuentas.find((c) => c.id === cuentaId) ?? null;
 
@@ -227,6 +229,11 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
     setIncluyeMovimiento(false);
     setMovimientoMonto("");
     setResultado("ok");
+    // refresca el arbol de server components de "/" (hero, tus cuentas,
+    // desgloses, grafico) para que reflejen el guardado sin recargar la
+    // pagina -- sin esto, guardar aca solo actualizaba el estado local de
+    // esta card, dejando el resto del dashboard con numeros viejos hasta F5.
+    router.refresh();
   }
 
   if (cuentas.length === 0) return null;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { obtenerTasaCambio } from "@/lib/mindicador";
 import { Ayuda } from "@/components/Ayuda";
@@ -90,6 +91,7 @@ function formatoFecha(fechaIso: string) {
 }
 
 export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }: SnapshotFormProps) {
+  const router = useRouter();
   const [filas, setFilas] = useState<Record<string, FilaState>>(() =>
     Object.fromEntries(cuentas.map((c) => [c.id, filaInicial(movimientosHoy[c.id])]))
   );
@@ -264,6 +266,10 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
         ? `${ok} cuenta${ok === 1 ? "" : "s"} guardada${ok === 1 ? "" : "s"}`
         : `${ok} guardada${ok === 1 ? "" : "s"}, ${fallidas} con error`
     );
+    // una sola vez, no por fila: si al menos una cuenta se guardo, refresca
+    // el resto del dashboard (mismo motivo que en CargaRapida.tsx). se omite
+    // si todo fallo, porque nada cambio del lado del servidor.
+    if (ok > 0) router.refresh();
   }
 
   if (cuentas.length === 0) return null;
