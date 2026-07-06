@@ -250,13 +250,13 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
             placeholder="Buscar por nombre o plataforma…"
             value={busquedaCuenta}
             onChange={(e) => setBusquedaCuenta(e.target.value)}
-            className="h-9 px-3 mb-1.5 rounded-[10px] border border-[#DFE2E8] text-[13px] bg-white focus:outline-none focus:border-[var(--accent)]"
+            className="h-9 px-3 mb-1.5 rounded-[10px] border border-[#DFE2E8] text-[13px] bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
           />
         )}
         <select
           value={cuentaId}
           onChange={(e) => setCuentaId(e.target.value)}
-          className="h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-[13px] bg-white focus:outline-none focus:border-[var(--accent)]"
+          className="h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-[13px] bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
         >
           {!hayCoincidencias && <option disabled>ninguna cuenta coincide</option>}
           {cuentas.map((c) => (
@@ -278,7 +278,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
           <span className="text-[11px] font-semibold text-[#6B7280]">Valor actual</span>
           <InputMonto
             placeholder="0"
-            className="h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)]"
+            className="h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
             value={valor}
             onChange={(v) => {
               setValor(v);
@@ -296,7 +296,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
               type="number"
               inputMode="decimal"
               step="0.01"
-              className="w-28 h-8 px-2 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)]"
+              className="w-28 h-8 px-2 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
               value={tasaCambio ?? ""}
               onChange={(e) => editarTasaManualmente(e.target.value ? Number(e.target.value) : null)}
             />
@@ -360,7 +360,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
             </select>
             <InputMonto
               placeholder="monto"
-              className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular bg-white focus:outline-none focus:border-[var(--accent)]"
+              className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
               value={movimientoMonto}
               onChange={(m) => cambiarMovimiento({ movimientoMonto: m })}
             />

@@ -310,7 +310,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
 
               <InputMonto
                 placeholder="0"
-                className="mt-2.5 w-full h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)]"
+                className="mt-2.5 w-full h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
                 value={fila.valor}
                 onChange={(valor) => actualizarFila(cuenta.id, { valor, valorEditadoManualmente: true })}
               />
@@ -323,7 +323,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                       type="number"
                       inputMode="decimal"
                       step="0.01"
-                      className="w-28 h-8 px-2 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)]"
+                      className="w-28 h-8 px-2 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
                       value={fila.tasaCambio ?? ""}
                       onChange={(e) =>
                         editarTasaManualmente(cuenta.id, e.target.value ? Number(e.target.value) : null)
@@ -391,7 +391,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                     </select>
                     <InputMonto
                       placeholder="monto"
-                      className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular bg-white focus:outline-none focus:border-[var(--accent)]"
+                      className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
                       value={fila.movimientoMonto}
                       onChange={(movimientoMonto) => actualizarMovimiento(cuenta, { movimientoMonto })}
                     />
