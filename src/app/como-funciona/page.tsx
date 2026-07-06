@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { FeedbackLink } from "@/components/FeedbackLink";
+import { PublicFooter } from "@/components/PublicFooter";
 
 export const metadata: Metadata = {
   title: "Cómo funciona — Mi portafolio",
@@ -110,10 +110,7 @@ export default function ComoFuncionaPage() {
         </Link>
       </div>
 
-      <footer className="flex items-center justify-between gap-4 mt-10 pt-6 border-t border-[#E7E9EE]">
-        <p className="text-[11.5px] text-[#B4BAC3]">Mi portafolio</p>
-        <FeedbackLink className="text-[12.5px] text-[#8A929E] border-b border-[#DADEE4]" />
-      </footer>
+      <PublicFooter />
     </main>
   );
 }

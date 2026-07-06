@@ -32,8 +32,12 @@ export async function updateSession(request: NextRequest) {
   const esRutaPublica =
     path === "/" ||
     path === "/como-funciona" ||
+    path === "/terminos" ||
+    path === "/privacidad" ||
+    path === "/disclaimer" ||
     path.startsWith("/login") ||
     path.startsWith("/signup") ||
+    path.startsWith("/recuperar-password") ||
     path.startsWith("/auth");
 
   if (!user && !esRutaPublica) {
@@ -42,9 +46,14 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // "/como-funciona" es publica pero NO es solo-invitado: un usuario logueado
-  // tambien puede verla (es informativa, no un formulario de auth).
-  const esRutaSoloInvitado = path === "/" || path.startsWith("/login") || path.startsWith("/signup");
+  // "/como-funciona", "/terminos", "/privacidad" y "/disclaimer" son publicas
+  // pero NO son solo-invitado: un usuario logueado tambien puede verlas (son
+  // informativas, no un formulario de auth).
+  const esRutaSoloInvitado =
+    path === "/" ||
+    path.startsWith("/login") ||
+    path.startsWith("/signup") ||
+    path.startsWith("/recuperar-password");
   if (user && esRutaSoloInvitado) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
