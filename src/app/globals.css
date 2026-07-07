@@ -42,6 +42,29 @@ body {
   animation: fadeUp 0.5s ease both;
 }
 
+@keyframes authFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* curva ease-out marcada (no el "ease" generico) para que la entrada del
+   formulario de auth se sienta responsiva, no floja. */
+.auth-fade-up {
+  animation: authFadeUp 0.4s cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-fade-up {
+    animation: none;
+  }
+}
+
 /* modo privacidad: oculta montos sin ocultar el layout -- el toggle en el
    header agrega/quita .privacy-on en un ancestro (PrivacyShell), y cualquier
    monto marcado con .money-value se difumina, sin que cada componente
