@@ -6,3 +6,12 @@ node_modules
 *.pem
 npm-debug.log*
 next-env.d.ts
+
+# scaffolding de skills de Claude Code (emilkowalski/skill, Leonxlnx/taste-skill,
+# pbakaus/impeccable) -- infraestructura local del agente, no codigo de la app.
+# su instalador corre su propio "git add" al configurarse, lo que en 2026-07-07
+# stageo de golpe 236 archivos ajenos (incluido un .docx personal del usuario)
+# -- ignorarlas evita que eso se repita.
+.agents/
+.claude/skills/
+skills-lock.json
