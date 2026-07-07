@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Ayuda } from "@/components/Ayuda";
 import { formatoPesos, formatoPesosSigned } from "@/lib/formato";
@@ -74,6 +74,7 @@ function TooltipPersonalizado({ active, payload }: { active?: boolean; payload?:
 
 export function PortfolioChart({ datos }: PortfolioChartProps) {
   const [periodo, setPeriodo] = useState<Periodo>("6M");
+  const gradientId = useId();
 
   const todosLosPuntos: Punto[] = useMemo(
     () =>
@@ -115,7 +116,6 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
 
   const gananciaEsPositivaHoy = puntos[puntos.length - 1].gananciaClp >= 0;
   const colorGanancia = gananciaEsPositivaHoy ? "#0B7A54" : "#C0392B";
-  const rellenoGanancia = gananciaEsPositivaHoy ? "rgba(11, 122, 84, 0.18)" : "rgba(192, 57, 43, 0.16)";
 
   return (
     <div>
@@ -152,6 +152,16 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
       <div className="h-[210px]">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={puntos} margin={{ top: 14, right: 4, bottom: 0, left: 4 }}>
+            <defs>
+              <linearGradient id={`${gradientId}-capital`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#C3CBD6" stopOpacity={0.55} />
+                <stop offset="100%" stopColor="#C3CBD6" stopOpacity={0.04} />
+              </linearGradient>
+              <linearGradient id={`${gradientId}-ganancia`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={colorGanancia} stopOpacity={0.32} />
+                <stop offset="100%" stopColor={colorGanancia} stopOpacity={0.03} />
+              </linearGradient>
+            </defs>
             <CartesianGrid horizontal vertical={false} stroke="#EFF1F5" />
             <XAxis
               dataKey="fecha"
@@ -169,7 +179,7 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
               stackId="portafolio"
               stroke="#C3CBD6"
               strokeWidth={1.4}
-              fill="#E4E8EF"
+              fill={`url(#${gradientId}-capital)`}
               isAnimationActive={false}
             />
             <Area
@@ -188,7 +198,7 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
               stroke={colorGanancia}
               strokeOpacity={0.55}
               strokeWidth={1}
-              fill={rellenoGanancia}
+              fill={`url(#${gradientId}-ganancia)`}
               isAnimationActive={false}
             />
             <Line

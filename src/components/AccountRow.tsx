@@ -83,7 +83,7 @@ export function AccountRow({
   const tipoLabel = TIPOS.find((t) => t.value === cuenta.tipo)?.label ?? cuenta.tipo;
 
   return (
-    <div className="acct-row border border-[#ECEEF2] rounded-xl px-[15px] py-[13px] transition-colors hover:border-[#DCE0E7] hover:bg-[#FCFCFD]">
+    <div className="acct-row border border-[#ECEEF2] rounded-xl px-[15px] py-[13px] transition-[transform,box-shadow,background-color,border-color] duration-300 ease-out hover:border-[#DCE0E7] hover:bg-[#FCFCFD] hover:[transform:translateY(-1px)] hover:shadow-[0_4px_16px_-6px_rgba(20,30,50,0.12)]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">

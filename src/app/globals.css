@@ -73,3 +73,28 @@ body {
   filter: blur(9px);
 }
 
+@keyframes skeletonPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* bloque generico de skeleton (loading.tsx) -- pulso de opacidad, no de
+   posicion/tamaño, para que sea barato de animar y no cause layout shift. */
+.skeleton {
+  background-color: #e9ebf0;
+  border-radius: 6px;
+  animation: skeletonPulse 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    opacity: 0.75;
+  }
+}
+

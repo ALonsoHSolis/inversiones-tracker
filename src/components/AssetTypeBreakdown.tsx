@@ -41,7 +41,7 @@ export function AssetTypeBreakdown({ tipos }: AssetTypeBreakdownProps) {
 
           return (
             <details key={t.nombre} className="group">
-              <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer">
+              <summary className="list-none [&::-webkit-details-marker]:hidden cursor-pointer -mx-2 px-2 py-1 rounded-lg transition-colors duration-200 ease-out hover:bg-[#FAFBFC]">
                 <div className="flex items-baseline justify-between gap-2.5">
                   <span className="text-[13px] font-medium text-[#2C333B]">{t.nombre}</span>
                   <span className="money-value font-mono-tabular text-[13px] font-semibold">
