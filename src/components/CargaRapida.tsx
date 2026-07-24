@@ -282,7 +282,13 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
           </p>
         </div>
         <label className="flex flex-col gap-1">
-          <span className="text-[11px] font-semibold text-[#6B7280]">Valor actual</span>
+          <span className="flex items-center gap-1">
+            <span className="text-[11px] font-semibold text-[#6B7280]">Valor actual</span>
+            <Ayuda>
+              Mientras más seguido registres el valor, más preciso es tu rendimiento semanal — los
+              saltos largos entre registros diluyen la comparación semana a semana.
+            </Ayuda>
+          </span>
           <InputMonto
             placeholder="0"
             className="h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"

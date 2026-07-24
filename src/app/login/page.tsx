@@ -33,7 +33,7 @@ export default async function LoginPage({
         <p className="text-[13px] text-[#8A929E]">
           ¿No tienes cuenta?{" "}
           <Link href="/signup" className="font-semibold text-[var(--accent)]">
-            Crea una
+            Crear cuenta gratis
           </Link>
         </p>
         <Link href="/recuperar-password" className="text-[13px] text-[#8A929E] border-b border-[#DADEE4]">

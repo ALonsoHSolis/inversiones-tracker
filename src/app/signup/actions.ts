@@ -12,6 +12,10 @@ export async function signup(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
+  if (password.length < 8) {
+    redirect(`/signup?error=${encodeURIComponent("la contraseña debe tener al menos 8 caracteres")}`);
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,

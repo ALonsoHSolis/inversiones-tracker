@@ -4,7 +4,7 @@ import { Logo } from "@/components/Logo";
 import { PublicFooter } from "@/components/PublicFooter";
 
 export const metadata: Metadata = {
-  title: "Mi portafolio — rendimiento real de tus inversiones",
+  title: "Mi portafolio — todas tus inversiones, con tu rendimiento real",
   description:
     "Consolida tus inversiones de distintas plataformas en pesos chilenos y descubre tu rendimiento real, sin confundir un aporte con una ganancia.",
 };
@@ -89,7 +89,7 @@ export default function LandingPage() {
               href="/signup"
               className="h-9 px-[15px] inline-flex items-center rounded-[9px] bg-[var(--accent)] text-white text-[13px] font-semibold no-underline"
             >
-              Crear cuenta
+              Crear cuenta gratis
             </Link>
           </div>
         </div>
@@ -103,10 +103,13 @@ export default function LandingPage() {
               Hecho para inversionistas en Chile
             </span>
             <h1 className="mt-5 font-semibold text-[40px] md:text-[46px] leading-[1.08] tracking-[-0.028em] max-w-[540px]">
-              Un aporte no es ganancia. Tu portafolio debería saber{" "}
-              <span className="text-[var(--accent)]">la diferencia</span>.
+              Todas tus inversiones, en un solo lugar{" "}
+              <span className="text-[var(--accent)]">y con tu ganancia real</span>, no con espejismos.
             </h1>
-            <p className="mt-5 text-[15px] md:text-base leading-[1.58] text-[#40474F] max-w-[500px]">
+            <p className="mt-3 text-[14px] font-semibold text-[#8A929E] max-w-[500px]">
+              Un aporte no es ganancia. Tu portafolio debería saber la diferencia.
+            </p>
+            <p className="mt-3 text-[15px] md:text-base leading-[1.58] text-[#40474F] max-w-[500px]">
               Mi portafolio junta tus cuentas de distintas plataformas, las consolida en pesos chilenos
               y calcula tu rendimiento real — descontando siempre lo que depositaste o retiraste, para
               que nunca confundas un aporte con una ganancia.
@@ -212,11 +215,34 @@ export default function LandingPage() {
                   {b.icon}
                 </svg>
               </div>
-              <p className="text-[14.5px] font-semibold">{b.titulo}</p>
+              <h3 className="text-[14.5px] font-semibold">{b.titulo}</h3>
               <p className="mt-2 text-[13px] text-[#6B7280] leading-relaxed">{b.texto}</p>
             </div>
           ))}
         </div>
+
+        <section className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-white border border-[#E7E9EE] rounded-2xl p-[22px]">
+            <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-[#8A929E]">
+              Funciona con tus cuentas donde sea que estén
+            </p>
+            <p className="mt-2.5 text-[13.5px] text-[#40474F] leading-relaxed">
+              No nos conectamos a ningún banco ni corredora — tú registras el valor que ves en tu
+              cuenta y nosotros calculamos. Por eso funciona igual con un banco, una corredora, un
+              fondo mutuo o una cuenta cripto: cualquier plataforma donde tengas plata invertida.
+            </p>
+          </div>
+          <div className="bg-white border border-[#E7E9EE] rounded-2xl p-[22px]">
+            <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-[#8A929E]">
+              Qué guardamos (y qué no)
+            </p>
+            <p className="mt-2.5 text-[13.5px] text-[#40474F] leading-relaxed">
+              Guardamos los valores y fechas que tú ingresas manualmente. Nunca te pedimos tus
+              claves bancarias ni nos conectamos a tu banco: no hay scraping ni acceso automático a
+              ninguna cuenta.
+            </p>
+          </div>
+        </section>
 
         <section className="mt-10">
           <div className="bg-[#171A20] rounded-[20px] p-10 flex items-center justify-between gap-6 flex-wrap">

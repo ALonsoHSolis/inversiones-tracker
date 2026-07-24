@@ -100,7 +100,7 @@ export default function ComoFuncionaPage() {
           href="/signup"
           className="inline-flex items-center h-11 px-6 rounded-[9px] bg-[var(--accent)] text-white text-[14px] font-semibold no-underline"
         >
-          crear cuenta gratis
+          Crear cuenta gratis
         </Link>
         <Link
           href="/login"

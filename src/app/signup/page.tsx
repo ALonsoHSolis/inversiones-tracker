@@ -26,7 +26,7 @@ export default async function SignupPage({
           <span className="text-[12.5px] font-semibold text-[#6B7280]">Email</span>
           <input type="email" name="email" placeholder="tucorreo@ejemplo.cl" required className={inputClass} />
         </label>
-        <PasswordInput name="password" placeholder="Mínimo 6 caracteres" minLength={6} />
+        <PasswordInput name="password" placeholder="Mínimo 8 caracteres" minLength={8} mostrarFortaleza />
         <label className="flex items-start gap-2.5 mt-0.5 cursor-pointer">
           <input
             type="checkbox"
