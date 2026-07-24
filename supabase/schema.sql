@@ -441,3 +441,20 @@ left join lateral (
 where c.activa = true
 group by f.fecha
 order by f.fecha;
+
+-- historial de recordatorios semanales enviados por el cron de retencion
+-- (src/app/api/cron/recordatorios) -- solo el cron (via service_role, que
+-- bypassea rls) inserta aca; el usuario solo puede leer su propio historial.
+create table recordatorios_enviados (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  fecha_envio timestamptz not null default now()
+);
+
+create index idx_recordatorios_enviados_user_fecha on recordatorios_enviados (user_id, fecha_envio desc);
+
+alter table recordatorios_enviados enable row level security;
+
+create policy "recordatorios propios (solo lectura)"
+  on recordatorios_enviados for select
+  using (auth.uid() = user_id);

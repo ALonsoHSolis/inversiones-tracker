@@ -26,8 +26,12 @@ export async function reenviarConfirmacion(formData: FormData) {
 
   const { error } = await supabase.auth.resend({ type: "signup", email });
 
+  // deliberado: mismo mensaje generico exista o no la cuenta, este confirmada
+  // o no, o falle el reenvio por otro motivo -- no distinguir el error real
+  // evita que alguien enumere que correos estan registrados (mismo criterio
+  // que recuperarPassword en src/app/recuperar-password/actions.ts).
   if (error) {
-    redirect(`/login?confirmError=${encodeURIComponent(error.message)}`);
+    console.error("resend signup error:", error.message);
   }
 
   redirect(

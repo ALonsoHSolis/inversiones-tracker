@@ -38,7 +38,13 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/login") ||
     path.startsWith("/signup") ||
     path.startsWith("/recuperar-password") ||
-    path.startsWith("/auth");
+    path.startsWith("/auth") ||
+    // el cron de vercel invoca este endpoint sin sesion de usuario (es un
+    // llamado servidor-a-servidor, no un navegador logueado) -- su propia
+    // autorizacion es el header CRON_SECRET, verificado dentro de la ruta,
+    // no la sesion. sin esta excepcion, el guard de abajo redirigiria la
+    // invocacion del cron a /login antes de que el handler se ejecute.
+    path.startsWith("/api/cron");
 
   if (!user && !esRutaPublica) {
     const url = request.nextUrl.clone();

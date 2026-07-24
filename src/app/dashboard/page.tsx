@@ -185,6 +185,10 @@ export default async function DashboardPage() {
               escríbenos
             </FeedbackLink>
             <div className="w-px h-[22px] bg-[#E1E4EA] mx-1" />
+            <Link href="/perfil" className="text-[11.5px] text-[#8A929E] border-b border-[#DADEE4]">
+              perfil
+            </Link>
+            <div className="w-px h-[22px] bg-[#E1E4EA] mx-1" />
             <div className="text-right leading-tight">
               <p className="text-[12.5px] font-medium text-[#40474F]">{user?.email}</p>
               <form action={logout}>

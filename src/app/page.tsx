@@ -103,8 +103,8 @@ export default function LandingPage() {
               Hecho para inversionistas en Chile
             </span>
             <h1 className="mt-5 font-semibold text-[40px] md:text-[46px] leading-[1.08] tracking-[-0.028em] max-w-[540px]">
-              Todas tus inversiones, en un solo lugar{" "}
-              <span className="text-[var(--accent)]">y con tu ganancia real</span>, no con espejismos.
+              Todas tus inversiones en un solo lugar, con{" "}
+              <span className="text-[var(--accent)]">tu ganancia real</span> — no con espejismos.
             </h1>
             <p className="mt-3 text-[14px] font-semibold text-[#8A929E] max-w-[500px]">
               Un aporte no es ganancia. Tu portafolio debería saber la diferencia.

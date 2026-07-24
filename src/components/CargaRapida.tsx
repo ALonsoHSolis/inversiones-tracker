@@ -239,7 +239,10 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
   if (cuentas.length === 0) return null;
 
   return (
-    <section className="bg-white border border-[#E7E9EE] rounded-2xl p-5 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
+    <section
+      id="carga-rapida"
+      className="bg-white border border-[#E7E9EE] rounded-2xl p-5 shadow-[0_1px_2px_rgba(20,30,50,0.03)] scroll-mt-6"
+    >
       <div className="flex items-center gap-1.5 mb-1">
         <p className="text-[13.5px] font-semibold">Carga rápida</p>
         <Ayuda>
