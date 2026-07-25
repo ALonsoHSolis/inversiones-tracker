@@ -11,6 +11,22 @@ import type { Moneda, TipoCuenta } from "@/types/database";
 
 const MONEDAS: Moneda[] = ["CLP", "USD", "UF"];
 
+// traduce errores tecnicos del rpc crear_cuenta_con_aporte_inicial (o de la
+// conexion) a mensajes entendibles -- antes se mostraba error.message crudo
+// (ej. mensajes de postgres sobre check constraints) directo al usuario.
+function mensajeErrorAmigable(mensaje: string): string {
+  const m = mensaje.toLowerCase();
+  if (m.includes("moneda")) return "la moneda seleccionada no es válida";
+  if (m.includes("tipo") && m.includes("check")) return "el tipo de cuenta seleccionado no es válido";
+  if (m.includes("monto_inicial") || (m.includes("monto") && m.includes("negativ"))) {
+    return "el monto inicial no puede ser negativo";
+  }
+  if (m.includes("fetch") || m.includes("network") || m.includes("failed to fetch")) {
+    return "no se pudo conectar — revisa tu conexión e intenta de nuevo";
+  }
+  return "no se pudo crear la cuenta. Intenta de nuevo o escríbenos si el problema persiste";
+}
+
 export function CuentaForm() {
   const router = useRouter();
 
@@ -98,7 +114,8 @@ export function CuentaForm() {
     setGuardando(false);
 
     if (error) {
-      setErrorGuardado(error.message);
+      console.error("crear_cuenta_con_aporte_inicial:", error.message);
+      setErrorGuardado(mensajeErrorAmigable(error.message));
       return;
     }
 
