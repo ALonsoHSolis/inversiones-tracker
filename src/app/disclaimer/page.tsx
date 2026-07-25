@@ -23,7 +23,7 @@ export default function DisclaimerPage() {
 
       <div className="max-w-[720px]">
         <h1 className="text-[28px] font-semibold tracking-[-0.02em]">Disclaimer financiero</h1>
-        <p className="mt-1 text-[12px] text-[#8A929E]">última actualización: [completar antes de publicar]</p>
+        <p className="mt-1 text-[12px] text-[#8A929E]">última actualización: 25-07-2026</p>
 
         <nav className="flex items-center gap-4 mt-4">
           <Link href="/terminos" className={`${legalNavClass} text-[#8A929E]`}>
@@ -73,7 +73,7 @@ export default function DisclaimerPage() {
         <h2 className="text-[15px] font-semibold mt-8 mb-2">5. Consulta a un profesional</h2>
         <p className="text-[13.5px] text-[#40474F] leading-relaxed">
           Antes de tomar decisiones de inversión, consulta a un asesor financiero, agente de valores u
-          otro profesional habilitado en <strong>[jurisdicción]</strong>.
+          otro profesional habilitado en <strong>Chile</strong>.
         </p>
 
         <h2 className="text-[15px] font-semibold mt-8 mb-2">6. Limitación de responsabilidad</h2>
