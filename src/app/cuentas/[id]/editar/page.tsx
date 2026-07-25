@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { EditarCuentaForm } from "@/components/EditarCuentaForm";
+import { Logo } from "@/components/Logo";
 
 export default async function EditarCuentaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -14,8 +16,15 @@ export default async function EditarCuentaPage({ params }: { params: Promise<{ i
   if (!cuenta) notFound();
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-10">
-      <h1 className="text-xl font-medium mb-6">editar cuenta</h1>
+    <main className="max-w-[560px] mx-auto px-6 pt-[26px] pb-16">
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <Logo />
+        <Link href="/dashboard" className="text-[12.5px] text-[#8A929E] border-b border-[#DADEE4]">
+          ← volver al dashboard
+        </Link>
+      </div>
+
+      <h1 className="text-[19px] font-semibold tracking-[-0.02em] mb-4">Editar cuenta</h1>
       <EditarCuentaForm cuenta={cuenta} />
     </main>
   );
