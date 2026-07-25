@@ -23,7 +23,7 @@ export default function PrivacidadPage() {
 
       <div className="max-w-[720px]">
         <h1 className="text-[28px] font-semibold tracking-[-0.02em]">Política de privacidad</h1>
-        <p className="mt-1 text-[12px] text-[#8A929E]">última actualización: [completar antes de publicar]</p>
+        <p className="mt-1 text-[12px] text-[#8A929E]">última actualización: 25-07-2026</p>
 
         <nav className="flex items-center gap-4 mt-4">
           <Link href="/terminos" className={`${legalNavClass} text-[#8A929E]`}>

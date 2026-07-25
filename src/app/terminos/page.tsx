@@ -23,7 +23,7 @@ export default function TerminosPage() {
 
       <div className="max-w-[720px]">
         <h1 className="text-[28px] font-semibold tracking-[-0.02em]">Términos y condiciones</h1>
-        <p className="mt-1 text-[12px] text-[#8A929E]">última actualización: [completar antes de publicar]</p>
+        <p className="mt-1 text-[12px] text-[#8A929E]">última actualización: 25-07-2026</p>
 
         <nav className="flex items-center gap-4 mt-4">
           <Link href="/terminos" className={`${legalNavClass} font-semibold text-[var(--accent)]`}>
@@ -95,7 +95,7 @@ export default function TerminosPage() {
 
         <h2 className="text-[15px] font-semibold mt-8 mb-2">7. Ley aplicable</h2>
         <p className="text-[13.5px] text-[#40474F] leading-relaxed">
-          Estos términos se rigen por las leyes de <strong>[jurisdicción, ej. la República de Chile]</strong>.
+          Estos términos se rigen por las leyes de <strong>la República de Chile</strong>.
           Cualquier disputa se resolverá ante los tribunales competentes de{" "}
           <strong>[ciudad / jurisdicción]</strong>.
         </p>
