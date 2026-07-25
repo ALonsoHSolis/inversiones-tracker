@@ -31,10 +31,37 @@ body {
 
 @keyframes drawLine {
   from {
-    stroke-dashoffset: 1400;
+    stroke-dashoffset: 1;
   }
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+/* linea del grafico del hero dibujandose progresivamente al cargar. usa el
+   truco de pathLength="1" en el <path> (ver src/app/page.tsx) para no tener
+   que calcular a mano el largo real de la curva -- con eso, stroke-dasharray
+   siempre puede ser "1" sin importar el path. */
+.hero-line-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: drawLine 1.4s 0.2s ease-out forwards;
+}
+
+.hero-line-dot {
+  opacity: 0;
+  animation: fadeUp 0.4s 1.5s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-line-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .hero-line-dot {
+    animation: none;
+    opacity: 1;
   }
 }
 

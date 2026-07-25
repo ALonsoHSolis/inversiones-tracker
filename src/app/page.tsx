@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { PublicFooter } from "@/components/PublicFooter";
+import { TrustFaq } from "@/components/TrustFaq";
 
 export const metadata: Metadata = {
   title: "Mi portafolio — todas tus inversiones, con tu rendimiento real",
@@ -57,6 +58,36 @@ const BENEFICIOS = [
       <>
         <path d="M3 17l5-6 4 3 4-7 5 6" />
         <path d="M3 21h18" />
+      </>
+    ),
+  },
+];
+
+const PASOS = [
+  {
+    titulo: "Agrega tus cuentas y su valor actual",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 8v8M8 12h8" />
+      </>
+    ),
+  },
+  {
+    titulo: "Actualiza el valor cuando quieras",
+    icon: (
+      <>
+        <path d="M4 20h4l10-10-4-4L4 16v4z" />
+        <path d="M13 7l4 4" />
+      </>
+    ),
+  },
+  {
+    titulo: "Mira tu ganancia real vs. el mercado",
+    icon: (
+      <>
+        <path d="M4 17l4-5 3 3 6-8" />
+        <path d="M4 21h16" />
       </>
     ),
   },
@@ -136,7 +167,7 @@ export default function LandingPage() {
             </div>
             <Link
               href="/como-funciona"
-              className="inline-block mt-5 text-[12.5px] text-[#8A929E] border-b border-[#DADEE4]"
+              className="inline-block mt-5 text-[12.5px] font-medium text-[#0B7A54] border-b border-[#0B7A54]/30"
             >
               Ver un ejemplo de cómo se calcula →
             </Link>
@@ -186,32 +217,48 @@ export default function LandingPage() {
                   stroke="var(--accent)"
                   strokeWidth="2.2"
                   strokeLinecap="round"
+                  pathLength="1"
+                  className="hero-line-draw"
                 />
-                <circle cx="300" cy="30" r="4" fill="#fff" stroke="var(--accent)" strokeWidth="2.2" />
+                <circle
+                  cx="300"
+                  cy="30"
+                  r="4"
+                  fill="#fff"
+                  stroke="var(--accent)"
+                  strokeWidth="2.2"
+                  className="hero-line-dot"
+                />
               </svg>
-              <div className="flex gap-4 mt-3.5">
-                <span className="inline-flex items-center gap-1.5 text-[11px] text-[#6B7280] font-medium">
-                  <span className="w-[9px] h-[9px] rounded-[3px] bg-[#E4E8EF] border border-[#C3CBD6]" />
-                  Capital aportado
-                </span>
-                <span className="inline-flex items-center gap-1.5 text-[11px] text-[#6B7280] font-medium">
-                  <span className="w-[9px] h-[9px] rounded-[3px] bg-[rgba(11,122,84,0.3)]" />
-                  Ganancia real
-                </span>
+              <div className="flex items-center justify-between gap-3 mt-3.5 flex-wrap">
+                <div className="flex gap-4">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] text-[#6B7280] font-medium">
+                    <span className="w-[9px] h-[9px] rounded-[3px] bg-[#E4E8EF] border border-[#C3CBD6]" />
+                    Capital aportado
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-[11px] text-[#6B7280] font-medium">
+                    <span className="w-[9px] h-[9px] rounded-[3px] bg-[rgba(11,122,84,0.3)]" />
+                    Ganancia real
+                  </span>
+                </div>
+                <div className="bg-[#171A20] rounded-[10px] px-3 py-1.5 text-right">
+                  <p className="text-[9.5px] text-[#AEB5C0] leading-none">Ganancia real (no aportes)</p>
+                  <p className="font-mono-tabular mt-[3px] text-[13px] font-semibold text-[#46C99A] leading-none">
+                    +$1.591.080
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="absolute -bottom-[18px] -left-5 bg-[#171A20] text-white rounded-[13px] px-[15px] py-[11px] shadow-[0_14px_32px_-12px_rgba(20,30,50,0.5)]">
-              <p className="text-[10.5px] text-[#AEB5C0]">Ganancia real (no aportes)</p>
-              <p className="font-mono-tabular mt-[3px] text-[15px] font-semibold text-[#46C99A]">+$1.591.080</p>
             </div>
           </div>
         </section>
+
+        <TrustFaq />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
           {BENEFICIOS.map((b) => (
             <div
               key={b.titulo}
-              className="bg-white border border-[#E7E9EE] rounded-2xl p-[22px] shadow-[0_1px_2px_rgba(20,30,50,0.03)]"
+              className="bg-white border border-[#E7E9EE] border-t-[3px] border-t-[#0B7A54] rounded-2xl p-[22px] shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_18px_rgba(0,0,0,0.10)] transition-shadow duration-200"
             >
               <div
                 className="w-10 h-10 rounded-[11px] flex items-center justify-center mb-3.5"
@@ -226,6 +273,36 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
+
+        <div className="text-center mt-5">
+          <Link
+            href="/calculadora"
+            className="text-[13px] font-medium text-[#40474F] border-b border-[#DADEE4]"
+          >
+            Prueba la calculadora sin crear cuenta →
+          </Link>
+        </div>
+
+        <section className="mt-10">
+          <h2 className="text-[22px] font-semibold tracking-[-0.01em] text-center">Cómo empezar</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            {PASOS.map((paso, i) => (
+              <div key={paso.titulo} className="bg-white border border-[#E7E9EE] rounded-2xl p-5">
+                <p className="font-mono-tabular text-[36px] font-bold text-[#E7E9EE] leading-none">
+                  {String(i + 1).padStart(2, "0")}
+                </p>
+                <div className="mt-2.5 flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-[9px] bg-[#EAF1F8] flex items-center justify-center shrink-0">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2A5F94" strokeWidth="1.8">
+                      {paso.icon}
+                    </svg>
+                  </div>
+                  <p className="text-[13.5px] font-semibold">{paso.titulo}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white border border-[#E7E9EE] rounded-2xl p-[22px]">
