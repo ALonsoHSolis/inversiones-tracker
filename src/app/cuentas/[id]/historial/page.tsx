@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { HistorialForm } from "@/components/HistorialForm";
+import { Logo } from "@/components/Logo";
 import type { TipoMovimiento } from "@/types/database";
 
 export default async function HistorialCuentaPage({ params }: { params: Promise<{ id: string }> }) {
@@ -38,9 +40,16 @@ export default async function HistorialCuentaPage({ params }: { params: Promise<
   });
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-10">
-      <h1 className="text-xl font-medium mb-1">historial</h1>
-      <p className="text-sm text-gray-500 mb-6">{cuenta.nombre}</p>
+    <main className="max-w-[560px] mx-auto px-6 pt-[26px] pb-16">
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <Logo />
+        <Link href="/dashboard" className="text-[12.5px] text-[#8A929E] border-b border-[#DADEE4]">
+          ← volver al dashboard
+        </Link>
+      </div>
+
+      <h1 className="text-[19px] font-semibold tracking-[-0.02em] mb-1">Historial</h1>
+      <p className="text-[13px] text-[#8A929E] mb-6">{cuenta.nombre}</p>
       <HistorialForm cuenta={cuenta} filas={filas} />
     </main>
   );

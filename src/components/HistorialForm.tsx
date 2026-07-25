@@ -79,6 +79,19 @@ function estimarRendimientoPct(
   return (gananciaReal / base) * 100;
 }
 
+// nunca mostrar error.message crudo de postgres/supabase -- mismo criterio
+// ya aplicado en CuentaForm/EditarCuentaForm/CuentasInactivas.
+function mensajeErrorAmigable(mensaje: string): string {
+  const m = mensaje.toLowerCase();
+  if (m.includes("fetch") || m.includes("network") || m.includes("failed to fetch")) {
+    return "no se pudo conectar — revisa tu conexión e intenta de nuevo";
+  }
+  return "no se pudo guardar. Intenta de nuevo o escríbenos si el problema persiste";
+}
+
+const inputClass =
+  "h-9 px-2.5 rounded-[8px] border border-[#DFE2E8] text-right text-[13px] font-mono-tabular bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+
 export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
   const [estados, setEstados] = useState<Record<string, FilaState>>(() =>
     Object.fromEntries(filas.map((f) => [f.snapshotId, filaInicial(f)]))
@@ -177,7 +190,8 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
     });
 
     if (error) {
-      actualizarFila(fila.snapshotId, { guardando: false, resultado: error.message });
+      console.error("guardar_snapshot_con_movimiento:", error.message);
+      actualizarFila(fila.snapshotId, { guardando: false, resultado: mensajeErrorAmigable(error.message) });
       return;
     }
     actualizarFila(fila.snapshotId, { guardando: false, resultado: "ok" });
@@ -185,48 +199,52 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
 
   if (filas.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 p-4">
-        <p className="text-sm text-gray-500">todavia no hay historial para esta cuenta.</p>
+      <div className="bg-white border border-[#E7E9EE] rounded-2xl p-6">
+        <p className="text-[13.5px] text-[#8A929E]">todavía no hay historial para esta cuenta.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2.5">
       {filas.map((fila) => {
         const estado = estados[fila.snapshotId];
         return (
-          <div key={fila.snapshotId} className="rounded-lg border border-gray-200 p-3">
-            <p className="text-xs text-gray-500 mb-2">{formatoFecha(fila.fecha)}</p>
+          <div
+            key={fila.snapshotId}
+            className="bg-white border border-[#E7E9EE] rounded-2xl p-4 shadow-[0_1px_2px_rgba(20,30,50,0.03)]"
+          >
+            <p className="text-[11px] text-[#8A929E] font-mono-tabular mb-2">{formatoFecha(fila.fecha)}</p>
 
-            <div className="flex items-center justify-between gap-3 text-sm">
-              <span className="text-gray-600">valor</span>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[12.5px] font-semibold text-[#6B7280]">valor</span>
               <InputMonto
-                className="w-32 rounded border border-gray-300 px-2 py-1 text-right"
+                className={`w-32 ${inputClass}`}
                 value={estado.valor}
                 onChange={(valor) => actualizarFila(fila.snapshotId, { valor, valorEditadoManualmente: true })}
               />
             </div>
 
             {cuenta.moneda !== "CLP" && (
-              <div className="mt-2 flex items-center justify-between gap-3 text-sm">
-                <span className="text-xs text-gray-500">tasa de cambio</span>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                <span className="text-[11.5px] text-[#8A929E]">tasa de cambio</span>
                 <input
                   type="number"
                   inputMode="decimal"
                   step="0.01"
-                  className="w-32 rounded border border-gray-300 px-2 py-1 text-right"
+                  className={`w-32 ${inputClass}`}
                   value={estado.tasaCambio}
                   onChange={(e) => actualizarFila(fila.snapshotId, { tasaCambio: e.target.value })}
                 />
               </div>
             )}
 
-            <label className="mt-2 flex items-center gap-2 text-xs text-gray-600">
+            <label className="mt-2.5 flex items-center gap-2 text-[12px] text-[#6B7280] cursor-pointer">
               <input
                 type="checkbox"
                 checked={estado.incluyeMovimiento}
                 onChange={(e) => actualizarMovimiento(fila, { incluyeMovimiento: e.target.checked })}
+                className="w-[15px] h-[15px] accent-[var(--accent)]"
               />
               esto incluye un aporte o retiro
             </label>
@@ -238,14 +256,14 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                   onChange={(e) =>
                     actualizarMovimiento(fila, { movimientoTipo: e.target.value as TipoMovimiento })
                   }
-                  className="rounded border border-gray-300 px-2 py-1 text-sm bg-white"
+                  className="h-9 px-2 rounded-[8px] border border-[#DFE2E8] text-[13px] bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
                 >
                   <option value="aporte">aporte</option>
                   <option value="retiro">retiro</option>
                 </select>
                 <InputMonto
                   placeholder="monto"
-                  className="flex-1 rounded border border-gray-300 px-2 py-1 text-right text-sm"
+                  className={`flex-1 min-w-[100px] ${inputClass}`}
                   value={estado.movimientoMonto}
                   onChange={(movimientoMonto) => actualizarMovimiento(fila, { movimientoMonto })}
                 />
@@ -255,14 +273,18 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
             <button
               onClick={() => guardarFila(fila)}
               disabled={estado.guardando}
-              className="mt-3 w-full rounded bg-gray-900 text-white text-sm py-1.5 disabled:opacity-50"
+              className="mt-3 h-9 w-full rounded-[8px] bg-[var(--accent)] text-white text-[13px] font-semibold disabled:opacity-50"
             >
               {estado.guardando ? "guardando..." : "guardar"}
             </button>
 
-            {estado.resultado === "ok" && <p className="mt-2 text-xs text-green-700">guardado</p>}
+            {estado.resultado === "ok" && (
+              <p className="mt-2 text-[12px] font-medium" style={{ color: "var(--pos)" }}>
+                guardado
+              </p>
+            )}
             {estado.resultado && estado.resultado !== "ok" && (
-              <p className="mt-2 text-xs text-red-700">{estado.resultado}</p>
+              <p className="mt-2 text-[12px] text-red-700">{estado.resultado}</p>
             )}
           </div>
         );
