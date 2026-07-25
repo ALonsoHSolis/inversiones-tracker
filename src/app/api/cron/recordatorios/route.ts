@@ -54,7 +54,18 @@ export async function GET(request: NextRequest) {
     const { data, error: errorUser } = await supabase.auth.admin.getUserById(userId);
     const usuario = data?.user;
 
-    if (errorUser || !usuario?.email || usuario.user_metadata?.recordatorios_activos === false) {
+    if (errorUser) {
+      console.error(`recordatorios: getUserById fallo para ${userId}:`, errorUser.message);
+      omitidos++;
+      continue;
+    }
+    if (!usuario?.email) {
+      console.error(`recordatorios: usuario ${userId} sin email`);
+      omitidos++;
+      continue;
+    }
+    if (usuario.user_metadata?.recordatorios_activos === false) {
+      console.log(`recordatorios: ${userId} hizo opt-out, se omite`);
       omitidos++;
       continue;
     }
@@ -67,6 +78,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (errorEnvio) {
+      console.error(`recordatorios: resend fallo para ${usuario.email}:`, errorEnvio.message);
       omitidos++;
       continue;
     }
