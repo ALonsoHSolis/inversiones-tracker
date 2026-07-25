@@ -6,6 +6,12 @@ export function PublicFooter() {
     <footer className="flex items-center justify-between gap-4 mt-10 pt-6 border-t border-[#E7E9EE]">
       <p className="text-[11.5px] text-[#B4BAC3]">Mi portafolio</p>
       <div className="flex items-center gap-4">
+        <Link href="/calculadora" className="text-[12.5px] text-[#8A929E] no-underline">
+          calculadora
+        </Link>
+        <Link href="/blog" className="text-[12.5px] text-[#8A929E] no-underline">
+          blog
+        </Link>
         <Link href="/terminos" className="text-[12.5px] text-[#8A929E] no-underline">
           términos
         </Link>

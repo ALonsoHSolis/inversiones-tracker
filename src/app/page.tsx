@@ -80,6 +80,12 @@ export default function LandingPage() {
               Cómo funciona
             </Link>
             <Link
+              href="/calculadora"
+              className="h-9 px-3 inline-flex items-center text-[13px] font-medium text-[#40474F] no-underline"
+            >
+              Calculadora
+            </Link>
+            <Link
               href="/login"
               className="h-9 px-3.5 inline-flex items-center text-[13px] font-medium text-[#40474F] no-underline"
             >
