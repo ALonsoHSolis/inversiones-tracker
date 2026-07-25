@@ -40,7 +40,7 @@ export function CalculadoraForm() {
 
       <div className="flex flex-col gap-1 mt-3">
         <span className="text-[11px] font-semibold text-[#6B7280]">Aportes / retiros</span>
-        <div className="flex gap-1.5">
+        <div className="flex flex-wrap gap-1.5">
           <div className="flex rounded-[10px] border border-[#DFE2E8] overflow-hidden shrink-0">
             <button
               type="button"
@@ -65,7 +65,7 @@ export function CalculadoraForm() {
             value={montoMovimiento}
             onChange={setMontoMovimiento}
             placeholder="0"
-            className={`${inputClass} flex-1 min-w-0`}
+            className={`${inputClass} flex-1 min-w-[140px]`}
           />
         </div>
       </div>

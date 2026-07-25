@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { calcularEfectoTipoCambio, calcularRendimientoAnualizado } from "@/lib/rendimiento";
-import { formatoPct } from "@/lib/formato";
+import { formatoPct, formatoPesos } from "@/lib/formato";
 import { TIPOS } from "@/lib/tipos-cuenta";
 import type { Cuenta, Moneda, RendimientoActual } from "@/types/database";
 
@@ -14,6 +14,12 @@ interface AccountRowProps {
   // una cuenta que sí tiene un valor, solo que todavía no tiene con qué
   // compararlo.
   valorActualFallback: number | null;
+  // valor_actual_clp de capital_por_cuenta -- ya convertido con la tasa
+  // historica correspondiente (regla de negocio: nunca recalcular esto en
+  // el cliente con la tasa de hoy). se usa para mostrar el valor de la fila
+  // siempre en CLP, igual que el resto del portafolio -- el % de rendimiento
+  // mas abajo sigue en moneda nativa, esa es la unica excepcion permitida.
+  valorClpFallback: number | null;
   // capital_aportado de capital_por_cuenta (moneda nativa): junto con
   // cuenta.created_at, permite estimar el rendimiento anualizado acumulado.
   capitalAportadoFallback: number | null;
@@ -52,10 +58,12 @@ export function AccountRow({
   cuenta,
   rendimiento,
   valorActualFallback,
+  valorClpFallback,
   capitalAportadoFallback,
   ultimaFechaFallback,
 }: AccountRowProps) {
   const valor = rendimiento?.valor ?? valorActualFallback;
+  const valorClp = rendimiento?.valor_clp ?? valorClpFallback;
   const tieneAporte = (rendimiento?.aportes_netos ?? 0) !== 0;
 
   // >14 dias (dos semanas) sin actualizar, no >=, para no marcar como
@@ -123,7 +131,7 @@ export function AccountRow({
         </div>
         <div className="text-right whitespace-nowrap">
           <p className="money-value font-mono-tabular text-sm font-semibold">
-            {valor != null ? formatoValor(valor, cuenta.moneda as Moneda) : "sin datos aún"}
+            {valorClp != null ? formatoPesos(valorClp) : "sin datos aún"}
           </p>
           {rendimiento?.rendimiento_pct != null && (
             <p
