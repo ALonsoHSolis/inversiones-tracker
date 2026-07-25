@@ -6,6 +6,7 @@ import { SiteNav } from "@/components/SiteNav";
 export const metadata: Metadata = {
   title: "Cómo funciona — Mi portafolio",
   description: "Un ejemplo con números: por qué depositar plata no siempre significa que ganaste plata.",
+  alternates: { canonical: "/como-funciona" },
 };
 
 export default function ComoFuncionaPage() {

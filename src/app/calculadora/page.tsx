@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Calculadora de rendimiento real de inversiones — Mi portafolio",
   description:
     "Calcula gratis cuánto ganaste realmente en una inversión, descontando los aportes y retiros que hiciste. Sin registro, sin conectar tu banco.",
+  alternates: { canonical: "/calculadora" },
 };
 
 export default function CalculadoraPage() {

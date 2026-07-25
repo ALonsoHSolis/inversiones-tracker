@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Mi portafolio — todas tus inversiones, con tu rendimiento real",
   description:
     "Consolida tus inversiones de distintas plataformas en pesos chilenos y descubre tu rendimiento real, sin confundir un aporte con una ganancia.",
+  alternates: { canonical: "/" },
 };
 
 // datos estructurados para google: FAQPage (misma fuente que TrustFaq, sin

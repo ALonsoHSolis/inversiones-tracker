@@ -7,6 +7,7 @@ import { PublicFooter } from "@/components/PublicFooter";
 export const metadata: Metadata = {
   title: "Disclaimer financiero — Mi portafolio",
   description: "Mi portafolio no es asesoría financiera — el alcance real de sus cálculos.",
+  alternates: { canonical: "/disclaimer" },
 };
 
 const legalNavClass = "text-[12.5px] no-underline";

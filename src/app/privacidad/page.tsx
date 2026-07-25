@@ -7,6 +7,7 @@ import { PublicFooter } from "@/components/PublicFooter";
 export const metadata: Metadata = {
   title: "Política de privacidad — Mi portafolio",
   description: "Qué datos recopila Mi portafolio y cómo los protege.",
+  alternates: { canonical: "/privacidad" },
 };
 
 const legalNavClass = "text-[12.5px] no-underline";

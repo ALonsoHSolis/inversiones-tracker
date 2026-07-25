@@ -7,6 +7,7 @@ import { PublicFooter } from "@/components/PublicFooter";
 export const metadata: Metadata = {
   title: "Términos y condiciones — Mi portafolio",
   description: "Términos y condiciones de uso de Mi portafolio.",
+  alternates: { canonical: "/terminos" },
 };
 
 const legalNavClass = "text-[12.5px] no-underline";

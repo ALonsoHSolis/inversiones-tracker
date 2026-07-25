@@ -7,6 +7,7 @@ import { getAllPosts } from "@/lib/blog";
 export const metadata: Metadata = {
   title: "Blog — Mi portafolio",
   description: "Artículos sobre cómo medir el rendimiento real de tus inversiones en Chile.",
+  alternates: { canonical: "/blog" },
 };
 
 function formatoFecha(fechaIso: string) {
