@@ -14,16 +14,18 @@ export default function Error({
   }, [error]);
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-16">
-      <h1 className="text-xl font-medium mb-3">algo salio mal</h1>
-      <p className="text-sm text-gray-500 mb-6">no se pudo cargar la pagina. intenta de nuevo.</p>
-      <button
-        type="button"
-        onClick={() => reset()}
-        className="w-full rounded bg-gray-900 text-white text-sm py-2"
-      >
-        reintentar
-      </button>
+    <main className="max-w-[420px] mx-auto px-6 py-16">
+      <div className="bg-white border border-[#E7E9EE] rounded-2xl p-6 text-center">
+        <h1 className="text-[19px] font-semibold tracking-[-0.02em]">algo salió mal</h1>
+        <p className="mt-2 text-[13.5px] text-[#8A929E]">no se pudo cargar la página. Intenta de nuevo.</p>
+        <button
+          type="button"
+          onClick={() => reset()}
+          className="mt-5 h-11 w-full rounded-[10px] bg-[var(--accent)] text-white text-[14px] font-semibold"
+        >
+          reintentar
+        </button>
+      </div>
     </main>
   );
 }
