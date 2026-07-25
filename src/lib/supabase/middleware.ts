@@ -35,6 +35,8 @@ export async function updateSession(request: NextRequest) {
     path === "/terminos" ||
     path === "/privacidad" ||
     path === "/disclaimer" ||
+    path === "/robots.txt" ||
+    path === "/sitemap.xml" ||
     path.startsWith("/login") ||
     path.startsWith("/signup") ||
     path.startsWith("/recuperar-password") ||
