@@ -98,3 +98,72 @@ body {
   }
 }
 
+/* estilos minimos para el html que genera marked (src/lib/blog.ts) a partir
+   de los .md del blog -- tailwind resetea headings/listas/parrafos por
+   defecto, asi que sin esto el contenido markdown se ve sin espaciado ni
+   jerarquia. no se agrego @tailwindcss/typography para esto (dependencia
+   nueva no aprobada), estas reglas cubren lo que un post normal necesita. */
+.contenido-post h2 {
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #171a20;
+}
+
+.contenido-post h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.4rem;
+  font-size: 15px;
+  font-weight: 600;
+  color: #171a20;
+}
+
+.contenido-post p {
+  margin-top: 0.75rem;
+}
+
+.contenido-post ul,
+.contenido-post ol {
+  margin-top: 0.75rem;
+  padding-left: 1.25rem;
+}
+
+.contenido-post ul {
+  list-style-type: disc;
+}
+
+.contenido-post ol {
+  list-style-type: decimal;
+}
+
+.contenido-post li {
+  margin-top: 0.3rem;
+}
+
+.contenido-post a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contenido-post strong {
+  font-weight: 600;
+  color: #171a20;
+}
+
+.contenido-post blockquote {
+  margin-top: 0.75rem;
+  padding-left: 1rem;
+  border-left: 3px solid #e1e4ea;
+  color: #6b7280;
+}
+
+.contenido-post code {
+  background: #f2f3f6;
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.9em;
+}
+
