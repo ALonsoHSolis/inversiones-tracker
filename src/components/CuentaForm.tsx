@@ -74,7 +74,6 @@ export function CuentaForm() {
     }
 
     cargarTasa(moneda);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moneda]);
 
   function editarTasaManualmente(valor: number | null) {
