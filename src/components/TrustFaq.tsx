@@ -1,4 +1,4 @@
-const PREGUNTAS = [
+export const PREGUNTAS = [
   {
     pregunta: "¿Pueden ver mi plata?",
     respuesta:

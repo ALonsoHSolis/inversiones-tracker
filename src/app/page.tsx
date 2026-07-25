@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicFooter } from "@/components/PublicFooter";
-import { TrustFaq } from "@/components/TrustFaq";
+import { TrustFaq, PREGUNTAS } from "@/components/TrustFaq";
 import { SiteNav } from "@/components/SiteNav";
 
 export const metadata: Metadata = {
@@ -9,6 +9,34 @@ export const metadata: Metadata = {
   description:
     "Consolida tus inversiones de distintas plataformas en pesos chilenos y descubre tu rendimiento real, sin confundir un aporte con una ganancia.",
 };
+
+// datos estructurados para google: FAQPage (misma fuente que TrustFaq, sin
+// duplicar contenido) habilita rich snippets de preguntas frecuentes en el
+// buscador; SoftwareApplication describe el producto en si.
+function jsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        name: "Mi portafolio",
+        applicationCategory: "FinanceApplication",
+        operatingSystem: "Web",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "CLP" },
+        description:
+          "Consolida inversiones de distintas plataformas en pesos chilenos y calcula el rendimiento real, descontando aportes y retiros.",
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: PREGUNTAS.map((p) => ({
+          "@type": "Question",
+          name: p.pregunta,
+          acceptedAnswer: { "@type": "Answer", text: p.respuesta },
+        })),
+      },
+    ],
+  };
+}
 
 const BENEFICIOS = [
   {
@@ -96,6 +124,7 @@ const PASOS = [
 export default function LandingPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd()) }} />
       <SiteNav />
 
       <main className="max-w-[1160px] mx-auto px-6 pt-9 pb-16">
