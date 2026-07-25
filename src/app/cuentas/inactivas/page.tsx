@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { CuentasInactivas } from "@/components/CuentasInactivas";
+import { Logo } from "@/components/Logo";
 
 export default async function CuentasInactivasPage() {
   const supabase = await createClient();
@@ -11,10 +13,17 @@ export default async function CuentasInactivasPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-10">
-      <h1 className="text-xl font-medium mb-1">cuentas dadas de baja</h1>
-      <p className="text-sm text-gray-500 mb-6">
-        no aparecen en tu portafolio, pero su historial sigue guardado. reactívalas cuando quieras.
+    <main className="max-w-[560px] mx-auto px-6 pt-[26px] pb-16">
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <Logo />
+        <Link href="/dashboard" className="text-[12.5px] text-[#8A929E] border-b border-[#DADEE4]">
+          ← volver al dashboard
+        </Link>
+      </div>
+
+      <h1 className="text-[19px] font-semibold tracking-[-0.02em] mb-1">Cuentas dadas de baja</h1>
+      <p className="text-[13px] text-[#8A929E] mb-6">
+        no aparecen en tu portafolio, pero su historial sigue guardado. Reactívalas cuando quieras.
       </p>
       <CuentasInactivas cuentas={cuentas ?? []} />
     </main>
