@@ -57,3 +57,36 @@ Orientación: releído `CLAUDE.md` completo y `git log` reciente (15 commits, wo
 - **Cambio**: solo presentación, mismo sistema visual del resto del sitio. `reset()`/`console.error` sin tocar.
 - **Build**: verde. Lint: mismos 5 problemas pre-existentes.
 - **Commit**: `3c35bae`
+
+### Nota — LOOP_LOG.md y SUGERENCIAS.md sin comitear
+Se detectó que ambos archivos quedaron sin `git add` en los commits anteriores (solo se comiteaba el código). Corregido en commit `6f9059e`.
+
+### Ítem 9 — Auditoría de contraste (documentado, no aplicado)
+- **Qué/por qué**: revisión de accesibilidad de color, mencionado en el menú de candidatos. Calculé el contraste WCAG de `#8A929E` (gris secundario usado extensivamente en todo el sitio) contra blanco: ~3.3:1, por debajo del 4.5:1 requerido para texto normal.
+- **Por qué no se aplicó**: cambiar este color afecta visualmente casi todas las páginas a la vez — calza directo en "reformateo global", explícitamente fuera de alcance de esta sesión conservadora, y no puedo verificarlo visualmente sin credenciales reales.
+- **Acción**: documentado en `SUGERENCIAS.md` con el cálculo exacto y opciones de remediación.
+- **Commit**: `fbaf32c`
+
+---
+
+## Cierre de la sesión
+
+**Estado final:** working tree limpio, `npm run build` verde, `npm run lint` con los mismos 5 hallazgos pre-existentes documentados (sin relación con los cambios de esta sesión), todo commiteado y pusheado a `origin/main`.
+
+**Commits de esta sesión (10, en orden):**
+1. `5e3e173` — mensajes de error amigables en CuentaForm
+2. `8d7e85c` — consistencia visual de CuentaForm/agregar cuenta
+3. `b886865` — consistencia visual + errores de EditarCuentaForm
+4. `a173eed` — consistencia visual + errores de CuentasInactivas
+5. `c613b2c` — consistencia visual + errores de HistorialForm (RPC sensible)
+6. `7d7af17` — canonical URLs en todas las páginas públicas
+7. `3845b98` — loading.tsx movido a /dashboard, fallback genérico en la raíz
+8. `3c35bae` — estilo del error boundary global
+9. `6f9059e` — LOOP_LOG.md y SUGERENCIAS.md (que habían quedado sin comitear)
+10. `fbaf32c` — documentación del hallazgo de contraste
+
+**Hallazgo más significativo:** todo el grupo de páginas de gestión de cuentas (`/cuentas/nueva`, `/cuentas/[id]/editar`, `/cuentas/[id]/historial`, `/cuentas/inactivas`) nunca había recibido el pase de diseño visual que sí tuvo el resto de la app, y mostraba errores crudos de Postgres al usuario — incluyendo el RPC con historial de incidentes de pérdida de datos. Resuelto en su totalidad.
+
+**Segundo hallazgo relevante:** el skeleton de carga del dashboard vivía en la raíz de `src/app/`, actuando como fallback engañoso para cualquier otra ruta del sitio.
+
+**Pendiente para el usuario (ver SUGERENCIAS.md):** contraste de `#8A929E` (requiere revisión visual antes de aplicar) y la decisión ya conocida sobre `next/image` vs. la vulnerabilidad de `sharp`.
