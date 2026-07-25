@@ -5,11 +5,16 @@ import { useRouter } from "next/navigation";
 import { track } from "@vercel/analytics";
 import { createClient } from "@/lib/supabase/client";
 import { obtenerTasaCambio } from "@/lib/mindicador";
+import { InputMonto } from "@/components/InputMonto";
 import { TIPOS } from "@/lib/tipos-cuenta";
 import { formatoFecha } from "@/lib/formato";
 import type { Moneda, TipoCuenta } from "@/types/database";
 
 const MONEDAS: Moneda[] = ["CLP", "USD", "UF"];
+
+const inputClass =
+  "h-11 px-3 rounded-[10px] border border-[#DFE2E8] text-[14px] text-[#171A20] bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+const labelClass = "text-[11px] font-semibold text-[#6B7280]";
 
 // traduce errores tecnicos del rpc crear_cuenta_con_aporte_inicial (o de la
 // conexion) a mensajes entendibles -- antes se mostraba error.message crudo
@@ -125,36 +130,36 @@ export function CuentaForm() {
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 p-4">
-      <div className="flex flex-col gap-3">
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-gray-600">nombre</span>
+    <div className="bg-white border border-[#E7E9EE] rounded-2xl p-6 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
+      <div className="flex flex-col gap-[15px]">
+        <label className="flex flex-col gap-[7px]">
+          <span className={labelClass}>nombre</span>
           <input
             type="text"
             required
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className={inputClass}
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-gray-600">plataforma</span>
+        <label className="flex flex-col gap-[7px]">
+          <span className={labelClass}>plataforma</span>
           <input
             type="text"
             required
             value={plataforma}
             onChange={(e) => setPlataforma(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            className={inputClass}
           />
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-gray-600">tipo</span>
+        <label className="flex flex-col gap-[7px]">
+          <span className={labelClass}>tipo</span>
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value as TipoCuenta)}
-            className="rounded border border-gray-300 px-3 py-2 bg-white"
+            className={`${inputClass} bg-white`}
           >
             {TIPOS.map((t) => (
               <option key={t.value} value={t.value}>
@@ -164,12 +169,12 @@ export function CuentaForm() {
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-gray-600">moneda</span>
+        <label className="flex flex-col gap-[7px]">
+          <span className={labelClass}>moneda</span>
           <select
             value={moneda}
             onChange={(e) => setMoneda(e.target.value as Moneda)}
-            className="rounded border border-gray-300 px-3 py-2 bg-white"
+            className={`${inputClass} bg-white`}
           >
             {MONEDAS.map((m) => (
               <option key={m} value={m}>
@@ -179,22 +184,19 @@ export function CuentaForm() {
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-gray-600">monto inicial</span>
-          <input
-            type="number"
-            inputMode="decimal"
-            min={0}
-            required
+        <label className="flex flex-col gap-[7px]">
+          <span className={labelClass}>monto inicial</span>
+          <InputMonto
             value={montoInicial}
-            onChange={(e) => setMontoInicial(e.target.value)}
-            className="rounded border border-gray-300 px-3 py-2"
+            onChange={setMontoInicial}
+            placeholder="0"
+            className={`${inputClass} text-right font-mono-tabular`}
           />
         </label>
 
         {moneda !== "CLP" && (
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="text-gray-600">tasa de cambio</span>
+          <label className="flex flex-col gap-[7px]">
+            <span className={labelClass}>tasa de cambio</span>
             <input
               type="number"
               inputMode="decimal"
@@ -203,16 +205,18 @@ export function CuentaForm() {
               onChange={(e) =>
                 editarTasaManualmente(e.target.value ? Number(e.target.value) : null)
               }
-              className="rounded border border-gray-300 px-3 py-2"
+              className={`${inputClass} text-right font-mono-tabular`}
             />
-            {cargandoTasa && <span className="text-xs text-gray-500">buscando tasa en mindicador.cl...</span>}
+            {cargandoTasa && (
+              <span className="text-[11.5px] text-[#8A929E]">buscando tasa en mindicador.cl...</span>
+            )}
             {!cargandoTasa && tasaFecha && (
-              <span className="text-xs text-gray-500">
-                segun Banco Central, {formatoFecha(tasaFecha)}
+              <span className="text-[11.5px] text-[#8A929E]">
+                según Banco Central, {formatoFecha(tasaFecha)}
               </span>
             )}
             {errorTasa && (
-              <span className="text-xs text-red-700 flex items-center gap-2">
+              <span className="text-[11.5px] text-red-700 flex items-center gap-2">
                 {errorTasa}
                 <button
                   type="button"
@@ -226,13 +230,13 @@ export function CuentaForm() {
           </label>
         )}
 
-        {errorGuardado && <p className="text-xs text-red-700">{errorGuardado}</p>}
+        {errorGuardado && <p className="text-[12.5px] text-red-700">{errorGuardado}</p>}
 
         <button
           type="button"
           onClick={guardarCuenta}
           disabled={guardando || cargandoTasa}
-          className="mt-2 w-full rounded bg-gray-900 text-white text-sm py-2 disabled:opacity-50"
+          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-white text-[14px] font-semibold disabled:opacity-50"
         >
           {guardando ? "guardando..." : "crear cuenta"}
         </button>
