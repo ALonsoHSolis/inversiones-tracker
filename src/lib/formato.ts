@@ -31,3 +31,15 @@ export function formatoMiles(valorCrudo: string): string {
   if (Number.isNaN(numero)) return valorCrudo;
   return numero.toLocaleString("es-CL", { maximumFractionDigits: 2 });
 }
+
+// antes duplicada identica en HistorialForm, CuentaForm, CargaRapida y
+// SnapshotForm -- consolidada aca para que un cambio futuro (ej. formato
+// distinto) no dependa de acordarse de tocar los 4 archivos.
+export function formatoFecha(fechaIso: string) {
+  return new Date(fechaIso).toLocaleDateString("es-CL", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}

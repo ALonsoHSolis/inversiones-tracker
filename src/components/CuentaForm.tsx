@@ -6,18 +6,10 @@ import { track } from "@vercel/analytics";
 import { createClient } from "@/lib/supabase/client";
 import { obtenerTasaCambio } from "@/lib/mindicador";
 import { TIPOS } from "@/lib/tipos-cuenta";
+import { formatoFecha } from "@/lib/formato";
 import type { Moneda, TipoCuenta } from "@/types/database";
 
 const MONEDAS: Moneda[] = ["CLP", "USD", "UF"];
-
-function formatoFecha(fechaIso: string) {
-  return new Date(fechaIso).toLocaleDateString("es-CL", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-}
 
 export function CuentaForm() {
   const router = useRouter();

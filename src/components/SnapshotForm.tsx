@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { obtenerTasaCambio } from "@/lib/mindicador";
 import { Ayuda } from "@/components/Ayuda";
 import { InputMonto } from "@/components/InputMonto";
+import { formatoFecha } from "@/lib/formato";
 import type { Cuenta, Moneda, TipoMovimiento } from "@/types/database";
 
 interface SnapshotFormProps {
@@ -79,15 +80,6 @@ function estimarRendimientoPct(
   if (base <= 0) return null;
   const gananciaReal = valorNuevo - valorAnterior - aportesNetos;
   return (gananciaReal / base) * 100;
-}
-
-function formatoFecha(fechaIso: string) {
-  return new Date(fechaIso).toLocaleDateString("es-CL", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    timeZone: "UTC",
-  });
 }
 
 export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }: SnapshotFormProps) {
