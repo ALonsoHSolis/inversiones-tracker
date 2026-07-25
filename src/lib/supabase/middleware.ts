@@ -39,6 +39,8 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/blog") ||
     path === "/robots.txt" ||
     path === "/sitemap.xml" ||
+    path === "/manifest.webmanifest" ||
+    path.startsWith("/opengraph-image") ||
     path.startsWith("/login") ||
     path.startsWith("/signup") ||
     path.startsWith("/recuperar-password") ||
