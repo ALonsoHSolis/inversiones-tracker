@@ -27,7 +27,7 @@ export function CalculadoraForm() {
 
   return (
     <div className="bg-white border border-[#E7E9EE] rounded-2xl p-6 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <label className="flex flex-col gap-1">
           <span className="text-[11px] font-semibold text-[#6B7280]">Valor inicial</span>
           <InputMonto value={valorInicial} onChange={setValorInicial} placeholder="0" className={inputClass} />
@@ -36,36 +36,37 @@ export function CalculadoraForm() {
           <span className="text-[11px] font-semibold text-[#6B7280]">Valor final</span>
           <InputMonto value={valorFinal} onChange={setValorFinal} placeholder="0" className={inputClass} />
         </label>
-        <div className="flex flex-col gap-1">
-          <span className="text-[11px] font-semibold text-[#6B7280]">Aportes / retiros</span>
-          <div className="flex gap-1.5">
-            <div className="flex rounded-[10px] border border-[#DFE2E8] overflow-hidden shrink-0">
-              <button
-                type="button"
-                onClick={() => setTipoMovimiento("aporte")}
-                className={`h-11 px-2.5 text-[12.5px] font-semibold ${
-                  tipoMovimiento === "aporte" ? "bg-[var(--accent)] text-white" : "bg-white text-[#6B7280]"
-                }`}
-              >
-                Aporté
-              </button>
-              <button
-                type="button"
-                onClick={() => setTipoMovimiento("retiro")}
-                className={`h-11 px-2.5 text-[12.5px] font-semibold border-l border-[#DFE2E8] ${
-                  tipoMovimiento === "retiro" ? "bg-[var(--accent)] text-white" : "bg-white text-[#6B7280]"
-                }`}
-              >
-                Retiré
-              </button>
-            </div>
-            <InputMonto
-              value={montoMovimiento}
-              onChange={setMontoMovimiento}
-              placeholder="0"
-              className={`${inputClass} flex-1 min-w-0`}
-            />
+      </div>
+
+      <div className="flex flex-col gap-1 mt-3">
+        <span className="text-[11px] font-semibold text-[#6B7280]">Aportes / retiros</span>
+        <div className="flex gap-1.5">
+          <div className="flex rounded-[10px] border border-[#DFE2E8] overflow-hidden shrink-0">
+            <button
+              type="button"
+              onClick={() => setTipoMovimiento("aporte")}
+              className={`h-11 px-3 text-[12.5px] font-semibold ${
+                tipoMovimiento === "aporte" ? "bg-[var(--accent)] text-white" : "bg-white text-[#6B7280]"
+              }`}
+            >
+              Aporté
+            </button>
+            <button
+              type="button"
+              onClick={() => setTipoMovimiento("retiro")}
+              className={`h-11 px-3 text-[12.5px] font-semibold border-l border-[#DFE2E8] ${
+                tipoMovimiento === "retiro" ? "bg-[var(--accent)] text-white" : "bg-white text-[#6B7280]"
+              }`}
+            >
+              Retiré
+            </button>
           </div>
+          <InputMonto
+            value={montoMovimiento}
+            onChange={setMontoMovimiento}
+            placeholder="0"
+            className={`${inputClass} flex-1 min-w-0`}
+          />
         </div>
       </div>
 

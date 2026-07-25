@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Logo } from "@/components/Logo";
 import { PublicFooter } from "@/components/PublicFooter";
 import { TrustFaq } from "@/components/TrustFaq";
+import { SiteNav } from "@/components/SiteNav";
 
 export const metadata: Metadata = {
   title: "Mi portafolio — todas tus inversiones, con tu rendimiento real",
@@ -96,41 +96,7 @@ const PASOS = [
 export default function LandingPage() {
   return (
     <>
-      <nav className="sticky top-0 z-20 bg-[#F5F6F8]/[0.82] backdrop-blur-[10px] border-b border-[#E7E9EE]">
-        <div className="max-w-[1160px] mx-auto px-6 py-[13px] flex items-center justify-between gap-4 flex-wrap">
-          <Logo
-            href="/"
-            subtitle="Rendimiento real, no aportes disfrazados de ganancia"
-            hideSubtitleOnMobile
-          />
-          <div className="flex items-center gap-1.5">
-            <Link
-              href="/como-funciona"
-              className="h-9 px-3 inline-flex items-center text-[13px] font-medium text-[#40474F] no-underline"
-            >
-              Cómo funciona
-            </Link>
-            <Link
-              href="/calculadora"
-              className="h-9 px-3 inline-flex items-center text-[13px] font-medium text-[#40474F] no-underline"
-            >
-              Calculadora
-            </Link>
-            <Link
-              href="/login"
-              className="h-9 px-3.5 inline-flex items-center text-[13px] font-medium text-[#40474F] no-underline"
-            >
-              Iniciar sesión
-            </Link>
-            <Link
-              href="/signup"
-              className="h-9 px-[15px] inline-flex items-center rounded-[9px] bg-[var(--accent)] text-white text-[13px] font-semibold no-underline"
-            >
-              Crear cuenta gratis
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <SiteNav />
 
       <main className="max-w-[1160px] mx-auto px-6 pt-9 pb-16">
         <section className="grid grid-cols-1 md:grid-cols-[1.04fr_1fr] gap-8 md:gap-[52px] items-center py-9">

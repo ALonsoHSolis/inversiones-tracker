@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Logo } from "@/components/Logo";
 import { PublicFooter } from "@/components/PublicFooter";
+import { SiteNav } from "@/components/SiteNav";
 
 export const metadata: Metadata = {
   title: "Cómo funciona — Mi portafolio",
@@ -10,13 +10,9 @@ export const metadata: Metadata = {
 
 export default function ComoFuncionaPage() {
   return (
-    <main className="max-w-[1160px] mx-auto px-6 pt-[26px] pb-16">
-      <header className="flex items-center justify-between gap-4 mb-10">
-        <Logo href="/" />
-        <Link href="/" className="text-[13px] font-medium text-[#40474F] no-underline">
-          ← volver al inicio
-        </Link>
-      </header>
+    <>
+      <SiteNav />
+      <main className="max-w-[1160px] mx-auto px-6 pt-9 pb-16">
 
       <h1 className="text-[28px] font-semibold tracking-[-0.02em] max-w-[640px]">
         La regla más importante: un aporte nunca es ganancia
@@ -106,11 +102,12 @@ export default function ComoFuncionaPage() {
           href="/login"
           className="inline-flex items-center h-11 px-6 rounded-[9px] border border-[#E1E4EA] text-[14px] font-semibold text-[#171a20] no-underline"
         >
-          iniciar sesión
+          Iniciar sesión
         </Link>
       </div>
 
       <PublicFooter />
-    </main>
+      </main>
+    </>
   );
 }
