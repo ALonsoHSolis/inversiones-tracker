@@ -90,7 +90,7 @@ function mensajeErrorAmigable(mensaje: string): string {
 }
 
 const inputClass =
-  "h-9 px-2.5 rounded-[8px] border border-[#DFE2E8] text-right text-[13px] font-mono-tabular bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+  "h-9 px-2.5 rounded-[8px] border border-white/[0.14] text-right text-[13px] font-mono-tabular bg-white/[0.04] text-[#F2F5F9] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
 
 export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
   const [estados, setEstados] = useState<Record<string, FilaState>>(() =>
@@ -199,8 +199,8 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
 
   if (filas.length === 0) {
     return (
-      <div className="bg-white border border-[#E7E9EE] rounded-2xl p-6">
-        <p className="text-[13.5px] text-[#8A929E]">todavía no hay historial para esta cuenta.</p>
+      <div className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-6">
+        <p className="text-[13.5px] text-[#8892A0]">todavía no hay historial para esta cuenta.</p>
       </div>
     );
   }
@@ -212,12 +212,12 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
         return (
           <div
             key={fila.snapshotId}
-            className="bg-white border border-[#E7E9EE] rounded-2xl p-4 shadow-[0_1px_2px_rgba(20,30,50,0.03)]"
+            className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-4 shadow-[0_16px_40px_-28px_rgba(0,0,0,0.5)]"
           >
-            <p className="text-[11px] text-[#8A929E] font-mono-tabular mb-2">{formatoFecha(fila.fecha)}</p>
+            <p className="text-[11px] text-[#5B6472] font-mono-tabular mb-2">{formatoFecha(fila.fecha)}</p>
 
             <div className="flex items-center justify-between gap-3">
-              <span className="text-[12.5px] font-semibold text-[#6B7280]">valor</span>
+              <span className="text-[12.5px] font-semibold text-[#8892A0]">valor</span>
               <InputMonto
                 className={`w-32 ${inputClass}`}
                 value={estado.valor}
@@ -227,7 +227,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
 
             {cuenta.moneda !== "CLP" && (
               <div className="mt-2 flex items-center justify-between gap-3">
-                <span className="text-[11.5px] text-[#8A929E]">tasa de cambio</span>
+                <span className="text-[11.5px] text-[#8892A0]">tasa de cambio</span>
                 <input
                   type="number"
                   inputMode="decimal"
@@ -239,7 +239,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
               </div>
             )}
 
-            <label className="mt-2.5 flex items-center gap-2 text-[12px] text-[#6B7280] cursor-pointer">
+            <label className="mt-2.5 flex items-center gap-2 text-[12px] text-[#8892A0] cursor-pointer">
               <input
                 type="checkbox"
                 checked={estado.incluyeMovimiento}
@@ -256,7 +256,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                   onChange={(e) =>
                     actualizarMovimiento(fila, { movimientoTipo: e.target.value as TipoMovimiento })
                   }
-                  className="h-9 px-2 rounded-[8px] border border-[#DFE2E8] text-[13px] bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+                  className="h-9 px-2 rounded-[8px] border border-white/[0.14] text-[13px] bg-white/[0.04] text-[#F2F5F9] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
                 >
                   <option value="aporte">aporte</option>
                   <option value="retiro">retiro</option>
@@ -273,7 +273,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
             <button
               onClick={() => guardarFila(fila)}
               disabled={estado.guardando}
-              className="mt-3 h-9 w-full rounded-[8px] bg-[var(--accent)] text-white text-[13px] font-semibold disabled:opacity-50"
+              className="mt-3 h-9 w-full rounded-[8px] bg-[var(--accent)] text-[#0A0D13] text-[13px] font-semibold disabled:opacity-50"
             >
               {estado.guardando ? "guardando..." : "guardar"}
             </button>
@@ -284,7 +284,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
               </p>
             )}
             {estado.resultado && estado.resultado !== "ok" && (
-              <p className="mt-2 text-[12px] text-red-700">{estado.resultado}</p>
+              <p className="mt-2 text-[12px] text-[var(--neg)]">{estado.resultado}</p>
             )}
           </div>
         );

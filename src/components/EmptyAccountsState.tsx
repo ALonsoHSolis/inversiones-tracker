@@ -9,29 +9,29 @@ export function EmptyAccountsState() {
         <span className="w-1 h-[18px] bg-white rounded-[1px]" />
       </div>
       <div>
-        <p className="text-[14px] font-semibold">todavía no tienes cuentas cargadas</p>
-        <p className="mt-1 text-[12.5px] text-[#8A929E] max-w-[300px] mx-auto">
+        <p className="text-[14px] font-semibold text-[#F2F5F9]">todavía no tienes cuentas cargadas</p>
+        <p className="mt-1 text-[12.5px] text-[#8892A0] max-w-[300px] mx-auto">
           agrega tu primera cuenta para empezar a ver tu rendimiento real, siempre separado de lo
           que depositas.
         </p>
       </div>
       <Link
         href="/cuentas/nueva"
-        className="inline-flex items-center gap-1.5 mt-1 h-9 px-4 rounded-[9px] bg-[var(--accent)] text-white text-[13px] font-semibold no-underline"
+        className="inline-flex items-center gap-1.5 mt-1 h-9 px-4 rounded-[9px] bg-[var(--accent)] text-[#0A0D13] text-[13px] font-semibold no-underline"
       >
         + agregar tu primera cuenta
       </Link>
 
-      <div className="mt-2 w-full max-w-[280px] text-left bg-[#FAFBFC] border border-[#E7E9EE] rounded-xl p-3.5">
-        <p className="text-[9.5px] uppercase tracking-[0.08em] font-semibold text-[#B8BEC7] text-center mb-2.5">
+      <div className="mt-2 w-full max-w-[280px] text-left bg-white/[0.03] border border-white/[0.08] rounded-xl p-3.5">
+        <p className="text-[9.5px] uppercase tracking-[0.08em] font-semibold text-[#5B6472] text-center mb-2.5">
           así se ve un portafolio con datos (ejemplo)
         </p>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[9.5px] uppercase tracking-[0.07em] font-semibold text-[#A0A7B2]">Valor total</p>
-            <p className="font-mono-tabular mt-1 font-semibold text-[17px] text-[#171A20]">$4.320.500</p>
+            <p className="text-[9.5px] uppercase tracking-[0.07em] font-semibold text-[#8892A0]">Valor total</p>
+            <p className="font-mono-tabular mt-1 font-semibold text-[17px] text-[#F2F5F9]">$4.320.500</p>
           </div>
-          <span className="font-mono-tabular inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#E9F3EE] text-[#0B7A54] text-[10.5px] font-semibold">
+          <span className="font-mono-tabular inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[rgba(62,217,163,0.15)] text-[#3ED9A3] text-[10.5px] font-semibold">
             +6,2%
           </span>
         </div>

@@ -1,5 +1,9 @@
 import { actualizarPassword } from "./actions";
 import { SubmitButton } from "@/components/SubmitButton";
+import { AuthShell } from "@/components/AuthShell";
+
+const inputClass =
+  "h-11 px-[13px] border border-white/[0.14] rounded-[10px] text-sm text-[#F2F5F9] bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(139,92,246,0.15)]";
 
 export default async function ActualizarPasswordPage({
   searchParams,
@@ -9,32 +13,29 @@ export default async function ActualizarPasswordPage({
   const { error } = await searchParams;
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-16">
-      <h1 className="text-xl font-medium mb-6">crear nueva contrasena</h1>
-      <form action={actualizarPassword} className="flex flex-col gap-3">
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-gray-600">contrasena nueva</span>
-          <input
-            type="password"
-            name="password"
-            required
-            minLength={6}
-            className="rounded border border-gray-300 px-3 py-2"
-          />
+    <AuthShell>
+      <h1 className="text-[25px] font-semibold tracking-[-0.02em] text-[#F2F5F9]">Crear nueva contraseña</h1>
+      <p className="mt-2 text-[13.5px] text-[#8892A0]">
+        Este paso normalmente se abre desde el link que te enviamos por correo.
+      </p>
+      <form action={actualizarPassword} className="flex flex-col gap-[15px] mt-[26px]">
+        <label className="flex flex-col gap-[7px]">
+          <span className="text-[12.5px] font-semibold text-[#8892A0]">Contraseña nueva</span>
+          <input type="password" name="password" required minLength={6} className={inputClass} />
         </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="text-gray-600">confirma la contrasena nueva</span>
+        <label className="flex flex-col gap-[7px]">
+          <span className="text-[12.5px] font-semibold text-[#8892A0]">Confirma la contraseña nueva</span>
           <input
             type="password"
             name="passwordConfirmacion"
             required
             minLength={6}
-            className="rounded border border-gray-300 px-3 py-2"
+            className={inputClass}
           />
         </label>
-        {error && <p className="text-xs text-red-700">{error}</p>}
-        <SubmitButton labelInactivo="guardar contrasena" labelActivo="guardando..." />
+        {error && <p className="text-xs text-[var(--neg)]">{error}</p>}
+        <SubmitButton labelInactivo="Guardar contraseña" labelActivo="Guardando..." />
       </form>
-    </main>
+    </AuthShell>
   );
 }

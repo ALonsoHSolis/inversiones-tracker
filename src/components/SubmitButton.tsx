@@ -10,9 +10,9 @@ interface SubmitButtonProps {
 
 const ESTILOS = {
   primary:
-    "mt-1 h-[46px] w-full rounded-[11px] bg-[var(--accent)] text-white text-[14.5px] font-semibold",
+    "mt-1 h-[46px] w-full rounded-[11px] bg-[var(--accent)] text-[#0A0D13] text-[14.5px] font-semibold",
   secondary:
-    "h-[42px] px-4 rounded-[10px] border border-[#DFE2E8] bg-white text-[13px] font-semibold text-[#40474F] whitespace-nowrap",
+    "h-[42px] px-4 rounded-[10px] border border-white/[0.14] bg-white/[0.04] text-[13px] font-semibold text-[#C7CDD6] whitespace-nowrap",
 };
 
 // useFormStatus solo funciona en un componente hijo del <form>, no en el

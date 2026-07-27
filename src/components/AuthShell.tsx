@@ -63,11 +63,11 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="flex flex-col px-5 py-6 md:px-7 bg-[#F5F6F8] min-h-screen">
+      <div className="flex flex-col px-5 py-6 md:px-7 bg-[#0A0D13] min-h-screen">
         <div>
           <Link
             href="/"
-            className="inline-block px-1 py-2 text-[13px] font-medium text-[#8A929E] hover:text-[#40474F]"
+            className="inline-block px-1 py-2 text-[13px] font-medium text-[#5B6472] hover:text-[#97A2B4]"
           >
             ← Volver al inicio
           </Link>
@@ -75,7 +75,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="flex-1 flex items-center justify-center py-6">
           <div className="w-full max-w-[384px] auth-fade-up">{children}</div>
         </div>
-        <p className="text-center text-[11px] text-[#B4BAC3]">Mi portafolio · seguimiento de rendimiento real</p>
+        <p className="text-center text-[11px] text-[#3E4650]">Mi portafolio · seguimiento de rendimiento real</p>
       </div>
     </div>
   );

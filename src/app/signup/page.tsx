@@ -5,7 +5,7 @@ import { PasswordInput } from "@/components/PasswordInput";
 import { AuthShell } from "@/components/AuthShell";
 
 const inputClass =
-  "h-11 px-[13px] border border-[#DFE2E8] rounded-[10px] text-sm text-[#171A20] bg-white focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(20,80,140,0.1)]";
+  "h-11 px-[13px] border border-white/[0.14] rounded-[10px] text-sm text-[#F2F5F9] bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(139,92,246,0.15)]";
 
 export default async function SignupPage({
   searchParams,
@@ -16,14 +16,14 @@ export default async function SignupPage({
 
   return (
     <AuthShell>
-      <h1 className="text-[25px] font-semibold tracking-[-0.02em]">Crear cuenta</h1>
-      <p className="mt-2 text-[13.5px] text-[#8A929E]">
+      <h1 className="text-[25px] font-semibold tracking-[-0.02em] text-[#F2F5F9]">Crear cuenta</h1>
+      <p className="mt-2 text-[13.5px] text-[#8892A0]">
         Gratis, sin conectar tu banco. Tú registras, nosotros calculamos.
       </p>
 
       <form action={signup} className="flex flex-col gap-[15px] mt-[26px]">
         <label className="flex flex-col gap-[7px]">
-          <span className="text-[12.5px] font-semibold text-[#6B7280]">Email</span>
+          <span className="text-[12.5px] font-semibold text-[#8892A0]">Email</span>
           <input type="email" name="email" placeholder="tucorreo@ejemplo.cl" required className={inputClass} />
         </label>
         <PasswordInput name="password" placeholder="Mínimo 8 caracteres" minLength={8} mostrarFortaleza />
@@ -34,9 +34,9 @@ export default async function SignupPage({
             required
             className="w-[17px] h-[17px] mt-px accent-[var(--accent)] shrink-0"
           />
-          <span className="text-[12.5px] text-[#6B7280] leading-relaxed">
+          <span className="text-[12.5px] text-[#8892A0] leading-relaxed">
             Acepto los{" "}
-            <Link href="/terminos" target="_blank" rel="noopener noreferrer" className="text-[#171A20] border-b border-[#DADEE4]">
+            <Link href="/terminos" target="_blank" rel="noopener noreferrer" className="text-[#C7CDD6] border-b border-white/[0.14]">
               Términos
             </Link>{" "}
             y la{" "}
@@ -44,18 +44,18 @@ export default async function SignupPage({
               href="/privacidad"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#171A20] border-b border-[#DADEE4]"
+              className="text-[#C7CDD6] border-b border-white/[0.14]"
             >
               política de privacidad
             </Link>
           </span>
         </label>
-        {error && <p className="text-xs text-red-700">{error}</p>}
-        {mensaje && <p className="text-xs text-gray-600">{mensaje}</p>}
+        {error && <p className="text-xs text-[var(--neg)]">{error}</p>}
+        {mensaje && <p className="text-xs text-[#8892A0]">{mensaje}</p>}
         <SubmitButton labelInactivo="Crear cuenta" labelActivo="Creando cuenta..." />
       </form>
 
-      <p className="mt-4 text-[13px] text-[#8A929E]">
+      <p className="mt-4 text-[13px] text-[#8892A0]">
         ¿Ya tienes cuenta?{" "}
         <Link href="/login" className="font-semibold text-[var(--accent)]">
           Inicia sesión

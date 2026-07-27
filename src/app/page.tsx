@@ -43,8 +43,8 @@ const BENEFICIOS = [
   {
     titulo: "Todas tus plataformas, un solo lugar",
     texto: "Fondos mutuos, acciones, ahorro — sin importar en qué banco o corredora estén, todo se ve junto.",
-    iconBg: "#EAF1F8",
-    iconStroke: "#2A5F94",
+    iconBg: "rgba(139,92,246,.14)",
+    iconStroke: "#B9A6F7",
     icon: (
       <>
         <rect x="3" y="4" width="18" height="4" rx="1.5" />
@@ -56,8 +56,8 @@ const BENEFICIOS = [
   {
     titulo: "Consolidado en pesos, con la tasa de cada día",
     texto: "Cuentas en USD o UF se convierten a CLP con la tasa de cambio real del día de cada aporte, no la de hoy.",
-    iconBg: "#EAF1F8",
-    iconStroke: "#2A5F94",
+    iconBg: "rgba(139,92,246,.14)",
+    iconStroke: "#B9A6F7",
     icon: (
       <>
         <circle cx="12" cy="12" r="9" />
@@ -69,8 +69,8 @@ const BENEFICIOS = [
     titulo: "Rendimiento que descuenta tus aportes",
     texto:
       "Si depositas plata a mitad de semana, no aparece como ganancia: siempre se resta el aporte antes de calcular tu rendimiento real.",
-    iconBg: "#E9F3EE",
-    iconStroke: "#0B7A54",
+    iconBg: "rgba(62,217,163,.14)",
+    iconStroke: "#3ED9A3",
     icon: (
       <>
         <path d="M4 15l5-5 4 4 7-8" />
@@ -81,8 +81,8 @@ const BENEFICIOS = [
   {
     titulo: "Benchmark contra S&P 500 y UF",
     texto: "Compara tu rendimiento semana a semana contra el mercado, para saber si le estás ganando o perdiendo.",
-    iconBg: "#EAF1F8",
-    iconStroke: "#2A5F94",
+    iconBg: "rgba(139,92,246,.14)",
+    iconStroke: "#B9A6F7",
     icon: (
       <>
         <path d="M3 17l5-6 4 3 4-7 5 6" />
@@ -131,18 +131,18 @@ export default function LandingPage() {
       <main className="max-w-[1160px] mx-auto px-6 pt-9 pb-16">
         <section className="grid grid-cols-1 md:grid-cols-[1.04fr_1fr] gap-8 md:gap-[52px] items-center py-9">
           <div className="animate-fade-up">
-            <span className="inline-flex items-center gap-[7px] px-3 py-1.5 rounded-full bg-[#EAF1F8] text-[#2A5F94] text-[12.5px] font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#2A5F94]" />
+            <span className="inline-flex items-center gap-[7px] px-3 py-1.5 rounded-full bg-[rgba(139,92,246,0.14)] text-[#C4B5FD] text-[12.5px] font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C4B5FD]" />
               Hecho para inversionistas en Chile
             </span>
-            <h1 className="mt-5 font-semibold text-[40px] md:text-[46px] leading-[1.08] tracking-[-0.028em] max-w-[540px]">
+            <h1 className="mt-5 font-semibold text-[40px] md:text-[46px] leading-[1.08] tracking-[-0.028em] max-w-[540px] text-[#F2F5F9]">
               Todas tus inversiones en un solo lugar, con{" "}
               <span className="text-[var(--accent)]">tu ganancia real</span> — no con espejismos.
             </h1>
-            <p className="mt-3 text-[14px] font-semibold text-[#8A929E] max-w-[500px]">
+            <p className="mt-3 text-[14px] font-semibold text-[#8892A0] max-w-[500px]">
               Un aporte no es ganancia. Tu portafolio debería saber la diferencia.
             </p>
-            <p className="mt-3 text-[15px] md:text-base leading-[1.58] text-[#40474F] max-w-[500px]">
+            <p className="mt-3 text-[15px] md:text-base leading-[1.58] text-[#97A2B4] max-w-[500px]">
               Mi portafolio junta tus cuentas de distintas plataformas, las consolida en pesos chilenos
               y calcula tu rendimiento real — descontando siempre lo que depositaste o retiraste, para
               que nunca confundas un aporte con una ganancia.
@@ -150,37 +150,37 @@ export default function LandingPage() {
             <div className="flex items-center gap-3 mt-7">
               <Link
                 href="/signup"
-                className="inline-flex items-center h-12 px-[22px] rounded-[11px] bg-[var(--accent)] text-white text-[15px] font-semibold no-underline"
+                className="inline-flex items-center h-12 px-[22px] rounded-[11px] bg-[var(--accent)] text-[#0A0D13] text-[15px] font-semibold no-underline"
               >
                 Crear cuenta gratis
               </Link>
               <Link
                 href="/login"
-                className="inline-flex items-center h-12 px-5 rounded-[11px] border border-[#E1E4EA] bg-white text-[15px] font-semibold text-[#171a20] no-underline"
+                className="inline-flex items-center h-12 px-5 rounded-[11px] border border-white/[0.14] text-[15px] font-semibold text-[#F2F5F9] no-underline"
               >
                 Ya tengo cuenta
               </Link>
             </div>
             <Link
               href="/como-funciona"
-              className="inline-block mt-5 text-[12.5px] font-medium text-[#0B7A54] border-b border-[#0B7A54]/30"
+              className="inline-block mt-5 text-[12.5px] font-medium text-[#5B6472] border-b border-white/[0.14]"
             >
               Ver un ejemplo de cómo se calcula →
             </Link>
           </div>
 
           <div className="relative animate-fade-up">
-            <div className="bg-white border border-[#E7E9EE] rounded-[20px] p-[22px] shadow-[0_24px_60px_-22px_rgba(20,40,80,0.26),0_2px_6px_rgba(20,30,50,0.05)]">
+            <div className="bg-[rgba(22,27,38,0.6)] backdrop-blur-[28px] border border-white/[0.09] rounded-[20px] p-[22px] shadow-[0_50px_110px_-30px_rgba(139,92,246,0.28),0_30px_70px_-30px_rgba(0,0,0,0.7)]">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.09em] font-semibold text-[#8A929E]">
+                  <p className="text-[10px] uppercase tracking-[0.09em] font-semibold text-[#7C8798]">
                     Valor total del portafolio
                   </p>
-                  <p className="font-mono-tabular mt-[7px] font-semibold text-[30px] tracking-[-0.02em]">
+                  <p className="font-mono-tabular mt-[7px] font-semibold text-[30px] tracking-[-0.02em] text-[#F2F5F9]">
                     $17.491.080
                   </p>
                 </div>
-                <span className="font-mono-tabular inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E9F3EE] text-[#0B7A54] text-xs font-semibold">
+                <span className="font-mono-tabular inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[rgba(62,217,163,0.15)] text-[#3ED9A3] text-xs font-semibold">
                   <span className="text-[9px]">▲</span> +10,0%
                 </span>
               </div>
@@ -191,20 +191,20 @@ export default function LandingPage() {
                 preserveAspectRatio="none"
                 className="block mt-4 overflow-visible"
               >
-                <line x1="0" y1="40" x2="300" y2="40" stroke="#EFF1F5" strokeWidth="1" />
-                <line x1="0" y1="80" x2="300" y2="80" stroke="#EFF1F5" strokeWidth="1" />
+                <line x1="0" y1="40" x2="300" y2="40" stroke="rgba(255,255,255,.06)" strokeWidth="1" />
+                <line x1="0" y1="80" x2="300" y2="80" stroke="rgba(255,255,255,.06)" strokeWidth="1" />
                 <path
                   d="M0 92 L110 92 L110 80 L185 80 L185 66 L250 66 L250 54 L300 54 L300 120 L0 120 Z"
-                  fill="#E4E8EF"
+                  fill="rgba(255,255,255,.05)"
                 />
                 <path
                   d="M0 84 C40 80,70 74,100 72 C140 69,165 58,195 52 C235 44,270 38,300 30 L300 54 L250 54 L250 66 L185 66 L185 80 L110 80 L110 92 L0 92 Z"
-                  fill="rgba(11,122,84,.15)"
+                  fill="rgba(62,217,163,.14)"
                 />
                 <path
                   d="M0 92 L110 92 L110 80 L185 80 L185 66 L250 66 L250 54 L300 54"
                   fill="none"
-                  stroke="#C3CBD6"
+                  stroke="rgba(255,255,255,.28)"
                   strokeWidth="1.4"
                 />
                 <path
@@ -220,7 +220,7 @@ export default function LandingPage() {
                   cx="300"
                   cy="30"
                   r="4"
-                  fill="#fff"
+                  fill="#12161F"
                   stroke="var(--accent)"
                   strokeWidth="2.2"
                   className="hero-line-dot"
@@ -228,18 +228,18 @@ export default function LandingPage() {
               </svg>
               <div className="flex items-center justify-between gap-3 mt-3.5 flex-wrap">
                 <div className="flex gap-4">
-                  <span className="inline-flex items-center gap-1.5 text-[11px] text-[#6B7280] font-medium">
-                    <span className="w-[9px] h-[9px] rounded-[3px] bg-[#E4E8EF] border border-[#C3CBD6]" />
+                  <span className="inline-flex items-center gap-1.5 text-[11px] text-[#8892A0] font-medium">
+                    <span className="w-[9px] h-[9px] rounded-[3px] bg-white/[0.08] border border-white/[0.28]" />
                     Capital aportado
                   </span>
-                  <span className="inline-flex items-center gap-1.5 text-[11px] text-[#6B7280] font-medium">
-                    <span className="w-[9px] h-[9px] rounded-[3px] bg-[rgba(11,122,84,0.3)]" />
+                  <span className="inline-flex items-center gap-1.5 text-[11px] text-[#8892A0] font-medium">
+                    <span className="w-[9px] h-[9px] rounded-[3px] bg-[rgba(62,217,163,0.3)]" />
                     Ganancia real
                   </span>
                 </div>
-                <div className="bg-[#171A20] rounded-[10px] px-3 py-1.5 text-right">
-                  <p className="text-[9.5px] text-[#AEB5C0] leading-none">Ganancia real (no aportes)</p>
-                  <p className="font-mono-tabular mt-[3px] text-[13px] font-semibold text-[#46C99A] leading-none">
+                <div className="bg-[rgba(10,13,19,0.94)] border border-[rgba(62,217,163,0.3)] rounded-[10px] px-3 py-1.5 text-right">
+                  <p className="text-[9.5px] text-[#8892A0] leading-none">Ganancia real (no aportes)</p>
+                  <p className="font-mono-tabular mt-[3px] text-[13px] font-semibold text-[#3ED9A3] leading-none">
                     +$1.591.080
                   </p>
                 </div>
@@ -254,7 +254,7 @@ export default function LandingPage() {
           {BENEFICIOS.map((b) => (
             <div
               key={b.titulo}
-              className="bg-white border border-[#E7E9EE] border-t-[3px] border-t-[#0B7A54] rounded-2xl p-[22px] shadow-[0_1px_3px_rgba(0,0,0,0.06)] hover:shadow-[0_6px_18px_rgba(0,0,0,0.10)] transition-shadow duration-200"
+              className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] border-t-[3px] border-t-[#3ED9A3] rounded-2xl p-[22px] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.5)]"
             >
               <div
                 className="w-10 h-10 rounded-[11px] flex items-center justify-center mb-3.5"
@@ -264,8 +264,8 @@ export default function LandingPage() {
                   {b.icon}
                 </svg>
               </div>
-              <h3 className="text-[14.5px] font-semibold">{b.titulo}</h3>
-              <p className="mt-2 text-[13px] text-[#6B7280] leading-relaxed">{b.texto}</p>
+              <h3 className="text-[14.5px] font-semibold text-[#F2F5F9]">{b.titulo}</h3>
+              <p className="mt-2 text-[13px] text-[#97A2B4] leading-relaxed">{b.texto}</p>
             </div>
           ))}
         </div>
@@ -273,27 +273,30 @@ export default function LandingPage() {
         <div className="text-center mt-5">
           <Link
             href="/calculadora"
-            className="text-[13px] font-medium text-[#40474F] border-b border-[#DADEE4]"
+            className="text-[13px] font-medium text-[#97A2B4] border-b border-white/[0.14]"
           >
             Prueba la calculadora sin crear cuenta →
           </Link>
         </div>
 
         <section className="mt-10">
-          <h2 className="text-[22px] font-semibold tracking-[-0.01em] text-center">Cómo empezar</h2>
+          <h2 className="text-[22px] font-semibold tracking-[-0.01em] text-center text-[#F2F5F9]">Cómo empezar</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             {PASOS.map((paso, i) => (
-              <div key={paso.titulo} className="bg-white border border-[#E7E9EE] rounded-2xl p-5">
-                <p className="font-mono-tabular text-[36px] font-bold text-[#E7E9EE] leading-none">
+              <div
+                key={paso.titulo}
+                className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5"
+              >
+                <p className="font-mono-tabular text-[36px] font-bold text-white/[0.09] leading-none">
                   {String(i + 1).padStart(2, "0")}
                 </p>
                 <div className="mt-2.5 flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-[9px] bg-[#EAF1F8] flex items-center justify-center shrink-0">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2A5F94" strokeWidth="1.8">
+                  <div className="w-8 h-8 rounded-[9px] bg-[rgba(139,92,246,0.14)] flex items-center justify-center shrink-0">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B9A6F7" strokeWidth="1.8">
                       {paso.icon}
                     </svg>
                   </div>
-                  <p className="text-[13.5px] font-semibold">{paso.titulo}</p>
+                  <p className="text-[13.5px] font-semibold text-[#F2F5F9]">{paso.titulo}</p>
                 </div>
               </div>
             ))}
@@ -301,21 +304,21 @@ export default function LandingPage() {
         </section>
 
         <section className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white border border-[#E7E9EE] rounded-2xl p-[22px]">
-            <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-[#8A929E]">
+          <div className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-[22px]">
+            <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-[#5B6472]">
               Funciona con tus cuentas donde sea que estén
             </p>
-            <p className="mt-2.5 text-[13.5px] text-[#40474F] leading-relaxed">
+            <p className="mt-2.5 text-[13.5px] text-[#97A2B4] leading-relaxed">
               No nos conectamos a ningún banco ni corredora — tú registras el valor que ves en tu
               cuenta y nosotros calculamos. Por eso funciona igual con un banco, una corredora, un
               fondo mutuo o una cuenta cripto: cualquier plataforma donde tengas plata invertida.
             </p>
           </div>
-          <div className="bg-white border border-[#E7E9EE] rounded-2xl p-[22px]">
-            <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-[#8A929E]">
+          <div className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-[22px]">
+            <p className="text-[12px] uppercase tracking-[0.08em] font-semibold text-[#5B6472]">
               Qué guardamos (y qué no)
             </p>
-            <p className="mt-2.5 text-[13.5px] text-[#40474F] leading-relaxed">
+            <p className="mt-2.5 text-[13.5px] text-[#97A2B4] leading-relaxed">
               Guardamos los valores y fechas que tú ingresas manualmente. Nunca te pedimos tus
               claves bancarias ni nos conectamos a tu banco: no hay scraping ni acceso automático a
               ninguna cuenta.
@@ -324,18 +327,18 @@ export default function LandingPage() {
         </section>
 
         <section className="mt-10">
-          <div className="bg-[#171A20] rounded-[20px] p-10 flex items-center justify-between gap-6 flex-wrap">
+          <div className="bg-white/[0.03] border border-[rgba(139,92,246,0.22)] rounded-[20px] p-10 flex items-center justify-between gap-6 flex-wrap">
             <div>
-              <h2 className="text-white text-[26px] font-semibold tracking-[-0.02em]">
+              <h2 className="text-[#F2F5F9] text-[26px] font-semibold tracking-[-0.02em]">
                 Empieza a medir lo que de verdad ganas.
               </h2>
-              <p className="mt-2 text-[#AEB5C0] text-sm">
+              <p className="mt-2 text-[#97A2B4] text-sm">
                 Gratis, sin conectar tu banco. Tú registras, nosotros calculamos.
               </p>
             </div>
             <Link
               href="/signup"
-              className="inline-flex items-center h-12 px-6 rounded-[11px] bg-white text-[#171A20] text-[15px] font-semibold no-underline whitespace-nowrap"
+              className="inline-flex items-center h-12 px-6 rounded-[11px] bg-white text-[#0A0D13] text-[15px] font-semibold no-underline whitespace-nowrap"
             >
               Crear cuenta gratis
             </Link>

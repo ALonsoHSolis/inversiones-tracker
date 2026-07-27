@@ -180,21 +180,21 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-2 flex-wrap justify-end">
             <PrivacyToggleButton />
             <ExportarDatos />
-            <div className="w-px h-[22px] bg-[#E1E4EA] mx-1" />
-            <FeedbackLink className="text-[11.5px] text-[#8A929E] border-b border-[#DADEE4]">
+            <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
+            <FeedbackLink className="text-[11.5px] text-[#8892A0] border-b border-white/[0.14]">
               escríbenos
             </FeedbackLink>
-            <div className="w-px h-[22px] bg-[#E1E4EA] mx-1" />
-            <Link href="/perfil" className="text-[11.5px] text-[#8A929E] border-b border-[#DADEE4]">
+            <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
+            <Link href="/perfil" className="text-[11.5px] text-[#8892A0] border-b border-white/[0.14]">
               perfil
             </Link>
-            <div className="w-px h-[22px] bg-[#E1E4EA] mx-1" />
+            <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
             <div className="text-right leading-tight">
-              <p className="text-[12.5px] font-medium text-[#40474F]">{user?.email}</p>
+              <p className="text-[12.5px] font-medium text-[#C7CDD6]">{user?.email}</p>
               <form action={logout}>
                 <button
                   type="submit"
-                  className="text-[11.5px] text-[#8A929E] border-b border-[#DADEE4]"
+                  className="text-[11.5px] text-[#8892A0] border-b border-white/[0.14]"
                 >
                   cerrar sesión
                 </button>
@@ -209,7 +209,15 @@ export default async function DashboardPage() {
           capitalAportadoClp={capitalAportadoClp}
           valorActualClp={valorActualClp}
           chart={<PortfolioChart datos={evolucionPortafolio ?? []} />}
-          benchmark={<MarketBenchmark sp500={benchmarkSp500} uf={benchmarkUf} />}
+          benchmark={
+            <MarketBenchmark
+              sp500={benchmarkSp500}
+              uf={benchmarkUf}
+              rendimientoRealPct={
+                capitalAportadoClp > 0 ? ((valorActualClp - capitalAportadoClp) / capitalAportadoClp) * 100 : null
+              }
+            />
+          }
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -218,9 +226,9 @@ export default async function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4 mt-4 items-start">
-          <section className="bg-white border border-[#E7E9EE] rounded-2xl p-5 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
+          <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-[13.5px] font-semibold">Tus cuentas</p>
+              <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Tus cuentas</p>
               <Link
                 href="/cuentas/nueva"
                 className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] no-underline"
@@ -229,7 +237,7 @@ export default async function DashboardPage() {
               </Link>
             </div>
             <div className="flex items-center gap-1.5 mb-3.5">
-              <p className="text-[11.5px] text-[#A0A7B2]">
+              <p className="text-[11.5px] text-[#8892A0]">
                 Rendimiento en moneda nativa · ya descuenta aportes y retiros
               </p>
               <Ayuda>
@@ -258,7 +266,7 @@ export default async function DashboardPage() {
             {(cuentasInactivasCount ?? 0) > 0 && (
               <Link
                 href="/cuentas/inactivas"
-                className="inline-block mt-3 text-[11.5px] text-[#A0A7B2] border-b border-[#E2E5EA]"
+                className="inline-block mt-3 text-[11.5px] text-[#8892A0] border-b border-white/[0.14]"
               >
                 ver cuentas dadas de baja
               </Link>
@@ -286,7 +294,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <p className="mt-6 text-[11px] text-[#B4BAC3] text-center">
+        <p className="mt-6 text-[11px] text-[#5B6472] text-center">
           El % real aparece cuando hay al menos dos registros para comparar
         </p>
       </main>

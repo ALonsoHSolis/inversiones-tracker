@@ -42,8 +42,8 @@ export function CuentasInactivas({ cuentas }: CuentasInactivasProps) {
 
   if (cuentas.length === 0) {
     return (
-      <div className="bg-white border border-[#E7E9EE] rounded-2xl p-6">
-        <p className="text-[13.5px] text-[#8A929E]">no tienes cuentas dadas de baja.</p>
+      <div className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-6">
+        <p className="text-[13.5px] text-[#8892A0]">no tienes cuentas dadas de baja.</p>
       </div>
     );
   }
@@ -51,11 +51,14 @@ export function CuentasInactivas({ cuentas }: CuentasInactivasProps) {
   return (
     <div className="flex flex-col gap-2.5">
       {cuentas.map((cuenta) => (
-        <div key={cuenta.id} className="bg-white border border-[#E7E9EE] rounded-2xl px-5 py-4">
+        <div
+          key={cuenta.id}
+          className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl px-5 py-4"
+        >
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-[13.5px] font-semibold">{cuenta.nombre}</p>
-              <p className="text-[11.5px] text-[#8A929E]">{cuenta.plataforma}</p>
+              <p className="text-[13.5px] font-semibold text-[#F2F5F9]">{cuenta.nombre}</p>
+              <p className="text-[11.5px] text-[#8892A0]">{cuenta.plataforma}</p>
             </div>
             <button
               type="button"
@@ -66,7 +69,7 @@ export function CuentasInactivas({ cuentas }: CuentasInactivasProps) {
               {reactivandoId === cuenta.id ? "reactivando..." : "reactivar"}
             </button>
           </div>
-          {errores[cuenta.id] && <p className="mt-2 text-[12.5px] text-red-700">{errores[cuenta.id]}</p>}
+          {errores[cuenta.id] && <p className="mt-2 text-[12.5px] text-[var(--neg)]">{errores[cuenta.id]}</p>}
         </div>
       ))}
     </div>

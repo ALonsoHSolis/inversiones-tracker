@@ -45,27 +45,27 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     <main className="max-w-[680px] mx-auto px-6 pt-[26px] pb-16">
       <header className="flex items-center justify-between gap-4 mb-10">
         <Logo href="/" />
-        <Link href="/blog" className="text-[13px] font-medium text-[#40474F] no-underline">
+        <Link href="/blog" className="text-[13px] font-medium text-[#97A2B4] no-underline">
           ← volver al blog
         </Link>
       </header>
 
-      <p className="text-[11px] text-[#8A929E] font-mono-tabular">{formatoFecha(post.date)}</p>
-      <h1 className="mt-1.5 text-[26px] font-semibold tracking-[-0.02em]">{post.title}</h1>
+      <p className="text-[11px] text-[#8892A0] font-mono-tabular">{formatoFecha(post.date)}</p>
+      <h1 className="mt-1.5 text-[26px] font-semibold tracking-[-0.02em] text-[#F2F5F9]">{post.title}</h1>
 
       {/* el contenido viene de archivos .md del propio repo (no de input de
           usuarios) -- solo quien puede hacer push al repo agrega un post,
           asi que renderizarlo como html no es una superficie de xss. */}
       <article
-        className="contenido-post mt-6 text-[14.5px] text-[#40474F] leading-relaxed"
+        className="contenido-post mt-6 text-[14.5px] text-[#97A2B4] leading-relaxed"
         dangerouslySetInnerHTML={{ __html: post.html }}
       />
 
-      <div className="mt-10 pt-6 border-t border-[#E7E9EE] flex items-center justify-between gap-4 flex-wrap">
-        <p className="text-[13px] text-[#40474F]">¿Quieres ver tu propio rendimiento real?</p>
+      <div className="mt-10 pt-6 border-t border-white/[0.07] flex items-center justify-between gap-4 flex-wrap">
+        <p className="text-[13px] text-[#97A2B4]">¿Quieres ver tu propio rendimiento real?</p>
         <Link
           href="/signup"
-          className="inline-flex items-center h-10 px-5 rounded-[9px] bg-[var(--accent)] text-white text-[13.5px] font-semibold no-underline whitespace-nowrap"
+          className="inline-flex items-center h-10 px-5 rounded-[9px] bg-[var(--accent)] text-[#0A0D13] text-[13.5px] font-semibold no-underline whitespace-nowrap"
         >
           Crear cuenta gratis →
         </Link>

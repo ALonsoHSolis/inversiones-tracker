@@ -8,19 +8,19 @@ const BLOG_HABILITADO = false;
 
 export function PublicFooter() {
   return (
-    <footer className="mt-10 pt-8 border-t border-[#E7E9EE]">
+    <footer className="mt-10 pt-8 border-t border-white/[0.07]">
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#8A929E]">Producto</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#5B6472]">Producto</p>
           <div className="mt-2.5 flex flex-col gap-2">
-            <Link href="/como-funciona" className="text-[12.5px] text-[#40474F] no-underline">
+            <Link href="/como-funciona" className="text-[12.5px] text-[#97A2B4] no-underline">
               Cómo funciona
             </Link>
-            <Link href="/calculadora" className="text-[12.5px] text-[#40474F] no-underline">
+            <Link href="/calculadora" className="text-[12.5px] text-[#97A2B4] no-underline">
               Calculadora
             </Link>
             {BLOG_HABILITADO && (
-              <Link href="/blog" className="text-[12.5px] text-[#40474F] no-underline">
+              <Link href="/blog" className="text-[12.5px] text-[#97A2B4] no-underline">
                 Blog
               </Link>
             )}
@@ -28,29 +28,29 @@ export function PublicFooter() {
         </div>
 
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#8A929E]">Legal</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#5B6472]">Legal</p>
           <div className="mt-2.5 flex flex-col gap-2">
-            <Link href="/terminos" className="text-[12.5px] text-[#40474F] no-underline">
+            <Link href="/terminos" className="text-[12.5px] text-[#97A2B4] no-underline">
               Términos
             </Link>
-            <Link href="/privacidad" className="text-[12.5px] text-[#40474F] no-underline">
+            <Link href="/privacidad" className="text-[12.5px] text-[#97A2B4] no-underline">
               Privacidad
             </Link>
-            <Link href="/disclaimer" className="text-[12.5px] text-[#40474F] no-underline">
+            <Link href="/disclaimer" className="text-[12.5px] text-[#97A2B4] no-underline">
               Disclaimer
             </Link>
           </div>
         </div>
 
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#8A929E]">Contacto</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#5B6472]">Contacto</p>
           <div className="mt-2.5">
-            <FeedbackLink className="text-[12.5px] text-[#40474F] border-b border-[#DADEE4]" />
+            <FeedbackLink className="text-[12.5px] text-[#97A2B4] border-b border-white/[0.14]" />
           </div>
         </div>
       </div>
 
-      <p className="mt-8 text-[11.5px] text-[#B4BAC3]">Mi portafolio</p>
+      <p className="mt-8 text-[11.5px] text-[#3E4650]">Mi portafolio</p>
     </footer>
   );
 }

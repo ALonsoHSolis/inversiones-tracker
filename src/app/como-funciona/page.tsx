@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Logo } from "@/components/Logo";
-import { FeedbackLink } from "@/components/FeedbackLink";
+import { SiteNav } from "@/components/SiteNav";
+import { PublicFooter } from "@/components/PublicFooter";
 
 export const metadata: Metadata = {
   title: "Cómo funciona — Mi portafolio",
@@ -9,61 +9,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/como-funciona" },
 };
 
-const NAV_LINK_CLASS = "h-9 px-3 inline-flex items-center text-[13px] font-medium text-[#97A2B4] no-underline";
-
 export default function ComoFuncionaPage() {
   return (
-    <div className="min-h-screen bg-[#0A0D13]">
-      <nav className="sticky top-0 z-20 bg-[#0A0D13]/[0.78] backdrop-blur-[14px] border-b border-white/[0.07]">
-        <div className="max-w-[1160px] mx-auto px-6 py-[13px] flex items-center justify-between gap-4">
-          <Logo
-            href="/"
-            light
-            subtitle="Rendimiento real, no aportes disfrazados de ganancia"
-            hideSubtitleOnMobile
-          />
-
-          <div className="hidden md:flex items-center gap-1.5">
-            <Link href="/calculadora" className={NAV_LINK_CLASS}>
-              Calculadora
-            </Link>
-            <Link href="/login" className="h-9 px-3.5 inline-flex items-center text-[13px] font-medium text-[#97A2B4] no-underline">
-              Iniciar sesión
-            </Link>
-            <Link
-              href="/signup"
-              className="h-9 px-[15px] inline-flex items-center rounded-[9px] bg-[#8B5CF6] text-[#0A0D13] text-[13px] font-semibold no-underline"
-            >
-              Crear cuenta gratis
-            </Link>
-          </div>
-
-          <details className="md:hidden group relative">
-            <summary
-              aria-label="Abrir menú"
-              className="list-none [&::-webkit-details-marker]:hidden cursor-pointer w-9 h-9 flex items-center justify-center rounded-[9px] border border-white/[0.14] bg-white/[0.04]"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F2F5F9" strokeWidth="2" strokeLinecap="round">
-                <path d="M4 7h16M4 12h16M4 17h16" />
-              </svg>
-            </summary>
-            <div className="absolute right-0 mt-2 w-[230px] bg-[#12161F] border border-white/[0.1] rounded-[12px] shadow-[0_12px_32px_-8px_rgba(0,0,0,0.6)] p-2 flex flex-col gap-1">
-              <Link href="/calculadora" className="px-3 py-2.5 rounded-[8px] text-[13.5px] font-medium text-[#97A2B4] no-underline">
-                Calculadora
-              </Link>
-              <Link href="/login" className="px-3 py-2.5 rounded-[8px] text-[13.5px] font-medium text-[#97A2B4] no-underline">
-                Iniciar sesión
-              </Link>
-              <Link
-                href="/signup"
-                className="mt-1 px-3 py-2.5 rounded-[8px] bg-[#8B5CF6] text-[#0A0D13] text-[13.5px] font-semibold no-underline text-center"
-              >
-                Crear cuenta gratis
-              </Link>
-            </div>
-          </details>
-        </div>
-      </nav>
+    <>
+      <SiteNav />
 
       <main className="max-w-[1160px] mx-auto px-6 pt-9 pb-16">
         <h1 className="text-[28px] font-semibold tracking-[-0.02em] max-w-[640px] text-[#F2F5F9]">
@@ -140,7 +89,7 @@ export default function ComoFuncionaPage() {
         <div className="flex items-center gap-3 mt-8">
           <Link
             href="/signup"
-            className="inline-flex items-center h-11 px-6 rounded-[11px] bg-[#8B5CF6] text-[#0A0D13] text-[14px] font-bold no-underline"
+            className="inline-flex items-center h-11 px-6 rounded-[11px] bg-[var(--accent)] text-[#0A0D13] text-[14px] font-bold no-underline"
           >
             Crear cuenta gratis
           </Link>
@@ -152,46 +101,8 @@ export default function ComoFuncionaPage() {
           </Link>
         </div>
 
-        <footer className="mt-10 pt-8 border-t border-white/[0.07]">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#5B6472]">Producto</p>
-              <div className="mt-2.5 flex flex-col gap-2">
-                <Link href="/como-funciona" className="text-[12.5px] text-[#97A2B4] no-underline">
-                  Cómo funciona
-                </Link>
-                <Link href="/calculadora" className="text-[12.5px] text-[#97A2B4] no-underline">
-                  Calculadora
-                </Link>
-              </div>
-            </div>
-
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#5B6472]">Legal</p>
-              <div className="mt-2.5 flex flex-col gap-2">
-                <Link href="/terminos" className="text-[12.5px] text-[#97A2B4] no-underline">
-                  Términos
-                </Link>
-                <Link href="/privacidad" className="text-[12.5px] text-[#97A2B4] no-underline">
-                  Privacidad
-                </Link>
-                <Link href="/disclaimer" className="text-[12.5px] text-[#97A2B4] no-underline">
-                  Disclaimer
-                </Link>
-              </div>
-            </div>
-
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#5B6472]">Contacto</p>
-              <div className="mt-2.5">
-                <FeedbackLink className="text-[12.5px] text-[#97A2B4] border-b border-white/[0.14]" />
-              </div>
-            </div>
-          </div>
-
-          <p className="mt-8 text-[11.5px] text-[#3E4650]">Mi portafolio</p>
-        </footer>
+        <PublicFooter />
       </main>
-    </div>
+    </>
   );
 }

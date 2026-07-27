@@ -49,18 +49,18 @@ function TooltipPersonalizado({ active, payload }: { active?: boolean; payload?:
   const esPositivo = punto.gananciaClp >= 0;
 
   return (
-    <div className="rounded-[10px] bg-[#171A20] px-3 py-2.5 min-w-[148px] shadow-[0_6px_18px_rgba(20,30,50,0.24)]">
-      <p className="text-[10.5px] text-[#AEB5C0] mb-1.5">{formatoFechaCorta(punto.fecha)}</p>
+    <div className="rounded-[10px] bg-[rgba(10,13,19,0.94)] border border-white/[0.1] backdrop-blur-[10px] px-3 py-2.5 min-w-[148px] shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
+      <p className="text-[10.5px] text-[#8892A0] mb-1.5">{formatoFechaCorta(punto.fecha)}</p>
       <div className="flex items-center gap-2 mb-1.5">
-        <span className="w-2 h-2 rounded-[2px] bg-[#C3CBD6]" />
-        <span className="text-[10.5px] text-[#AEB5C0]">Capital</span>
+        <span className="w-2 h-2 rounded-[2px] bg-white/[0.3]" />
+        <span className="text-[10.5px] text-[#8892A0]">Capital</span>
         <span className="font-mono-tabular text-[11.5px] font-semibold text-white ml-auto">
           {formatoPesos(punto.capitalAportadoClp)}
         </span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="w-2 h-2 rounded-[2px]" style={{ background: "rgba(11, 122, 84, 0.55)" }} />
-        <span className="text-[10.5px] text-[#AEB5C0]">Ganancia</span>
+        <span className="w-2 h-2 rounded-[2px]" style={{ background: "rgba(62, 217, 163, 0.6)" }} />
+        <span className="text-[10.5px] text-[#8892A0]">Ganancia</span>
         <span
           className="font-mono-tabular text-[11.5px] font-semibold ml-auto"
           style={{ color: esPositivo ? "var(--pos)" : "var(--neg)" }}
@@ -104,9 +104,9 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
     return (
       <div>
         <div className="flex items-center justify-between mb-2">
-          <p className="text-[12.5px] font-semibold text-[#40474F]">Evolución del portafolio</p>
+          <p className="text-[12.5px] font-semibold text-[#C7CDD6]">Evolución del portafolio</p>
         </div>
-        <p className="text-[12.5px] text-[#A0A7B2] py-8 text-center">
+        <p className="text-[12.5px] text-[#8892A0] py-8 text-center">
           todavía no hay suficiente historial para graficar — vuelve cuando tengas al menos dos fechas
           con valores guardados.
         </p>
@@ -115,20 +115,20 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
   }
 
   const gananciaEsPositivaHoy = puntos[puntos.length - 1].gananciaClp >= 0;
-  const colorGanancia = gananciaEsPositivaHoy ? "#0B7A54" : "#C0392B";
+  const colorGanancia = gananciaEsPositivaHoy ? "#3ED9A3" : "#FF6B6B";
 
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
-          <p className="text-[12.5px] font-semibold text-[#40474F]">Evolución del portafolio</p>
+          <p className="text-[12.5px] font-semibold text-[#C7CDD6]">Evolución del portafolio</p>
           <Ayuda>
             El área gris es el capital que has aportado, acumulado (crece en escalones, cuando haces
             un aporte o retiro). El área verde o roja encima es tu ganancia o pérdida real sobre ese
             capital. La línea del valor total va sobre ambas.
           </Ayuda>
         </div>
-        <div className="flex gap-0.5 bg-[#F3F4F7] p-[3px] rounded-[9px]">
+        <div className="flex gap-0.5 bg-white/[0.04] p-[3px] rounded-[9px]">
           {PERIODOS.map((p) => {
             const activo = p === periodo;
             return (
@@ -138,9 +138,9 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
                 onClick={() => setPeriodo(p)}
                 className="h-6 px-2.5 rounded-md text-xs font-semibold"
                 style={{
-                  background: activo ? "#fff" : "transparent",
-                  color: activo ? "#171A20" : "#8A929E",
-                  boxShadow: activo ? "0 1px 2px rgba(20,30,50,.12)" : "none",
+                  background: activo ? "rgba(255,255,255,.1)" : "transparent",
+                  color: activo ? "#F2F5F9" : "#7C8798",
+                  boxShadow: activo ? "0 1px 2px rgba(0,0,0,.3)" : "none",
                 }}
               >
                 {p}
@@ -154,20 +154,20 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
           <ComposedChart data={puntos} margin={{ top: 14, right: 4, bottom: 0, left: 4 }}>
             <defs>
               <linearGradient id={`${gradientId}-capital`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#C3CBD6" stopOpacity={0.55} />
-                <stop offset="100%" stopColor="#C3CBD6" stopOpacity={0.04} />
+                <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0.16} />
+                <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0.02} />
               </linearGradient>
               <linearGradient id={`${gradientId}-ganancia`} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={colorGanancia} stopOpacity={0.32} />
                 <stop offset="100%" stopColor={colorGanancia} stopOpacity={0.03} />
               </linearGradient>
             </defs>
-            <CartesianGrid horizontal vertical={false} stroke="#EFF1F5" />
+            <CartesianGrid horizontal vertical={false} stroke="rgba(255,255,255,.06)" />
             <XAxis
               dataKey="fecha"
               tickFormatter={formatoMes}
-              tick={{ fontSize: 10.5, fill: "#A8AEB8" }}
-              axisLine={{ stroke: "#EFF1F5" }}
+              tick={{ fontSize: 10.5, fill: "#5B6472" }}
+              axisLine={{ stroke: "rgba(255,255,255,.06)" }}
               tickLine={false}
               minTickGap={40}
             />
@@ -177,7 +177,7 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
               type="stepAfter"
               dataKey="capitalAportadoClp"
               stackId="portafolio"
-              stroke="#C3CBD6"
+              stroke="rgba(255,255,255,.28)"
               strokeWidth={1.4}
               fill={`url(#${gradientId}-capital)`}
               isAnimationActive={false}
@@ -207,7 +207,7 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
               stroke="var(--accent)"
               strokeWidth={2.2}
               dot={false}
-              activeDot={{ r: 4.5, fill: "#fff", stroke: "var(--accent)", strokeWidth: 2.4 }}
+              activeDot={{ r: 4.5, fill: "#12161F", stroke: "var(--accent)", strokeWidth: 2.4 }}
               isAnimationActive
               animationDuration={900}
             />
@@ -215,12 +215,12 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
         </ResponsiveContainer>
       </div>
       <div className="flex gap-4 mt-2.5">
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#6B7280]">
-          <span className="w-2.5 h-2.5 rounded-[3px] bg-[#E4E8EF] border border-[#C3CBD6]" />
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#8892A0]">
+          <span className="w-2.5 h-2.5 rounded-[3px] bg-white/[0.08] border border-white/[0.28]" />
           Capital aportado
         </span>
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#6B7280]">
-          <span className="w-2.5 h-2.5 rounded-[3px]" style={{ background: "rgba(11, 122, 84, 0.3)" }} />
+        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#8892A0]">
+          <span className="w-2.5 h-2.5 rounded-[3px]" style={{ background: "rgba(62, 217, 163, 0.3)" }} />
           Ganancia real
         </span>
       </div>

@@ -35,7 +35,7 @@ export function PrivacyToggleButton() {
     <button
       type="button"
       onClick={toggle}
-      className="inline-flex items-center gap-1.5 h-[34px] px-3.5 rounded-[9px] border border-[#E1E4EA] bg-white text-[13px] font-medium text-[#40474F] hover:border-[#C9CDD5]"
+      className="inline-flex items-center gap-1.5 h-[34px] px-3.5 rounded-[9px] border border-white/[0.1] bg-white/[0.03] text-[13px] font-medium text-[#C7CDD6] hover:border-white/[0.2]"
     >
       <span className="w-[7px] h-[7px] rounded-full bg-[var(--accent)]" />
       {oculto ? "Mostrar" : "Ocultar"}

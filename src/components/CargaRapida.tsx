@@ -233,32 +233,32 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
   return (
     <section
       id="carga-rapida"
-      className="bg-white border border-[#E7E9EE] rounded-2xl p-5 shadow-[0_1px_2px_rgba(20,30,50,0.03)] scroll-mt-6"
+      className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)] scroll-mt-6"
     >
       <div className="flex items-center gap-1.5 mb-1">
-        <p className="text-[13.5px] font-semibold">Carga rápida</p>
+        <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Carga rápida</p>
         <Ayuda>
           Registra el valor de hoy de una sola cuenta. Para actualizar varias cuentas a la vez, usa
           &quot;actualizar varias cuentas de una vez&quot; más abajo.
         </Ayuda>
       </div>
-      <p className="text-[11.5px] text-[#A0A7B2] mb-4">Registra el valor de hoy de una cuenta</p>
+      <p className="text-[11.5px] text-[#8892A0] mb-4">Registra el valor de hoy de una cuenta</p>
 
       <label className="flex flex-col gap-1">
-        <span className="text-[11px] font-semibold text-[#6B7280]">Cuenta</span>
+        <span className="text-[11px] font-semibold text-[#8892A0]">Cuenta</span>
         {cuentas.length > 5 && (
           <input
             type="text"
             placeholder="Buscar por nombre o plataforma…"
             value={busquedaCuenta}
             onChange={(e) => setBusquedaCuenta(e.target.value)}
-            className="h-9 px-3 mb-1.5 rounded-[10px] border border-[#DFE2E8] text-[13px] bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+            className="h-9 px-3 mb-1.5 rounded-[10px] border border-white/[0.14] text-[13px] bg-white/[0.04] text-[#F2F5F9] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
           />
         )}
         <select
           value={cuentaId}
           onChange={(e) => setCuentaId(e.target.value)}
-          className="h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-[13px] bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+          className="h-10 px-3 rounded-[10px] border border-white/[0.14] text-[13px] bg-white/[0.04] text-[#F2F5F9] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
         >
           {!hayCoincidencias && <option disabled>ninguna cuenta coincide</option>}
           {cuentas.map((c) => (
@@ -271,14 +271,14 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
 
       <div className="grid grid-cols-2 gap-3 mt-3">
         <div>
-          <span className="text-[11px] font-semibold text-[#6B7280]">Fecha</span>
-          <p className="mt-1 h-10 px-3 rounded-[10px] bg-[#F7F8FA] flex items-center text-[13px] text-[#8A929E] font-mono-tabular">
+          <span className="text-[11px] font-semibold text-[#8892A0]">Fecha</span>
+          <p className="mt-1 h-10 px-3 rounded-[10px] bg-white/[0.03] flex items-center text-[13px] text-[#8892A0] font-mono-tabular">
             {formatoFecha(new Date().toISOString())}
           </p>
         </div>
         <label className="flex flex-col gap-1">
           <span className="flex items-center gap-1">
-            <span className="text-[11px] font-semibold text-[#6B7280]">Valor actual</span>
+            <span className="text-[11px] font-semibold text-[#8892A0]">Valor actual</span>
             <Ayuda>
               Mientras más seguido registres el valor, más preciso es tu rendimiento semanal — los
               saltos largos entre registros diluyen la comparación semana a semana.
@@ -286,7 +286,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
           </span>
           <InputMonto
             placeholder="0"
-            className="h-10 px-3 rounded-[10px] border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+            className="h-10 px-3 rounded-[10px] border border-white/[0.14] bg-white/[0.04] text-[#F2F5F9] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
             value={valor}
             onChange={(v) => {
               setValor(v);
@@ -299,21 +299,21 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
       {cuenta && cuenta.moneda !== "CLP" && (
         <div className="mt-3 flex flex-col gap-1">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[11px] font-semibold text-[#6B7280]">tasa de cambio</span>
+            <span className="text-[11px] font-semibold text-[#8892A0]">tasa de cambio</span>
             <input
               type="number"
               inputMode="decimal"
               step="0.01"
-              className="w-28 h-8 px-2 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+              className="w-28 h-8 px-2 rounded-lg border border-white/[0.14] bg-white/[0.04] text-[#F2F5F9] text-right text-[13px] font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
               value={tasaCambio ?? ""}
               onChange={(e) => editarTasaManualmente(e.target.value ? Number(e.target.value) : null)}
             />
           </div>
           {cargandoTasa && (
-            <span className="text-[11px] text-[#A0A7B2] text-right block">buscando tasa en mindicador.cl…</span>
+            <span className="text-[11px] text-[#8892A0] text-right block">buscando tasa en mindicador.cl…</span>
           )}
           {!cargandoTasa && tasaFecha && (
-            <span className="text-[11px] text-[#A0A7B2] text-right block">
+            <span className="text-[11px] text-[#8892A0] text-right block">
               según Banco Central, {formatoFecha(tasaFecha)}
             </span>
           )}
@@ -341,19 +341,19 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
           + añadir aporte o retiro
         </button>
       ) : (
-        <div className="mt-3 rounded-[10px] bg-[#F7F8FA] p-2.5 flex flex-col gap-2">
+        <div className="mt-3 rounded-[10px] bg-white/[0.03] p-2.5 flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] font-medium text-[#6B7280]">esto incluye un aporte o retiro</span>
+            <span className="text-[11px] font-medium text-[#8892A0]">esto incluye un aporte o retiro</span>
             <button
               type="button"
               onClick={() => cambiarMovimiento({ incluyeMovimiento: false })}
-              className="text-[11px] text-[#98A0AB] border-b border-[#E2E5EA] shrink-0"
+              className="text-[11px] text-[#6B7684] border-b border-white/[0.12] shrink-0"
             >
               quitar
             </button>
           </div>
           {tieneMovimientoOriginal && (
-            <span className="self-start text-[10px] font-medium text-[#8A929E] bg-white border border-[#E2E5EA] rounded px-1.5 py-px">
+            <span className="self-start text-[10px] font-medium text-[#8892A0] bg-white/[0.04] border border-white/[0.12] rounded px-1.5 py-px">
               ya registrado hoy
             </span>
           )}
@@ -361,14 +361,14 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
             <select
               value={movimientoTipo}
               onChange={(e) => cambiarMovimiento({ movimientoTipo: e.target.value as TipoMovimiento })}
-              className="h-9 px-2 rounded-lg border border-[#DFE2E8] text-[13px] bg-white shrink-0"
+              className="h-9 px-2 rounded-lg border border-white/[0.14] text-[13px] bg-white/[0.04] text-[#F2F5F9] shrink-0"
             >
               <option value="aporte">aporte</option>
               <option value="retiro">retiro</option>
             </select>
             <InputMonto
               placeholder="monto"
-              className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-[#DFE2E8] text-right text-[13px] font-mono-tabular bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+              className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-white/[0.14] text-right text-[13px] font-mono-tabular bg-white/[0.04] text-[#F2F5F9] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
               value={movimientoMonto}
               onChange={(m) => cambiarMovimiento({ movimientoMonto: m })}
             />
@@ -379,7 +379,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
       <button
         onClick={guardar}
         disabled={guardando || cargandoTasa}
-        className="w-full h-[42px] mt-4 rounded-[11px] bg-[var(--accent)] text-white text-[13.5px] font-semibold disabled:opacity-50 hover:brightness-[1.08]"
+        className="w-full h-[42px] mt-4 rounded-[11px] bg-[var(--accent)] text-[#0A0D13] text-[13.5px] font-semibold disabled:opacity-50 hover:brightness-[1.08]"
       >
         {guardando ? "Guardando…" : "Guardar registro"}
       </button>

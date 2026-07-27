@@ -1,6 +1,6 @@
 function AccountRowSkeleton() {
   return (
-    <div className="border border-[#ECEEF2] rounded-xl px-[15px] py-[13px] flex items-center justify-between gap-3">
+    <div className="border border-white/[0.07] rounded-xl px-[15px] py-[13px] flex items-center justify-between gap-3">
       <div className="flex flex-col gap-2 min-w-0">
         <div className="skeleton h-3.5 w-32" />
         <div className="skeleton h-2.5 w-20" />
@@ -15,7 +15,7 @@ function AccountRowSkeleton() {
 
 function BreakdownCardSkeleton() {
   return (
-    <section className="bg-white border border-[#E7E9EE] rounded-2xl p-5 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
+    <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
       <div className="skeleton h-3.5 w-32 mb-2" />
       <div className="skeleton h-2.5 w-44 mb-4" />
       <div className="flex flex-col gap-[15px]">
@@ -50,13 +50,13 @@ export default function Loading() {
         </div>
       </header>
 
-      <section className="bg-white border border-[#E7E9EE] rounded-[18px] px-7 py-6 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
+      <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[28px] border border-white/[0.08] rounded-[18px] px-7 py-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)]">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(280px,1fr)_minmax(360px,1.35fr)] gap-8">
           <div>
             <div className="skeleton h-3 w-40 mb-3" />
             <div className="skeleton h-11 w-56 mb-4" />
             <div className="skeleton h-6 w-32 rounded-full mb-6" />
-            <div className="h-px bg-[#EEF0F4] my-5" />
+            <div className="h-px bg-white/[0.07] my-5" />
             <div className="grid grid-cols-3 gap-3.5">
               {[0, 1, 2].map((i) => (
                 <div key={i} className="flex flex-col gap-1.5">
@@ -76,7 +76,7 @@ export default function Loading() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4 mt-4 items-start">
-        <section className="bg-white border border-[#E7E9EE] rounded-2xl p-5 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
+        <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
           <div className="skeleton h-3.5 w-24 mb-4" />
           <div className="flex flex-col gap-[9px]">
             <AccountRowSkeleton />
@@ -84,7 +84,7 @@ export default function Loading() {
             <AccountRowSkeleton />
           </div>
         </section>
-        <section className="bg-white border border-[#E7E9EE] rounded-2xl p-5 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
+        <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
           <div className="skeleton h-3.5 w-28 mb-4" />
           <div className="skeleton h-10 w-full mb-3.5" />
           <div className="skeleton h-10 w-full mb-3.5" />

@@ -30,12 +30,12 @@ interface AccountRowProps {
 }
 
 const CHIP_COLORES: Record<string, { bg: string; fg: string }> = {
-  fondo_mutuo: { bg: "#EAF1F8", fg: "#2A5F94" },
-  acciones: { bg: "#EDEBF7", fg: "#4B3E92" },
-  cripto: { bg: "#FBEFE6", fg: "#9A5A22" },
-  deposito_plazo: { bg: "#E9F3EE", fg: "#1F7A54" },
+  fondo_mutuo: { bg: "rgba(139,92,246,.16)", fg: "#B9A6F7" },
+  acciones: { bg: "rgba(143,163,191,.18)", fg: "#B9C4D6" },
+  cripto: { bg: "rgba(232,168,87,.16)", fg: "#F0BD7E" },
+  deposito_plazo: { bg: "rgba(62,217,163,.16)", fg: "#7EE8C4" },
 };
-const CHIP_DEFAULT = { bg: "#F0F1F4", fg: "#5B6472" };
+const CHIP_DEFAULT = { bg: "rgba(255,255,255,.08)", fg: "#AEB6C2" };
 
 // el símbolo de moneda importa: rendimiento.valor y aportes_netos vienen en
 // la moneda nativa de la cuenta (nunca convertidos a clp, por regla de
@@ -91,11 +91,11 @@ export function AccountRow({
   const tipoLabel = TIPOS.find((t) => t.value === cuenta.tipo)?.label ?? cuenta.tipo;
 
   return (
-    <div className="acct-row border border-[#ECEEF2] rounded-xl px-[15px] py-[13px] transition-[transform,box-shadow,background-color,border-color] duration-300 ease-out hover:border-[#DCE0E7] hover:bg-[#FCFCFD] hover:[transform:translateY(-1px)] hover:shadow-[0_4px_16px_-6px_rgba(20,30,50,0.12)]">
+    <div className="acct-row border border-white/[0.07] rounded-xl px-[15px] py-[13px] transition-[transform,box-shadow,background-color,border-color] duration-300 ease-out hover:border-white/[0.16] hover:bg-white/[0.025] hover:[transform:translateY(-1px)] hover:shadow-[0_4px_16px_-6px_rgba(0,0,0,0.35)]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-[13.5px] font-semibold">{cuenta.nombre}</span>
+            <span className="text-[13.5px] font-semibold text-[#F2F5F9]">{cuenta.nombre}</span>
             <span
               className="text-[10.5px] font-semibold px-[7px] py-0.5 rounded-md"
               style={{ background: chip.bg, color: chip.fg }}
@@ -103,16 +103,16 @@ export function AccountRow({
               {tipoLabel}
             </span>
           </div>
-          <p className="mt-1 text-[11.5px] text-[#98A0AB]">
+          <p className="mt-1 text-[11.5px] text-[#6B7684]">
             {cuenta.plataforma}
             {" · "}
-            <Link href={`/cuentas/${cuenta.id}/editar`} className="text-[#98A0AB] no-underline border-b border-[#E2E5EA]">
+            <Link href={`/cuentas/${cuenta.id}/editar`} className="text-[#6B7684] no-underline border-b border-white/[0.12]">
               editar
             </Link>
             {" · "}
             <Link
               href={`/cuentas/${cuenta.id}/historial`}
-              className="text-[#98A0AB] no-underline border-b border-[#E2E5EA]"
+              className="text-[#6B7684] no-underline border-b border-white/[0.12]"
             >
               historial
             </Link>
@@ -130,7 +130,7 @@ export function AccountRow({
           </p>
         </div>
         <div className="text-right whitespace-nowrap">
-          <p className="money-value font-mono-tabular text-sm font-semibold">
+          <p className="money-value font-mono-tabular text-sm font-semibold text-[#F2F5F9]">
             {valorClp != null ? formatoPesos(valorClp) : "sin datos aún"}
           </p>
           {rendimiento?.rendimiento_pct != null && (
@@ -138,17 +138,17 @@ export function AccountRow({
               className="mt-[3px] text-[11.5px] font-semibold"
               style={{ color: rendimiento.rendimiento_pct >= 0 ? "var(--pos)" : "var(--neg)" }}
             >
-              {formatoPct(rendimiento.rendimiento_pct)} <span className="text-[#B4BAC3] font-medium">real</span>
+              {formatoPct(rendimiento.rendimiento_pct)} <span className="text-[#5B6472] font-medium">real</span>
             </p>
           )}
           {(rendimientoAnualizado != null || efectoTipoCambio != null) && (
             <details className="mt-[3px] group">
-              <summary className="list-none [&::-webkit-details-marker]:hidden inline-flex items-center justify-center w-4 h-4 rounded-full border border-[#DADEE4] text-[10px] font-medium text-[#A0A7B2] cursor-pointer select-none ml-auto group-hover:border-[#C9CDD5] group-hover:text-[#6B7280]">
+              <summary className="list-none [&::-webkit-details-marker]:hidden inline-flex items-center justify-center w-4 h-4 rounded-full border border-white/[0.18] text-[10px] font-medium text-[#8892A0] cursor-pointer select-none ml-auto group-hover:border-white/[0.32] group-hover:text-[#C7CDD6]">
                 ▾
               </summary>
               <div className="mt-1.5 flex flex-col gap-1 text-left max-w-[190px] ml-auto">
                 {rendimientoAnualizado != null && (
-                  <p className="text-[11px] leading-relaxed text-[#98A0AB] whitespace-normal">
+                  <p className="text-[11px] leading-relaxed text-[#8892A0] whitespace-normal">
                     Rendimiento anualizado:{" "}
                     <strong style={{ color: rendimientoAnualizado >= 0 ? "var(--pos)" : "var(--neg)" }}>
                       {formatoPct(rendimientoAnualizado)}
@@ -156,7 +156,7 @@ export function AccountRow({
                   </p>
                 )}
                 {efectoTipoCambio != null && (
-                  <p className="text-[11px] leading-relaxed text-[#98A0AB] whitespace-normal">
+                  <p className="text-[11px] leading-relaxed text-[#8892A0] whitespace-normal">
                     Rendimiento del activo:{" "}
                     <strong style={{ color: (rendimiento?.rendimiento_pct ?? 0) >= 0 ? "var(--pos)" : "var(--neg)" }}>
                       {rendimiento?.rendimiento_pct != null ? formatoPct(rendimiento.rendimiento_pct) : "—"}
@@ -174,13 +174,13 @@ export function AccountRow({
         </div>
       </div>
       {tieneAporte && rendimiento && (
-        <div className="mt-2.5 pt-2.5 border-t border-[#F0F1F4] flex items-center gap-2 flex-wrap">
-          <span className="money-value text-[11px] font-semibold bg-[#FBF3E4] text-[#9A6B12] px-2 py-[3px] rounded-md">
+        <div className="mt-2.5 pt-2.5 border-t border-white/[0.06] flex items-center gap-2 flex-wrap">
+          <span className="money-value text-[11px] font-semibold bg-[rgba(232,168,87,0.16)] text-[#E8A857] px-2 py-[3px] rounded-md">
             {/* aportes_netos siempre cae a 0 via coalesce en la vista sql, nunca null */}
             {rendimiento.aportes_netos! > 0 ? "+ aporte " : "− retiro "}
             {formatoValor(Math.abs(rendimiento.aportes_netos!), cuenta.moneda as Moneda)}
           </span>
-          <span className="text-[11px] text-[#A0A7B2]">esta parte no es rendimiento</span>
+          <span className="text-[11px] text-[#8892A0]">esta parte no es rendimiento</span>
         </div>
       )}
     </div>

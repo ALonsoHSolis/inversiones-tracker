@@ -21,12 +21,12 @@ export function Logo({
     <div className="flex items-center gap-3">
       <img src="/logo-icon.png" alt="" className="w-10 h-10 object-contain" />
       <div>
-        <p className={`text-[15px] font-semibold tracking-[-0.01em] ${light ? "text-white" : ""}`}>
+        <p className={`text-[15px] font-semibold tracking-[-0.01em] ${light ? "text-white" : "text-[#F2F5F9]"}`}>
           Mi portafolio
         </p>
         <p
           className={`mt-0.5 text-xs ${hideSubtitleOnMobile ? "hidden sm:block" : ""} ${
-            light ? "text-white/70" : "text-[#8A929E]"
+            light ? "text-white/70" : "text-[#97A2B4]"
           }`}
         >
           {subtitle}

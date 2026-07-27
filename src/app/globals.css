@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --accent: #14508c;
-  --pos: #0b7a54;
-  --neg: #c0392b;
+  --accent: #8b5cf6;
+  --pos: #3ed9a3;
+  --neg: #ff6b6b;
 }
 
 body {
-  background-color: #f5f6f8;
-  color: #171a20;
+  background-color: #0a0d13;
+  color: #f2f5f9;
   font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -113,7 +113,7 @@ body {
 /* bloque generico de skeleton (loading.tsx) -- pulso de opacidad, no de
    posicion/tamaño, para que sea barato de animar y no cause layout shift. */
 .skeleton {
-  background-color: #e9ebf0;
+  background-color: rgba(255, 255, 255, 0.07);
   border-radius: 6px;
   animation: skeletonPulse 1.6s ease-in-out infinite;
 }
@@ -136,7 +136,7 @@ body {
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #171a20;
+  color: #f2f5f9;
 }
 
 .contenido-post h3 {
@@ -144,7 +144,7 @@ body {
   margin-bottom: 0.4rem;
   font-size: 15px;
   font-weight: 600;
-  color: #171a20;
+  color: #f2f5f9;
 }
 
 .contenido-post p {
@@ -177,18 +177,18 @@ body {
 
 .contenido-post strong {
   font-weight: 600;
-  color: #171a20;
+  color: #f2f5f9;
 }
 
 .contenido-post blockquote {
   margin-top: 0.75rem;
   padding-left: 1rem;
-  border-left: 3px solid #e1e4ea;
-  color: #6b7280;
+  border-left: 3px solid rgba(255, 255, 255, 0.14);
+  color: #97a2b4;
 }
 
 .contenido-post code {
-  background: #f2f3f6;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 4px;
   padding: 0.1rem 0.35rem;
   font-size: 0.9em;

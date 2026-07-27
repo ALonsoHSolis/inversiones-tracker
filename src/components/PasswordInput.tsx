@@ -18,9 +18,9 @@ function calcularFortaleza(password: string) {
   if (/\d/.test(password)) puntos++;
   if (/[^a-zA-Z0-9]/.test(password)) puntos++;
 
-  if (puntos <= 1) return { ancho: "33%", color: "#D64545", etiqueta: "débil" };
-  if (puntos <= 3) return { ancho: "66%", color: "#C98A1B", etiqueta: "media" };
-  return { ancho: "100%", color: "#0B7A54", etiqueta: "fuerte" };
+  if (puntos <= 1) return { ancho: "33%", color: "#FF6B6B", etiqueta: "débil" };
+  if (puntos <= 3) return { ancho: "66%", color: "#E8A857", etiqueta: "media" };
+  return { ancho: "100%", color: "#3ED9A3", etiqueta: "fuerte" };
 }
 
 export function PasswordInput({ name, placeholder, minLength, mostrarFortaleza }: PasswordInputProps) {
@@ -31,7 +31,7 @@ export function PasswordInput({ name, placeholder, minLength, mostrarFortaleza }
   return (
     <label className="flex flex-col gap-[7px]">
       <span className="flex items-center justify-between">
-        <span className="text-[12.5px] font-semibold text-[#6B7280]">Contraseña</span>
+        <span className="text-[12.5px] font-semibold text-[#8892A0]">Contraseña</span>
         <button
           type="button"
           onClick={() => setMostrar((v) => !v)}
@@ -48,11 +48,11 @@ export function PasswordInput({ name, placeholder, minLength, mostrarFortaleza }
         minLength={minLength}
         value={valor}
         onChange={(e) => setValor(e.target.value)}
-        className="h-11 px-[13px] border border-[#DFE2E8] rounded-[10px] text-sm text-[#171A20] bg-white focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(20,80,140,0.1)]"
+        className="h-11 px-[13px] border border-white/[0.14] rounded-[10px] text-sm text-[#F2F5F9] bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(139,92,246,0.15)]"
       />
       {fortaleza && (
         <div className="flex items-center gap-2">
-          <div className="flex-1 h-1 rounded-full bg-[#E7E9EE] overflow-hidden">
+          <div className="flex-1 h-1 rounded-full bg-white/[0.1] overflow-hidden">
             <div className="h-full rounded-full" style={{ width: fortaleza.ancho, background: fortaleza.color }} />
           </div>
           <span className="text-[11px] font-medium" style={{ color: fortaleza.color }}>

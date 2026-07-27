@@ -11,8 +11,8 @@ interface EditarCuentaFormProps {
 }
 
 const inputClass =
-  "h-11 px-3 rounded-[10px] border border-[#DFE2E8] text-[14px] text-[#171A20] bg-white focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
-const labelClass = "text-[11px] font-semibold text-[#6B7280]";
+  "h-11 px-3 rounded-[10px] border border-white/[0.14] text-[14px] text-[#F2F5F9] bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+const labelClass = "text-[11px] font-semibold text-[#8892A0]";
 
 // mismo criterio que CuentaForm: nunca mostrar error.message crudo de
 // postgres/supabase al usuario.
@@ -82,7 +82,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
   }
 
   return (
-    <div className="bg-white border border-[#E7E9EE] rounded-2xl p-6 shadow-[0_1px_2px_rgba(20,30,50,0.03)]">
+    <div className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-6 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
       <div className="flex flex-col gap-[15px]">
         <label className="flex flex-col gap-[7px]">
           <span className={labelClass}>nombre</span>
@@ -111,7 +111,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value as TipoCuenta)}
-            className={`${inputClass} bg-white`}
+            className={inputClass}
           >
             {TIPOS.map((t) => (
               <option key={t.value} value={t.value}>
@@ -123,21 +123,21 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
 
         <div className="flex flex-col gap-[7px]">
           <span className={labelClass}>moneda</span>
-          <p className="h-11 px-3 rounded-[10px] border border-[#E7E9EE] bg-[#F7F8FA] flex items-center text-[14px] text-[#8A929E]">
+          <p className="h-11 px-3 rounded-[10px] border border-white/[0.08] bg-white/[0.02] flex items-center text-[14px] text-[#8892A0]">
             {cuenta.moneda}
           </p>
-          <span className="text-[11.5px] text-[#8A929E]">
+          <span className="text-[11.5px] text-[#5B6472]">
             no se puede cambiar: los valores ya guardados quedarían mal interpretados
           </span>
         </div>
 
-        {errorGuardado && <p className="text-[12.5px] text-red-700">{errorGuardado}</p>}
+        {errorGuardado && <p className="text-[12.5px] text-[var(--neg)]">{errorGuardado}</p>}
 
         <button
           type="button"
           onClick={guardarCambios}
           disabled={accion !== null}
-          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-white text-[14px] font-semibold disabled:opacity-50"
+          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-[#0A0D13] text-[14px] font-semibold disabled:opacity-50"
         >
           {accion === "guardar" ? "guardando..." : "guardar cambios"}
         </button>
@@ -146,7 +146,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
           type="button"
           onClick={darDeBaja}
           disabled={accion !== null}
-          className="text-[12.5px] text-red-700 underline disabled:opacity-50"
+          className="text-[12.5px] text-[var(--neg)] underline disabled:opacity-50"
         >
           {accion === "baja" ? "dando de baja..." : "dar de baja esta cuenta"}
         </button>
