@@ -19,7 +19,13 @@ export function Logo({
 }: LogoProps) {
   const contenido = (
     <div className="flex items-center gap-3">
-      <img src="/logo-icon.png" alt="" className="w-10 h-10 object-contain" />
+      <div
+        className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+          light ? "bg-white/[0.14] border border-white/[0.24]" : "bg-white/[0.07] border border-white/[0.12]"
+        }`}
+      >
+        <img src="/logo-icon.png" alt="" className="w-8 h-8 object-contain" />
+      </div>
       <div>
         <p className={`text-[15px] font-semibold tracking-[-0.01em] ${light ? "text-white" : "text-[#F2F5F9]"}`}>
           Mi portafolio
