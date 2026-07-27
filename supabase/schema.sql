@@ -18,6 +18,14 @@ create table cuentas (
   created_at timestamptz not null default now()
 );
 
+-- categoria personalizada de la cuenta (fase 3 del roadmap): agrupacion
+-- propia del usuario, ej. "jubilacion", "fondo de emergencia" -- texto libre,
+-- mismo patron que plataforma. nullable: no reemplaza tipo (el enum fijo de
+-- activo), es una segunda dimension de agrupacion opcional. se agrega aca
+-- (justo despues de la tabla original) y no al final del archivo, porque
+-- crear_cuenta_con_aporte_inicial mas abajo ya inserta en esta columna.
+alter table cuentas add column categoria text;
+
 -- snapshots: valor de una cuenta en una fecha especifica, en su moneda nativa.
 -- tasa_cambio: valor de 1 usd o 1 uf en clp ese dia. obligatoria si moneda != 'CLP' (ver trigger).
 create table snapshots (
@@ -29,6 +37,14 @@ create table snapshots (
   created_at timestamptz not null default now(),
   unique (cuenta_id, fecha)
 );
+
+-- anotacion de usuario por snapshot (fase 3 del roadmap) -- distinto de
+-- movimientos.nota, que siempre escriben las funciones de bd con texto fijo:
+-- esta columna es exclusivamente para lo que el usuario escriba a mano (ej.
+-- "caida del mercado"), y tiene sentido en cualquier actualizacion de valor,
+-- no solo cuando hay un aporte/retiro asociado. se agrega aca (no al final
+-- del archivo) porque guardar_snapshot_con_movimiento mas abajo ya la usa.
+alter table snapshots add column nota text;
 
 -- movimientos: aportes y retiros, en moneda nativa. separados del valor para
 -- poder calcular rendimiento real. misma regla de tasa_cambio que snapshots.
@@ -116,6 +132,13 @@ create policy "movimientos de cuentas propias" on movimientos
 -- todo en una sola transaccion. el frontend SIEMPRE debe crear cuentas asi,
 -- nunca insertando directo en la tabla cuentas, para que el monto inicial
 -- quede contabilizado como capital aportado desde el dia uno.
+--
+-- p_categoria (fase 3 del roadmap) se agrego al final de la lista de
+-- parametros -- por eso el drop de abajo, mismo motivo que el de
+-- guardar_snapshot_con_movimiento un poco mas abajo en este archivo: "create
+-- or replace" no reemplaza una funcion cuando cambia la lista de parametros.
+drop function if exists crear_cuenta_con_aporte_inicial(text, text, text, text, numeric, numeric, date);
+
 create or replace function crear_cuenta_con_aporte_inicial(
   p_nombre text,
   p_plataforma text,
@@ -123,7 +146,8 @@ create or replace function crear_cuenta_con_aporte_inicial(
   p_moneda text,
   p_monto_inicial numeric,
   p_tasa_cambio numeric default null,
-  p_fecha date default current_date
+  p_fecha date default current_date,
+  p_categoria text default null
 )
 returns uuid
 language plpgsql
@@ -136,8 +160,8 @@ begin
     raise exception 'el monto inicial no puede ser negativo';
   end if;
 
-  insert into cuentas (user_id, nombre, plataforma, tipo, moneda)
-  values (auth.uid(), p_nombre, p_plataforma, p_tipo, p_moneda)
+  insert into cuentas (user_id, nombre, plataforma, tipo, moneda, categoria)
+  values (auth.uid(), p_nombre, p_plataforma, p_tipo, p_moneda, p_categoria)
   returning id into v_cuenta_id;
 
   insert into snapshots (cuenta_id, fecha, valor, tasa_cambio)
@@ -201,7 +225,11 @@ $$;
 -- existiendo en la base en paralelo a esta, un riesgo real dado que ese
 -- comportamiento es justamente el que causo la perdida de datos que este
 -- parametro corrige.
-drop function if exists guardar_snapshot_con_movimiento(uuid, date, numeric, numeric, text, numeric);
+--
+-- p_nota (fase 3 del roadmap) se agrego despues, al final de la lista --
+-- mismo motivo, nuevo drop de la firma que tenia hasta ese momento (7
+-- parametros, ya con p_permitir_quitar_movimiento) antes de recrear.
+drop function if exists guardar_snapshot_con_movimiento(uuid, date, numeric, numeric, text, numeric, boolean);
 
 create or replace function guardar_snapshot_con_movimiento(
   p_cuenta_id uuid,
@@ -210,7 +238,8 @@ create or replace function guardar_snapshot_con_movimiento(
   p_tasa_cambio numeric default null,
   p_movimiento_tipo text default null,
   p_movimiento_monto numeric default null,
-  p_permitir_quitar_movimiento boolean default true
+  p_permitir_quitar_movimiento boolean default true,
+  p_nota text default null
 )
 returns uuid
 language plpgsql
@@ -220,10 +249,10 @@ declare
   v_snapshot_id uuid;
   v_movimiento_id uuid;
 begin
-  insert into snapshots (cuenta_id, fecha, valor, tasa_cambio)
-  values (p_cuenta_id, p_fecha, p_valor, p_tasa_cambio)
+  insert into snapshots (cuenta_id, fecha, valor, tasa_cambio, nota)
+  values (p_cuenta_id, p_fecha, p_valor, p_tasa_cambio, p_nota)
   on conflict (cuenta_id, fecha) do update
-    set valor = excluded.valor, tasa_cambio = excluded.tasa_cambio
+    set valor = excluded.valor, tasa_cambio = excluded.tasa_cambio, nota = excluded.nota
   returning id into v_snapshot_id;
 
   select id into v_movimiento_id
@@ -458,3 +487,84 @@ alter table recordatorios_enviados enable row level security;
 create policy "recordatorios propios (solo lectura)"
   on recordatorios_enviados for select
   using (auth.uid() = user_id);
+
+-- ==========================================================================
+-- fase 3 del roadmap: categoria personalizada, metas de ahorro, anotaciones
+-- por registro, y la vista base del grafico de composicion historica.
+-- ==========================================================================
+
+-- metas de ahorro: monto objetivo, fecha objetivo opcional, y las cuentas
+-- que cuentan hacia esa meta (una cuenta puede aportar a mas de una meta).
+-- crear una meta es un insert directo desde el frontend (no una rpc): a
+-- diferencia de crear una cuenta, no hay ninguna regla de capital que
+-- proteger aca -- el progreso se calcula en el cliente reusando
+-- capital_por_cuenta, no vive en una columna ni en otra vista.
+create table metas (
+  id uuid primary key default gen_random_uuid(),
+  -- default auth.uid(): a diferencia de cuentas (que siempre se crea via el
+  -- rpc crear_cuenta_con_aporte_inicial, que fija user_id server-side), una
+  -- meta se crea con un insert directo desde el frontend -- el default evita
+  -- que el cliente tenga que (o pueda equivocarse al) mandar su propio user_id.
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  nombre text not null,
+  monto_objetivo numeric(14,2) not null check (monto_objetivo > 0),
+  fecha_objetivo date,
+  created_at timestamptz not null default now()
+);
+
+create table meta_cuentas (
+  meta_id uuid not null references metas(id) on delete cascade,
+  cuenta_id uuid not null references cuentas(id) on delete cascade,
+  primary key (meta_id, cuenta_id)
+);
+
+create index idx_meta_cuentas_meta on meta_cuentas (meta_id);
+
+alter table metas enable row level security;
+alter table meta_cuentas enable row level security;
+
+create policy "metas propias" on metas
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create policy "meta_cuentas de metas propias" on meta_cuentas
+  for all using (exists (
+    select 1 from metas where metas.id = meta_cuentas.meta_id and metas.user_id = auth.uid()
+  )) with check (exists (
+    select 1 from metas where metas.id = meta_cuentas.meta_id and metas.user_id = auth.uid()
+  ));
+
+-- valor clp forward-filled por (fecha, cuenta activa) -- misma logica de
+-- relleno hacia adelante que evolucion_portafolio (cte de fechas + cross
+-- join cuentas + lateral por la ultima fecha <= f.fecha), pero sin colapsar
+-- con sum(...) al final: expone una fila por cuenta para que el cliente
+-- pueda agrupar por plataforma o por tipo segun lo que quiera graficar, sin
+-- necesitar dos vistas casi iguales.
+create view valor_diario_por_cuenta
+with (security_invoker = true)
+as
+with fechas as (
+  select distinct s.fecha
+  from snapshots s
+  join cuentas c on c.id = s.cuenta_id
+  where c.activa = true
+)
+select
+  f.fecha,
+  c.id as cuenta_id,
+  c.plataforma,
+  c.tipo,
+  coalesce(
+    case when c.moneda = 'CLP' then u.valor else u.valor * u.tasa_cambio end,
+    0
+  ) as valor_clp
+from fechas f
+cross join cuentas c
+left join lateral (
+  select valor, tasa_cambio
+  from snapshots s
+  where s.cuenta_id = c.id and s.fecha <= f.fecha
+  order by s.fecha desc
+  limit 1
+) u on true
+where c.activa = true
+order by f.fecha, c.plataforma;

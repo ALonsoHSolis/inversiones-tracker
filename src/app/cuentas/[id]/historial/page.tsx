@@ -35,6 +35,7 @@ export default async function HistorialCuentaPage({ params }: { params: Promise<
       fecha: snapshot.fecha,
       valor: snapshot.valor,
       tasaCambio: snapshot.tasa_cambio,
+      nota: snapshot.nota,
       movimiento: movimiento ? { tipo: movimiento.tipo as TipoMovimiento, monto: movimiento.monto } : null,
     };
   });

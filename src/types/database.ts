@@ -17,6 +17,7 @@ export type Database = {
       cuentas: {
         Row: {
           activa: boolean
+          categoria: string | null
           created_at: string
           id: string
           moneda: string
@@ -27,6 +28,7 @@ export type Database = {
         }
         Insert: {
           activa?: boolean
+          categoria?: string | null
           created_at?: string
           id?: string
           moneda?: string
@@ -37,6 +39,7 @@ export type Database = {
         }
         Update: {
           activa?: boolean
+          categoria?: string | null
           created_at?: string
           id?: string
           moneda?: string
@@ -46,6 +49,63 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      metas: {
+        Row: {
+          created_at: string
+          fecha_objetivo: string | null
+          id: string
+          monto_objetivo: number
+          nombre: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fecha_objetivo?: string | null
+          id?: string
+          monto_objetivo: number
+          nombre: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          fecha_objetivo?: string | null
+          id?: string
+          monto_objetivo?: number
+          nombre?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      meta_cuentas: {
+        Row: {
+          cuenta_id: string
+          meta_id: string
+        }
+        Insert: {
+          cuenta_id: string
+          meta_id: string
+        }
+        Update: {
+          cuenta_id?: string
+          meta_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meta_cuentas_cuenta_id_fkey"
+            columns: ["cuenta_id"]
+            isOneToOne: false
+            referencedRelation: "cuentas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "meta_cuentas_meta_id_fkey"
+            columns: ["meta_id"]
+            isOneToOne: false
+            referencedRelation: "metas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       recordatorios_enviados: {
         Row: {
@@ -129,6 +189,7 @@ export type Database = {
           cuenta_id: string
           fecha: string
           id: string
+          nota: string | null
           tasa_cambio: number | null
           valor: number
         }
@@ -137,6 +198,7 @@ export type Database = {
           cuenta_id: string
           fecha: string
           id?: string
+          nota?: string | null
           tasa_cambio?: number | null
           valor: number
         }
@@ -145,6 +207,7 @@ export type Database = {
           cuenta_id?: string
           fecha?: string
           id?: string
+          nota?: string | null
           tasa_cambio?: number | null
           valor?: number
         }
@@ -254,6 +317,31 @@ export type Database = {
           },
         ]
       }
+      valor_diario_por_cuenta: {
+        Row: {
+          cuenta_id: string | null
+          fecha: string | null
+          plataforma: string | null
+          tipo: string | null
+          valor_clp: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "snapshots_cuenta_id_fkey"
+            columns: ["cuenta_id"]
+            isOneToOne: false
+            referencedRelation: "capital_por_cuenta"
+            referencedColumns: ["cuenta_id"]
+          },
+          {
+            foreignKeyName: "snapshots_cuenta_id_fkey"
+            columns: ["cuenta_id"]
+            isOneToOne: false
+            referencedRelation: "cuentas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       crear_cuenta_con_aporte_inicial: {
@@ -274,6 +362,7 @@ export type Database = {
           p_fecha: string
           p_movimiento_monto?: number
           p_movimiento_tipo?: string
+          p_nota?: string
           p_permitir_quitar_movimiento?: boolean
           p_tasa_cambio?: number
           p_valor: number
@@ -423,3 +512,6 @@ export type Movimiento = Tables<"movimientos">
 export type RendimientoActual = Tables<"rendimiento_actual">
 export type CapitalPorCuenta = Tables<"capital_por_cuenta">
 export type EvolucionPortafolio = Tables<"evolucion_portafolio">
+export type Meta = Tables<"metas">
+export type MetaCuenta = Tables<"meta_cuentas">
+export type ValorDiarioPorCuenta = Tables<"valor_diario_por_cuenta">

@@ -11,6 +11,7 @@ interface FilaHistorial {
   fecha: string;
   valor: number;
   tasaCambio: number | null;
+  nota: string | null;
   movimiento: { tipo: TipoMovimiento; monto: number } | null;
 }
 
@@ -22,6 +23,7 @@ interface HistorialFormProps {
 interface FilaState {
   valor: string;
   tasaCambio: string;
+  nota: string;
   incluyeMovimiento: boolean;
   movimientoTipo: TipoMovimiento;
   movimientoMonto: string;
@@ -41,6 +43,7 @@ function filaInicial(fila: FilaHistorial): FilaState {
   return {
     valor: String(fila.valor),
     tasaCambio: fila.tasaCambio != null ? String(fila.tasaCambio) : "",
+    nota: fila.nota ?? "",
     incluyeMovimiento: !!fila.movimiento,
     movimientoTipo: fila.movimiento?.tipo ?? "aporte",
     movimientoMonto: fila.movimiento ? String(fila.movimiento.monto) : "",
@@ -187,6 +190,11 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
       // exactamente el lugar pensado para corregir/quitar un movimiento a
       // proposito -- aca si se permite.
       p_permitir_quitar_movimiento: true,
+      // siempre se manda el valor actual del campo, nunca lo que habia antes
+      // de que el usuario lo viera -- mismo principio que ya protege
+      // valor/tasaCambio en este mismo formulario (fila.nota ya precarga el
+      // input, asi que borrarlo aca es una decision deliberada, no un accidente).
+      p_nota: estado.nota.trim() || undefined,
     });
 
     if (error) {
@@ -269,6 +277,17 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                 />
               </div>
             )}
+
+            <label className="mt-2.5 flex flex-col gap-1">
+              <span className="text-[11px] text-[#8892A0]">nota (opcional)</span>
+              <input
+                type="text"
+                placeholder="ej. caída del mercado"
+                value={estado.nota}
+                onChange={(e) => actualizarFila(fila.snapshotId, { nota: e.target.value })}
+                className="h-9 px-2.5 rounded-[8px] border border-white/[0.14] text-[13px] bg-white/[0.04] text-[#F2F5F9] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+              />
+            </label>
 
             <button
               onClick={() => guardarFila(fila)}

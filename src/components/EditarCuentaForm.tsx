@@ -30,6 +30,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
   const [nombre, setNombre] = useState(cuenta.nombre);
   const [plataforma, setPlataforma] = useState(cuenta.plataforma);
   const [tipo, setTipo] = useState<TipoCuenta>(cuenta.tipo as TipoCuenta);
+  const [categoria, setCategoria] = useState(cuenta.categoria ?? "");
 
   // accion separada por boton (en vez de un solo "guardando" compartido): con
   // un solo booleano, dar de baja hacia que el boton de "guardar cambios"
@@ -44,7 +45,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
 
     const { error } = await supabase
       .from("cuentas")
-      .update({ nombre, plataforma, tipo })
+      .update({ nombre, plataforma, tipo, categoria: categoria.trim() || null })
       .eq("id", cuenta.id);
 
     if (error) {
@@ -119,6 +120,17 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
               </option>
             ))}
           </select>
+        </label>
+
+        <label className="flex flex-col gap-[7px]">
+          <span className={labelClass}>categoría (opcional)</span>
+          <input
+            type="text"
+            placeholder="ej. jubilación, fondo de emergencia"
+            value={categoria}
+            onChange={(e) => setCategoria(e.target.value)}
+            className={inputClass}
+          />
         </label>
 
         <div className="flex flex-col gap-[7px]">

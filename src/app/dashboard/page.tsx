@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Hero } from "@/components/Hero";
 import { PlatformBreakdown } from "@/components/PlatformBreakdown";
 import { AssetTypeBreakdown } from "@/components/AssetTypeBreakdown";
+import { CategoryBreakdown } from "@/components/CategoryBreakdown";
 import { PortfolioChart } from "@/components/PortfolioChart";
 import { MarketBenchmark } from "@/components/MarketBenchmark";
 import { Ayuda } from "@/components/Ayuda";
@@ -13,6 +14,8 @@ import { PrintButton } from "@/components/PrintButton";
 import { PrivacyShell, PrivacyToggleButton } from "@/components/PrivacyShell";
 import { AccountComparison, type CuentaComparacion } from "@/components/AccountComparison";
 import { DataHealthView, type AlertaSalud } from "@/components/DataHealthView";
+import { MetasList, type MetaConProgreso } from "@/components/MetasList";
+import { CompositionChart, type DatosComposicion, type PuntoComposicion } from "@/components/CompositionChart";
 import { TIPOS } from "@/lib/tipos-cuenta";
 import type { Cuenta, RendimientoActual, TipoCuenta, TipoMovimiento } from "@/types/database";
 import { obtenerCambioSp500, obtenerCambioUf } from "@/lib/mercado";
@@ -30,6 +33,58 @@ import { Logo } from "@/components/Logo";
 import { FeedbackLink } from "@/components/FeedbackLink";
 import { EmptyAccountsState } from "@/components/EmptyAccountsState";
 import Link from "next/link";
+
+// paleta ciclica para el grafico de composicion historica -- la cantidad de
+// grupos (plataformas o tipos) es dinamica, no fija, asi que no alcanza con
+// 2-3 colores nombrados como en otros graficos de esta app.
+const PALETA_COMPOSICION = ["#8B5CF6", "#3ED9A3", "#E8A857", "#8FA3BF", "#FF6B6B", "#B9A6F7", "#7EE8C4", "#F0BD7E"];
+
+// pivotea valor_diario_por_cuenta (una fila por fecha+cuenta) agrupando por
+// el nombre de grupo que le corresponda a cada cuenta -- reusada para las
+// dos dimensiones del grafico (plataforma y tipo), mismo dato crudo para
+// ambas, cada una con su propio mapa cuenta -> nombre de grupo.
+function construirComposicion(
+  filas: { fecha: string | null; cuenta_id: string | null; valor_clp: number | null }[],
+  nombrePorCuenta: Map<string, string>
+): DatosComposicion {
+  const validas = filas.filter(
+    (f): f is { fecha: string; cuenta_id: string; valor_clp: number } =>
+      f.fecha !== null && f.cuenta_id !== null && f.valor_clp !== null
+  );
+
+  const totalPorGrupo = new Map<string, number>();
+  validas.forEach((f) => {
+    const nombre = nombrePorCuenta.get(f.cuenta_id) ?? "otro";
+    totalPorGrupo.set(nombre, (totalPorGrupo.get(nombre) ?? 0) + f.valor_clp);
+  });
+  const nombresOrdenados = Array.from(totalPorGrupo.keys()).sort(
+    (a, b) => (totalPorGrupo.get(b) ?? 0) - (totalPorGrupo.get(a) ?? 0)
+  );
+  const grupos = nombresOrdenados.map((nombre, i) => ({
+    nombre,
+    color: PALETA_COMPOSICION[i % PALETA_COMPOSICION.length],
+  }));
+
+  const porFecha = new Map<string, PuntoComposicion>();
+  validas.forEach((f) => {
+    const nombre = nombrePorCuenta.get(f.cuenta_id) ?? "otro";
+    const punto = porFecha.get(f.fecha) ?? { fecha: f.fecha };
+    punto[nombre] = (Number(punto[nombre]) || 0) + f.valor_clp;
+    porFecha.set(f.fecha, punto);
+  });
+
+  const puntos = Array.from(porFecha.values()).sort((a, b) => a.fecha.localeCompare(b.fecha));
+  // cada punto necesita un valor explicito por grupo (no undefined) para que
+  // el area apilada de recharts no deje huecos en fechas donde ese grupo en
+  // particular no tenia datos.
+  puntos.forEach((p) => {
+    grupos.forEach((g) => {
+      if (!(g.nombre in p)) p[g.nombre] = 0;
+    });
+  });
+
+  return { puntos, grupos };
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -54,6 +109,9 @@ export default async function DashboardPage() {
     { data: evolucionPortafolio },
     { data: historialRendimientos },
     { data: movimientosTodos },
+    { data: metas },
+    { data: metaCuentas },
+    { data: valorDiarioPorCuenta },
     { count: cuentasInactivasCount },
     benchmarkSp500,
     benchmarkUf,
@@ -74,6 +132,14 @@ export default async function DashboardPage() {
     // portafolio completo (metrica adicional, no reemplaza el rendimiento
     // anualizado que ya se muestra en toda la app).
     supabase.from("movimientos").select("cuenta_id, fecha, tipo, monto, tasa_cambio").order("fecha"),
+    // metas de ahorro (fase 3 del roadmap) -- el progreso se calcula aca
+    // reusando capital_por_cuenta, ya consultado arriba, no vive en sql.
+    supabase.from("metas").select("*").order("created_at"),
+    supabase.from("meta_cuentas").select("meta_id, cuenta_id"),
+    // valor clp diario por cuenta, ya forward-filled por la vista (fase 3 del
+    // roadmap) -- alimenta el grafico de composicion historica, pivotado en
+    // el cliente por plataforma o por tipo mas abajo.
+    supabase.from("valor_diario_por_cuenta").select("fecha, cuenta_id, valor_clp").order("fecha"),
     supabase.from("cuentas").select("id", { count: "exact", head: true }).eq("activa", false),
     obtenerCambioSp500().catch(() => null),
     obtenerCambioUf().catch(() => null),
@@ -187,6 +253,84 @@ export default async function DashboardPage() {
     tiposMap.set(cuenta.tipo, grupo);
   });
   const tipos = Array.from(tiposMap.values()).sort((a, b) => b.valorActualClp - a.valorActualClp);
+
+  // agrupa por categoria personalizada (fase 3 del roadmap) -- texto libre
+  // igual que plataforma, asi que se normaliza la clave igual (trim +
+  // minusculas). cuentas sin categoria (el caso mas comun, es un campo
+  // opcional) simplemente no entran a este mapa -- CategoryBreakdown ya
+  // devuelve null si queda vacio.
+  const categoriasMap = new Map<
+    string,
+    { nombre: string; capitalAportadoClp: number; valorActualClp: number }
+  >();
+  (cuentas ?? []).forEach((cuenta) => {
+    const categoriaCruda = cuenta.categoria?.trim();
+    if (!categoriaCruda) return;
+    const clave = categoriaCruda.toLowerCase();
+    const datos = capitalPorCuentaMap.get(cuenta.id);
+    const grupo = categoriasMap.get(clave) ?? {
+      nombre: categoriaCruda,
+      capitalAportadoClp: 0,
+      valorActualClp: 0,
+    };
+    grupo.capitalAportadoClp += datos?.capital_aportado_clp ?? 0;
+    grupo.valorActualClp += datos?.valor_actual_clp ?? 0;
+    categoriasMap.set(clave, grupo);
+  });
+  const categorias = Array.from(categoriasMap.values()).sort((a, b) => b.valorActualClp - a.valorActualClp);
+
+  // composicion historica (fase 3 del roadmap): mismo dato crudo
+  // (valor_diario_por_cuenta) agrupado por plataforma o por tipo -- el
+  // toggle dentro de CompositionChart decide cual de los dos mostrar, no
+  // vuelve a pedir datos. la clave de plataforma se normaliza igual que en
+  // plataformasMap (trim + minusculas) para no separar un mismo banco en dos
+  // grupos por un despiste de tipeo.
+  const nombreCanonicoPorClavePlataforma = new Map<string, string>();
+  (cuentas ?? []).forEach((cuenta) => {
+    const clave = cuenta.plataforma.trim().toLowerCase();
+    if (!nombreCanonicoPorClavePlataforma.has(clave)) {
+      nombreCanonicoPorClavePlataforma.set(clave, cuenta.plataforma.trim());
+    }
+  });
+  const nombrePlataformaPorCuenta = new Map(
+    (cuentas ?? []).map((c) => [
+      c.id,
+      nombreCanonicoPorClavePlataforma.get(c.plataforma.trim().toLowerCase()) ?? c.plataforma,
+    ])
+  );
+  const nombreTipoPorCuenta = new Map(
+    (cuentas ?? []).map((c) => [c.id, etiquetaPorTipo.get(c.tipo as TipoCuenta) ?? c.tipo])
+  );
+  const composicionPorPlataforma = construirComposicion(valorDiarioPorCuenta ?? [], nombrePlataformaPorCuenta);
+  const composicionPorTipo = construirComposicion(valorDiarioPorCuenta ?? [], nombreTipoPorCuenta);
+
+  // metas de ahorro (fase 3 del roadmap): el progreso de cada meta suma
+  // valor_actual_clp (de capital_por_cuenta, ya consultado arriba) de las
+  // cuentas asociadas via meta_cuentas -- si una cuenta asociada se da de
+  // baja, capital_por_cuenta ya la excluye (where activa = true), asi que su
+  // aporte a la meta simplemente deja de contar, mismo criterio que el resto
+  // del dashboard aplica a cuentas inactivas.
+  const nombrePorCuentaId = new Map((cuentas ?? []).map((c) => [c.id, c.nombre]));
+  const cuentaIdsPorMeta = new Map<string, string[]>();
+  (metaCuentas ?? []).forEach((mc) => {
+    const lista = cuentaIdsPorMeta.get(mc.meta_id) ?? [];
+    lista.push(mc.cuenta_id);
+    cuentaIdsPorMeta.set(mc.meta_id, lista);
+  });
+  const metasConProgreso: MetaConProgreso[] = (metas ?? []).map((meta) => {
+    const cuentaIds = cuentaIdsPorMeta.get(meta.id) ?? [];
+    return {
+      id: meta.id,
+      nombre: meta.nombre,
+      montoObjetivo: meta.monto_objetivo,
+      montoActualClp: cuentaIds.reduce(
+        (acc, id) => acc + (capitalPorCuentaMap.get(id)?.valor_actual_clp ?? 0),
+        0
+      ),
+      fechaObjetivo: meta.fecha_objetivo,
+      cuentasAsociadas: cuentaIds.map((id) => nombrePorCuentaId.get(id)).filter((n): n is string => !!n),
+    };
+  });
 
   // valor_actual (moneda nativa, no clp) de capital_por_cuenta -- el ultimo
   // valor conocido de cada cuenta, usado por SnapshotForm para sugerir el
@@ -375,6 +519,11 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <PlatformBreakdown plataformas={plataformas} />
           <AssetTypeBreakdown tipos={tipos} />
+          <CategoryBreakdown categorias={categorias} />
+        </div>
+
+        <div className="mt-4">
+          <CompositionChart porPlataforma={composicionPorPlataforma} porTipo={composicionPorTipo} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4 mt-4 items-start">
@@ -445,6 +594,22 @@ export default async function DashboardPage() {
             </details>
           </div>
         </div>
+
+        <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)] mt-4">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Tus metas</p>
+            <Link
+              href="/metas/nueva"
+              className="no-print inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] no-underline"
+            >
+              + agregar meta
+            </Link>
+          </div>
+          <p className="text-[11.5px] text-[#8892A0] mb-3.5">
+            El progreso suma el valor actual (en CLP) de las cuentas que asociaste a cada meta
+          </p>
+          <MetasList metas={metasConProgreso} />
+        </section>
 
         {cuentasConDatos.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 items-start">

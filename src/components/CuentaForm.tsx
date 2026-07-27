@@ -40,6 +40,7 @@ export function CuentaForm() {
   const [tipo, setTipo] = useState<TipoCuenta>("otro");
   const [moneda, setMoneda] = useState<Moneda>("CLP");
   const [montoInicial, setMontoInicial] = useState("");
+  const [categoria, setCategoria] = useState("");
 
   const [tasaCambio, setTasaCambio] = useState<number | null>(null);
   const [tasaFecha, setTasaFecha] = useState<string | null>(null);
@@ -114,6 +115,7 @@ export function CuentaForm() {
       p_moneda: moneda,
       p_monto_inicial: Number(montoInicial || 0),
       p_tasa_cambio: moneda === "CLP" ? undefined : (tasaCambio ?? undefined),
+      p_categoria: categoria.trim() || undefined,
     });
 
     setGuardando(false);
@@ -167,6 +169,17 @@ export function CuentaForm() {
               </option>
             ))}
           </select>
+        </label>
+
+        <label className="flex flex-col gap-[7px]">
+          <span className={labelClass}>categoría (opcional)</span>
+          <input
+            type="text"
+            placeholder="ej. jubilación, fondo de emergencia"
+            value={categoria}
+            onChange={(e) => setCategoria(e.target.value)}
+            className={inputClass}
+          />
         </label>
 
         <label className="flex flex-col gap-[7px]">
