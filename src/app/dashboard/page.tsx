@@ -10,9 +10,18 @@ import { CargaRapida } from "@/components/CargaRapida";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import { ExportarDatos } from "@/components/ExportarDatos";
 import { PrivacyShell, PrivacyToggleButton } from "@/components/PrivacyShell";
+import { AccountComparison, type CuentaComparacion } from "@/components/AccountComparison";
+import { DataHealthView, type AlertaSalud } from "@/components/DataHealthView";
 import { TIPOS } from "@/lib/tipos-cuenta";
 import type { Cuenta, RendimientoActual, TipoCuenta, TipoMovimiento } from "@/types/database";
 import { obtenerCambioSp500, obtenerCambioUf } from "@/lib/mercado";
+import {
+  calcularMaxDrawdown,
+  calcularRacha,
+  calcularRendimientoAnualizado,
+  calcularRetornosPortafolio,
+  calcularTWR,
+} from "@/lib/rendimiento";
 import { logout } from "../actions";
 import { Logo } from "@/components/Logo";
 import { FeedbackLink } from "@/components/FeedbackLink";
@@ -40,6 +49,7 @@ export default async function DashboardPage() {
     { data: snapshotsHoy },
     { data: capitalPorCuenta },
     { data: evolucionPortafolio },
+    { data: historialRendimientos },
     { count: cuentasInactivasCount },
     benchmarkSp500,
     benchmarkUf,
@@ -50,6 +60,11 @@ export default async function DashboardPage() {
     supabase.from("snapshots").select("id, cuenta_id").eq("fecha", hoy),
     supabase.from("capital_por_cuenta").select("*"),
     supabase.from("evolucion_portafolio").select("*").order("fecha"),
+    // historial completo de rendimiento_semanal (no solo el ultimo registro
+    // como rendimiento_actual) -- alimenta la racha, el twr y el drawdown por
+    // cuenta, y los chequeos de la vista de salud de datos. una sola consulta
+    // nueva para las tres cosas.
+    supabase.from("rendimiento_semanal").select("cuenta_id, fecha, rendimiento_pct").order("fecha"),
     supabase.from("cuentas").select("id", { count: "exact", head: true }).eq("activa", false),
     obtenerCambioSp500().catch(() => null),
     obtenerCambioUf().catch(() => null),
@@ -170,6 +185,94 @@ export default async function DashboardPage() {
   const valorAnteriorPorCuenta: Record<string, number | null> = {};
   (cuentas ?? []).forEach((cuenta) => {
     valorAnteriorPorCuenta[cuenta.id] = capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null;
+  });
+
+  // agrupa el historial de rendimiento_semanal por cuenta -- ya viene
+  // ordenado por fecha ascendente (ver consulta arriba), asi que sirve tal
+  // cual para componer un twr y no necesita reordenarse para eso.
+  const historialPorCuenta = new Map<string, { fecha: string; rendimientoPct: number | null }[]>();
+  (historialRendimientos ?? []).forEach((r) => {
+    if (!r.cuenta_id || !r.fecha) return;
+    const lista = historialPorCuenta.get(r.cuenta_id) ?? [];
+    lista.push({ fecha: r.fecha, rendimientoPct: r.rendimiento_pct });
+    historialPorCuenta.set(r.cuenta_id, lista);
+  });
+
+  // reusa hoy (ya calculado arriba, mismo string de fecha que usa la
+  // consulta de snapshotsHoy) en vez de un new Date()/Date.now() nuevo --
+  // evita repetir el problema de pureza ya documentado en AccountRow.tsx,
+  // que llama Date.now() directo dentro del render.
+  const hoyMs = new Date(hoy).getTime();
+
+  const comparacionCuentas: CuentaComparacion[] = (cuentas ?? []).map((cuenta) => {
+    const datosCapital = capitalPorCuentaMap.get(cuenta.id);
+    const historial = historialPorCuenta.get(cuenta.id) ?? [];
+    const pctsAsc = historial.map((h) => h.rendimientoPct);
+
+    const capitalAportado = datosCapital?.capital_aportado ?? null;
+    const valorActual = datosCapital?.valor_actual ?? null;
+    const diasTranscurridos = (hoyMs - new Date(cuenta.created_at).getTime()) / (1000 * 60 * 60 * 24);
+    const rendimientoAnualizado =
+      capitalAportado != null && valorActual != null
+        ? calcularRendimientoAnualizado(capitalAportado, valorActual, diasTranscurridos)
+        : null;
+
+    const gananciaClp =
+      datosCapital?.valor_actual_clp != null && datosCapital?.capital_aportado_clp != null
+        ? datosCapital.valor_actual_clp - datosCapital.capital_aportado_clp
+        : null;
+
+    return {
+      id: cuenta.id,
+      nombre: cuenta.nombre,
+      rendimientoAnualizado,
+      racha: calcularRacha([...pctsAsc].reverse()),
+      twr: calcularTWR(pctsAsc),
+      gananciaClp,
+    };
+  });
+  const gananciaTotalClp = comparacionCuentas.reduce((acc, c) => acc + (c.gananciaClp ?? 0), 0);
+
+  const retornosPortafolio = calcularRetornosPortafolio(
+    (evolucionPortafolio ?? [])
+      .filter((p) => p.valor_total_clp != null && p.capital_aportado_acumulado_clp != null)
+      .map((p) => ({
+        valorTotalClp: p.valor_total_clp!,
+        capitalAportadoAcumuladoClp: p.capital_aportado_acumulado_clp!,
+      }))
+  );
+  const twrPortafolio = calcularTWR(retornosPortafolio);
+  const drawdownPortafolio = calcularMaxDrawdown(retornosPortafolio);
+
+  // umbrales propios de la vista de salud (no se comparten con
+  // CargaRapida/SnapshotForm/HistorialForm a proposito -- misma convencion ya
+  // establecida en el proyecto de no compartir estos umbrales chicos entre
+  // archivos distintos).
+  const UMBRAL_RENDIMIENTO_IMPLAUSIBLE_SALUD = 80;
+  const UMBRAL_GAP_DIAS = 45;
+  const UMBRAL_DATO_ANTIGUO_DIAS_SALUD = 14;
+
+  const alertasSalud: AlertaSalud[] = (cuentas ?? []).map((cuenta) => {
+    const datosCapital = capitalPorCuentaMap.get(cuenta.id);
+    const historial = historialPorCuenta.get(cuenta.id) ?? [];
+
+    const ultimaFecha = datosCapital?.ultima_fecha;
+    const diasSinActualizarCrudo = ultimaFecha ? (hoyMs - new Date(ultimaFecha).getTime()) / (1000 * 60 * 60 * 24) : null;
+    const diasSinActualizar =
+      diasSinActualizarCrudo != null && diasSinActualizarCrudo > UMBRAL_DATO_ANTIGUO_DIAS_SALUD
+        ? diasSinActualizarCrudo
+        : null;
+
+    const saltos = historial
+      .filter((h) => h.rendimientoPct != null && Math.abs(h.rendimientoPct) >= UMBRAL_RENDIMIENTO_IMPLAUSIBLE_SALUD)
+      .map((h) => ({ fecha: h.fecha, pct: h.rendimientoPct! }));
+
+    const gaps = historial.slice(1).flatMap((h, i) => {
+      const diasGap = (new Date(h.fecha).getTime() - new Date(historial[i].fecha).getTime()) / (1000 * 60 * 60 * 24);
+      return diasGap > UMBRAL_GAP_DIAS ? [{ diasGap, fechaFin: h.fecha }] : [];
+    });
+
+    return { cuentaId: cuenta.id, nombre: cuenta.nombre, diasSinActualizar, saltos, gaps };
   });
 
   return (
@@ -293,6 +396,18 @@ export default async function DashboardPage() {
             </details>
           </div>
         </div>
+
+        {cuentasConDatos.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 items-start">
+            <AccountComparison
+              cuentas={comparacionCuentas}
+              gananciaTotalClp={gananciaTotalClp}
+              twrPortafolio={twrPortafolio}
+              drawdownPortafolio={drawdownPortafolio}
+            />
+            <DataHealthView alertas={alertasSalud} />
+          </div>
+        )}
 
         <p className="mt-6 text-[11px] text-[#5B6472] text-center">
           El % real aparece cuando hay al menos dos registros para comparar
