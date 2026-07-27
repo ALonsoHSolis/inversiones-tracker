@@ -37,6 +37,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
   // mostrara "guardando..." aunque esa no fuera la accion en curso.
   const [accion, setAccion] = useState<"guardar" | "baja" | null>(null);
   const [errorGuardado, setErrorGuardado] = useState<string | null>(null);
+  const [bajaConfirm, setBajaConfirm] = useState(false);
 
   async function guardarCambios() {
     setErrorGuardado(null);
@@ -60,11 +61,6 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
   }
 
   async function darDeBaja() {
-    const confirmado = window.confirm(
-      "¿Dar de baja esta cuenta? No se borra el historial, pero dejará de aparecer en el portafolio."
-    );
-    if (!confirmado) return;
-
     setErrorGuardado(null);
     setAccion("baja");
     const supabase = createClient();
@@ -74,6 +70,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
     if (error) {
       console.error("dar de baja cuenta:", error.message);
       setAccion(null);
+      setBajaConfirm(false);
       setErrorGuardado(mensajeErrorAmigable(error.message));
       return;
     }
@@ -154,14 +151,40 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
           {accion === "guardar" ? "guardando..." : "guardar cambios"}
         </button>
 
-        <button
-          type="button"
-          onClick={darDeBaja}
-          disabled={accion !== null}
-          className="text-[12.5px] text-[var(--neg)] underline disabled:opacity-50"
-        >
-          {accion === "baja" ? "dando de baja..." : "dar de baja esta cuenta"}
-        </button>
+        {!bajaConfirm ? (
+          <button
+            type="button"
+            onClick={() => setBajaConfirm(true)}
+            disabled={accion !== null}
+            className="text-[12.5px] text-[var(--neg)] underline text-left disabled:opacity-50"
+          >
+            dar de baja esta cuenta
+          </button>
+        ) : (
+          <div className="bg-[rgba(255,107,107,0.08)] border border-[rgba(255,107,107,0.25)] rounded-[10px] px-3.5 py-3">
+            <p className="text-[12.5px] text-[#F2A6A6] leading-relaxed mb-2.5">
+              ¿Dar de baja esta cuenta? No se borra el historial, pero dejará de aparecer en el portafolio.
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={darDeBaja}
+                disabled={accion !== null}
+                className="h-[34px] px-3.5 rounded-lg bg-[var(--neg)] text-[#1A0A0A] text-[12.5px] font-bold disabled:opacity-50"
+              >
+                {accion === "baja" ? "dando de baja..." : "confirmar"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setBajaConfirm(false)}
+                disabled={accion !== null}
+                className="h-[34px] px-3.5 rounded-lg border border-white/[0.14] text-[#C7CDD6] text-[12.5px] font-semibold disabled:opacity-50"
+              >
+                cancelar
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
