@@ -194,3 +194,27 @@ body {
   font-size: 0.9em;
 }
 
+/* export a "pdf" via impresion del navegador (sin libreria nueva): el sitio
+   entero es oscuro, y la mayoria de los navegadores no imprimen fondos por
+   defecto -- eso dejaria texto claro sobre pagina blanca, invisible. se
+   fuerza negro sobre blanco solo al imprimir, sin tocar el tema en pantalla.
+   .no-print marca lo que no tiene sentido en una copia impresa (acciones del
+   header, carga rapida/actualizar varias cuentas, agregar cuenta). */
+@media print {
+  * {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    border-color: #ccc !important;
+  }
+
+  body {
+    background: #fff !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
+

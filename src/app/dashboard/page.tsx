@@ -9,6 +9,7 @@ import { AccountRow } from "@/components/AccountRow";
 import { CargaRapida } from "@/components/CargaRapida";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import { ExportarDatos } from "@/components/ExportarDatos";
+import { PrintButton } from "@/components/PrintButton";
 import { PrivacyShell, PrivacyToggleButton } from "@/components/PrivacyShell";
 import { AccountComparison, type CuentaComparacion } from "@/components/AccountComparison";
 import { DataHealthView, type AlertaSalud } from "@/components/DataHealthView";
@@ -280,9 +281,10 @@ export default async function DashboardPage() {
       <main className="max-w-[1160px] mx-auto px-6 pt-[26px] pb-16">
         <header className="flex items-center justify-between gap-4 mb-6 flex-wrap">
           <Logo />
-          <div className="flex items-center gap-2 flex-wrap justify-end">
+          <div className="flex items-center gap-2 flex-wrap justify-end no-print">
             <PrivacyToggleButton />
             <ExportarDatos />
+            <PrintButton />
             <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
             <FeedbackLink className="text-[11.5px] text-[#8892A0] border-b border-white/[0.14]">
               escríbenos
@@ -334,7 +336,7 @@ export default async function DashboardPage() {
               <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Tus cuentas</p>
               <Link
                 href="/cuentas/nueva"
-                className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] no-underline"
+                className="no-print inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] no-underline"
               >
                 + agregar cuenta
               </Link>
@@ -376,7 +378,7 @@ export default async function DashboardPage() {
             )}
           </section>
 
-          <div className="lg:sticky lg:top-5 flex flex-col gap-4">
+          <div className="no-print lg:sticky lg:top-5 flex flex-col gap-4">
             <CargaRapida
               cuentas={cuentas ?? []}
               movimientosHoy={movimientosHoy}

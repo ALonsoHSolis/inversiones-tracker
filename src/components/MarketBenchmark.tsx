@@ -54,14 +54,14 @@ export function MarketBenchmark({ sp500, uf, rendimientoRealPct }: MarketBenchma
   return (
     <div className="flex items-center gap-2 mt-3.5 flex-wrap">
       {rendimientoRealPct != null && <Ring label="Rendimiento real" pct={rendimientoRealPct} />}
-      {uf && <Ring label="vs UF (5d)" pct={uf.pct} />}
-      {sp500 && <Ring label="vs S&P 500 (5d)" pct={sp500.pct} />}
+      {uf && <Ring label="vs UF (1m)" pct={uf.pct} />}
+      {sp500 && <Ring label="vs S&P 500 (1m)" pct={sp500.pct} />}
       <Ayuda>
         El primer anillo es tu rendimiento real acumulado (ganancia total sobre capital aportado).
-        Los otros son referencias de mercado para comparar a grandes rasgos si conviene estar
-        invertido: la UF mide si le ganas a la inflación chilena, el S&P 500 cómo se movió el
-        mercado bursátil de EE.UU. Ninguna de las dos usa el mismo período exacto que &quot;cambio
-        nominal esta semana&quot;.
+        Los otros son referencias de mercado del último mes para comparar a grandes rasgos si
+        conviene estar invertido: la UF mide si le ganas a la inflación chilena, el S&P 500 cómo se
+        movió el mercado bursátil de EE.UU. Ninguna de las dos usa el mismo período exacto que
+        &quot;cambio nominal esta semana&quot;.
       </Ayuda>
     </div>
   );
