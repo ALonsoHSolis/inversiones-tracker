@@ -165,3 +165,62 @@ export function calcularRetornosPortafolio(puntos: PuntoEvolucion[]): (number | 
   }
   return retornos;
 }
+
+export interface FlujoCaja {
+  fecha: string; // fecha iso (yyyy-mm-dd)
+  // signo desde el punto de vista del inversionista: negativo = plata que
+  // sale de tu bolsillo hacia la cuenta (aporte), positivo = plata que
+  // vuelve (retiro, o el valor actual si "vendieras todo hoy").
+  monto: number;
+}
+
+function valorPresenteNeto(flujos: FlujoCaja[], tasa: number, fechaBaseMs: number): number {
+  return flujos.reduce((acc, f) => {
+    const dias = (new Date(f.fecha).getTime() - fechaBaseMs) / (1000 * 60 * 60 * 24);
+    return acc + f.monto / Math.pow(1 + tasa, dias / 365);
+  }, 0);
+}
+
+// xirr: tasa de retorno anualizada que hace que el valor presente neto de
+// una serie de flujos de caja con fechas irregulares sea cero -- a
+// diferencia de calcularRendimientoAnualizado (cagr simple sobre capital
+// aportado acumulado y valor actual, sin mirar el momento exacto de cada
+// aporte dentro del periodo), xirr si ajusta por el momento exacto de cada
+// flujo. Esta funcion es una metrica ADICIONAL: no reemplaza
+// calcularRendimientoAnualizado en ningun lugar del código, por decisión
+// explícita del usuario -- ese calculo simple sigue siendo el que se
+// muestra como "rendimiento anualizado" en toda la app.
+//
+// se resuelve con biseccion (no newton-raphson): mas lento por iteracion,
+// pero no requiere una derivada ni un punto de partida razonable, y con la
+// cantidad de flujos de un uso personal (decenas, no miles) el costo es
+// insignificante. requiere al menos un flujo negativo y uno positivo -- si
+// todos los flujos tienen el mismo signo, no existe una tasa que resuelva
+// vpn = 0 (ej. una cuenta que nunca recibio un aporte real).
+export function calcularXIRR(flujos: FlujoCaja[]): number | null {
+  if (flujos.length < 2) return null;
+  const tieneNegativo = flujos.some((f) => f.monto < 0);
+  const tienePositivo = flujos.some((f) => f.monto > 0);
+  if (!tieneNegativo || !tienePositivo) return null;
+
+  const fechaBaseMs = Math.min(...flujos.map((f) => new Date(f.fecha).getTime()));
+
+  let bajo = -0.9999; // -99.99%, limite inferior (no se puede perder mas del 100%)
+  let alto = 10; // +1000% anual, limite superior generoso
+  let vpnBajo = valorPresenteNeto(flujos, bajo, fechaBaseMs);
+  const vpnAlto = valorPresenteNeto(flujos, alto, fechaBaseMs);
+  if (vpnBajo * vpnAlto > 0) return null; // no hay raiz dentro del rango (caso raro)
+
+  for (let i = 0; i < 100; i++) {
+    const medio = (bajo + alto) / 2;
+    const vpnMedio = valorPresenteNeto(flujos, medio, fechaBaseMs);
+    if (Math.abs(vpnMedio) < 1e-6) return medio * 100;
+    if (vpnBajo * vpnMedio < 0) {
+      alto = medio;
+    } else {
+      bajo = medio;
+      vpnBajo = vpnMedio;
+    }
+  }
+  return ((bajo + alto) / 2) * 100;
+}

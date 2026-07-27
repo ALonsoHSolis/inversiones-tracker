@@ -22,6 +22,8 @@ import {
   calcularRendimientoAnualizado,
   calcularRetornosPortafolio,
   calcularTWR,
+  calcularXIRR,
+  type FlujoCaja,
 } from "@/lib/rendimiento";
 import { logout } from "../actions";
 import { Logo } from "@/components/Logo";
@@ -51,6 +53,7 @@ export default async function DashboardPage() {
     { data: capitalPorCuenta },
     { data: evolucionPortafolio },
     { data: historialRendimientos },
+    { data: movimientosTodos },
     { count: cuentasInactivasCount },
     benchmarkSp500,
     benchmarkUf,
@@ -66,6 +69,11 @@ export default async function DashboardPage() {
     // cuenta, y los chequeos de la vista de salud de datos. una sola consulta
     // nueva para las tres cosas.
     supabase.from("rendimiento_semanal").select("cuenta_id, fecha, rendimiento_pct").order("fecha"),
+    // historial completo de movimientos (no solo los de hoy, que ya se
+    // consultan aparte mas abajo) -- alimenta el xirr por cuenta y del
+    // portafolio completo (metrica adicional, no reemplaza el rendimiento
+    // anualizado que ya se muestra en toda la app).
+    supabase.from("movimientos").select("cuenta_id, fecha, tipo, monto, tasa_cambio").order("fecha"),
     supabase.from("cuentas").select("id", { count: "exact", head: true }).eq("activa", false),
     obtenerCambioSp500().catch(() => null),
     obtenerCambioUf().catch(() => null),
@@ -199,6 +207,21 @@ export default async function DashboardPage() {
     historialPorCuenta.set(r.cuenta_id, lista);
   });
 
+  // agrupa todos los movimientos por cuenta (no solo los de hoy) -- alimenta
+  // el xirr por cuenta, en moneda nativa (igual criterio que el % de
+  // rendimiento: sin ruido cambiario).
+  const movimientosPorCuenta = new Map<
+    string,
+    { fecha: string; tipo: string; monto: number; tasaCambio: number | null }[]
+  >();
+  (movimientosTodos ?? []).forEach((m) => {
+    if (!m.cuenta_id || !m.fecha) return;
+    const lista = movimientosPorCuenta.get(m.cuenta_id) ?? [];
+    lista.push({ fecha: m.fecha, tipo: m.tipo, monto: m.monto, tasaCambio: m.tasa_cambio });
+    movimientosPorCuenta.set(m.cuenta_id, lista);
+  });
+  const cuentaPorId = new Map((cuentas ?? []).map((c) => [c.id, c]));
+
   // reusa hoy (ya calculado arriba, mismo string de fecha que usa la
   // consulta de snapshotsHoy) en vez de un new Date()/Date.now() nuevo --
   // evita repetir el problema de pureza ya documentado en AccountRow.tsx,
@@ -223,12 +246,22 @@ export default async function DashboardPage() {
         ? datosCapital.valor_actual_clp - datosCapital.capital_aportado_clp
         : null;
 
+    // xirr de la cuenta: cada aporte es un flujo negativo (plata que sale
+    // del bolsillo), cada retiro uno positivo, y el valor actual se trata
+    // como un flujo positivo final (como si se vendiera todo hoy).
+    const flujosCuenta: FlujoCaja[] = (movimientosPorCuenta.get(cuenta.id) ?? []).map((m) => ({
+      fecha: m.fecha,
+      monto: m.tipo === "aporte" ? -m.monto : m.monto,
+    }));
+    if (valorActual != null) flujosCuenta.push({ fecha: hoy, monto: valorActual });
+
     return {
       id: cuenta.id,
       nombre: cuenta.nombre,
       rendimientoAnualizado,
       racha: calcularRacha([...pctsAsc].reverse()),
       twr: calcularTWR(pctsAsc),
+      xirr: calcularXIRR(flujosCuenta),
       gananciaClp,
     };
   });
@@ -244,6 +277,20 @@ export default async function DashboardPage() {
   );
   const twrPortafolio = calcularTWR(retornosPortafolio);
   const drawdownPortafolio = calcularMaxDrawdown(retornosPortafolio);
+
+  // xirr del portafolio completo: mismos flujos que arriba, pero convertidos
+  // a clp con la tasa historica propia de cada movimiento (igual criterio
+  // que capital_por_cuenta) -- solo cuentas activas, mismo filtro que ya
+  // aplican capital_por_cuenta/evolucion_portafolio.
+  const flujosPortafolio: FlujoCaja[] = (movimientosTodos ?? [])
+    .filter((m): m is typeof m & { cuenta_id: string; fecha: string } => !!m.cuenta_id && !!m.fecha && cuentaPorId.has(m.cuenta_id))
+    .map((m) => {
+      const cuenta = cuentaPorId.get(m.cuenta_id)!;
+      const montoClp = cuenta.moneda !== "CLP" ? m.monto * (m.tasa_cambio ?? 1) : m.monto;
+      return { fecha: m.fecha, monto: m.tipo === "aporte" ? -montoClp : montoClp };
+    });
+  flujosPortafolio.push({ fecha: hoy, monto: valorActualClp });
+  const xirrPortafolio = calcularXIRR(flujosPortafolio);
 
   // umbrales propios de la vista de salud (no se comparten con
   // CargaRapida/SnapshotForm/HistorialForm a proposito -- misma convencion ya
@@ -406,6 +453,7 @@ export default async function DashboardPage() {
               gananciaTotalClp={gananciaTotalClp}
               twrPortafolio={twrPortafolio}
               drawdownPortafolio={drawdownPortafolio}
+              xirrPortafolio={xirrPortafolio}
             />
             <DataHealthView alertas={alertasSalud} />
           </div>

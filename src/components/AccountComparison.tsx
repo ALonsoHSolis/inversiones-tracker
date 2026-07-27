@@ -11,6 +11,7 @@ export interface CuentaComparacion {
   rendimientoAnualizado: number | null;
   racha: RachaResultado;
   twr: number | null;
+  xirr: number | null;
   gananciaClp: number | null;
 }
 
@@ -19,6 +20,7 @@ interface AccountComparisonProps {
   gananciaTotalClp: number;
   twrPortafolio: number | null;
   drawdownPortafolio: number | null;
+  xirrPortafolio: number | null;
 }
 
 type Orden = "anualizado" | "contribucion";
@@ -44,7 +46,13 @@ function textoRacha(racha: RachaResultado): string {
   return `${racha.longitud} ${plural} ${racha.tipo}${racha.longitud === 1 ? "o" : "s"} seguido${racha.longitud === 1 ? "" : "s"}`;
 }
 
-export function AccountComparison({ cuentas, gananciaTotalClp, twrPortafolio, drawdownPortafolio }: AccountComparisonProps) {
+export function AccountComparison({
+  cuentas,
+  gananciaTotalClp,
+  twrPortafolio,
+  drawdownPortafolio,
+  xirrPortafolio,
+}: AccountComparisonProps) {
   const [orden, setOrden] = useState<Orden>("anualizado");
 
   if (cuentas.length === 0) return null;
@@ -67,13 +75,16 @@ export function AccountComparison({ cuentas, gananciaTotalClp, twrPortafolio, dr
           plata, sin importar cuánto le agregaste o sacaste en el camino. El máximo drawdown es la
           peor caída registrada desde un máximo hasta el mínimo posterior, calculada sobre esa misma
           serie (nunca sobre el valor bruto, para que un retiro no se vea como una caída de mercado).
-          Ambos solo ven lo que capturaron tus propios registros — si el mercado cayó y se recuperó
-          entre dos actualizaciones tuyas, no queda reflejado.
+          El XIRR es una tasa anualizada distinta al &quot;rendimiento anualizado&quot; que ya se
+          muestra en el resto de la app — esta sí ajusta por la fecha exacta de cada aporte y retiro,
+          en vez de solo mirar el capital acumulado. Es una métrica adicional, no un reemplazo.
+          Los tres solo ven lo que capturaron tus propios registros — si el mercado cayó y se
+          recuperó entre dos actualizaciones tuyas, no queda reflejado.
         </Ayuda>
       </div>
       <p className="text-[11.5px] text-[#8892A0] mb-4">Rendimiento compuesto y comparación entre tus cuentas</p>
 
-      <div className="grid grid-cols-2 gap-3.5">
+      <div className="grid grid-cols-3 gap-3.5">
         <div>
           <p className="text-[11px] font-medium text-[#8892A0]">TWR del portafolio</p>
           <p
@@ -87,6 +98,15 @@ export function AccountComparison({ cuentas, gananciaTotalClp, twrPortafolio, dr
           <p className="text-[11px] font-medium text-[#8892A0]">Peor caída registrada</p>
           <p className="money-value mt-1 font-mono-tabular font-semibold text-base" style={{ color: "var(--neg)" }}>
             {drawdownPortafolio != null && drawdownPortafolio < 0 ? formatoPct(drawdownPortafolio) : "sin caídas"}
+          </p>
+        </div>
+        <div>
+          <p className="text-[11px] font-medium text-[#8892A0]">XIRR del portafolio</p>
+          <p
+            className="money-value mt-1 font-mono-tabular font-semibold text-base"
+            style={{ color: xirrPortafolio == null ? "#F2F5F9" : xirrPortafolio >= 0 ? "var(--pos)" : "var(--neg)" }}
+          >
+            {xirrPortafolio != null ? formatoPct(xirrPortafolio) : "—"}
           </p>
         </div>
       </div>
@@ -154,6 +174,13 @@ export function AccountComparison({ cuentas, gananciaTotalClp, twrPortafolio, dr
                     {" · "}
                     TWR{" "}
                     <span style={{ color: c.twr >= 0 ? "var(--pos)" : "var(--neg)" }}>{formatoPct(c.twr)}</span>
+                  </>
+                )}
+                {c.xirr != null && (
+                  <>
+                    {" · "}
+                    XIRR{" "}
+                    <span style={{ color: c.xirr >= 0 ? "var(--pos)" : "var(--neg)" }}>{formatoPct(c.xirr)}</span>
                   </>
                 )}
               </p>

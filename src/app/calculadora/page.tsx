@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { PublicFooter } from "@/components/PublicFooter";
 import { CalculadoraForm } from "@/components/CalculadoraForm";
+import { ProyeccionForm } from "@/components/ProyeccionForm";
 
 export const metadata: Metadata = {
   title: "Calculadora de rendimiento real de inversiones — Mi portafolio",
@@ -59,6 +60,20 @@ export default function CalculadoraPage() {
           tedioso rápido — y es exactamente el problema que resuelve Mi portafolio: consolida
           todas tus cuentas en un solo lugar y hace este cálculo automáticamente por ti.
         </p>
+      </div>
+
+      <div className="mt-10 max-w-[640px]">
+        <h2 className="text-[17px] font-semibold tracking-[-0.01em] text-[#F2F5F9]">
+          Simulador de proyección a futuro
+        </h2>
+        <p className="mt-2.5 text-[13.5px] text-[#97A2B4] leading-relaxed">
+          Esto es distinto al cálculo de arriba: no mira datos reales, sino que proyecta hacia
+          adelante — cuánto podrías tener si aportas un monto inicial y/o mensual a una tasa de
+          retorno esperada, durante los años que definas.
+        </p>
+      </div>
+      <div className="mt-6">
+        <ProyeccionForm />
       </div>
 
       <PublicFooter />
