@@ -125,6 +125,24 @@ export type Database = {
         }
         Relationships: []
       }
+      reportes_mensuales_enviados: {
+        Row: {
+          fecha_envio: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          fecha_envio?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          fecha_envio?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       movimientos: {
         Row: {
           created_at: string

@@ -568,3 +568,27 @@ left join lateral (
 ) u on true
 where c.activa = true
 order by f.fecha, c.plataforma;
+
+-- ==========================================================================
+-- fase 4 del roadmap: reporte mensual de rendimiento por correo.
+-- ==========================================================================
+
+-- historial de reportes mensuales enviados por el cron
+-- (src/app/api/cron/reporte-mensual) -- mismo patron que
+-- recordatorios_enviados: solo el cron (via service_role, que bypassea rls)
+-- inserta aca, y sirve tambien de guardia para no mandar dos veces el mismo
+-- mes si el cron se dispara mas de una vez (a diferencia del recordatorio
+-- semanal, un reporte mensual duplicado es mas notorio).
+create table reportes_mensuales_enviados (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  fecha_envio timestamptz not null default now()
+);
+
+create index idx_reportes_mensuales_enviados_user_fecha on reportes_mensuales_enviados (user_id, fecha_envio desc);
+
+alter table reportes_mensuales_enviados enable row level security;
+
+create policy "reportes mensuales propios (solo lectura)"
+  on reportes_mensuales_enviados for select
+  using (auth.uid() = user_id);

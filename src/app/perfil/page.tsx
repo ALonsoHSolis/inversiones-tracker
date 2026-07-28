@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/Logo";
-import { actualizarPreferenciaRecordatorios } from "./actions";
+import { actualizarPreferenciaRecordatorios, actualizarPreferenciaReporteMensual } from "./actions";
 
 export default async function PerfilPage() {
   const supabase = await createClient();
@@ -13,6 +13,7 @@ export default async function PerfilPage() {
   if (!user) redirect("/login");
 
   const recordatoriosActivos = user.user_metadata?.recordatorios_activos !== false;
+  const reporteMensualActivo = user.user_metadata?.reporte_mensual_activo !== false;
 
   return (
     <main className="max-w-[560px] mx-auto px-6 pt-[26px] pb-16">
@@ -45,6 +46,29 @@ export default async function PerfilPage() {
               }
             >
               {recordatoriosActivos ? "Desactivar" : "Activar"}
+            </button>
+          </form>
+        </div>
+
+        <div className="mt-4 pt-4 border-t border-white/[0.07] flex items-center justify-between gap-4">
+          <div>
+            <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Reporte mensual de rendimiento</p>
+            <p className="mt-1 text-[12.5px] text-[#8892A0] max-w-[320px]">
+              Un correo a fin de mes con tu valor total, capital aportado, ganancia y cómo te fue en
+              el mes.
+            </p>
+          </div>
+          <form action={actualizarPreferenciaReporteMensual}>
+            <input type="hidden" name="activar" value={(!reporteMensualActivo).toString()} />
+            <button
+              type="submit"
+              className={
+                reporteMensualActivo
+                  ? "h-9 px-4 rounded-[9px] border border-white/[0.14] bg-white/[0.04] text-[12.5px] font-semibold text-[#F2F5F9] whitespace-nowrap"
+                  : "h-9 px-4 rounded-[9px] bg-[var(--accent)] text-[#0A0D13] text-[12.5px] font-semibold whitespace-nowrap"
+              }
+            >
+              {reporteMensualActivo ? "Desactivar" : "Activar"}
             </button>
           </form>
         </div>
