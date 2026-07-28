@@ -50,7 +50,6 @@ function estimarRendimientoPct(
 // misma logica de guardado, guardrails y rpc que SnapshotForm, solo que
 // aplicada a una cuenta elegida en un desplegable en vez de a todas a la vez.
 export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }: CargaRapidaProps) {
-  const router = useRouter();
   const [cuentaId, setCuentaId] = useState(cuentas[0]?.id ?? "");
   const cuenta = cuentas.find((c) => c.id === cuentaId) ?? null;
 
@@ -66,21 +65,99 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
   }
   const hayCoincidencias = cuentas.some(coincideBusqueda);
 
+  if (cuentas.length === 0) return null;
+
+  return (
+    <section
+      id="carga-rapida"
+      className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)] scroll-mt-6"
+    >
+      <div className="flex items-center gap-1.5 mb-1">
+        <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Carga rápida</p>
+        <Ayuda>
+          Registra el valor de hoy de una sola cuenta. Para actualizar varias cuentas a la vez, usa
+          &quot;actualizar varias cuentas de una vez&quot; más abajo.
+        </Ayuda>
+      </div>
+      <p className="text-[11.5px] text-[#8892A0] mb-4">Registra el valor de hoy de una cuenta</p>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-[11px] font-semibold text-[#8892A0]">Cuenta</span>
+        {cuentas.length > 5 && (
+          <input
+            type="text"
+            placeholder="Buscar por nombre o plataforma…"
+            value={busquedaCuenta}
+            onChange={(e) => setBusquedaCuenta(e.target.value)}
+            className="h-9 px-3 mb-1.5 rounded-[10px] border border-white/[0.14] text-[13px] bg-white/[0.04] text-[#F2F5F9] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+          />
+        )}
+        <select
+          value={cuentaId}
+          onChange={(e) => setCuentaId(e.target.value)}
+          className="h-10 px-3 rounded-[10px] border border-white/[0.14] text-[13px] bg-white/[0.04] text-[#F2F5F9] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+        >
+          {!hayCoincidencias && <option disabled>ninguna cuenta coincide</option>}
+          {cuentas.map((c) => (
+            <option key={c.id} value={c.id} style={{ display: coincideBusqueda(c) ? undefined : "none" }}>
+              {c.nombre} · {c.plataforma}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      {cuenta && (
+        <FormularioCargaRapida
+          key={cuenta.id}
+          cuenta={cuenta}
+          movimientoSemilla={movimientosHoy[cuenta.id]}
+          valorAnterior={valorAnteriorPorCuenta[cuenta.id] ?? null}
+        />
+      )}
+    </section>
+  );
+}
+
+interface FormularioCargaRapidaProps {
+  cuenta: Cuenta;
+  movimientoSemilla: { tipo: TipoMovimiento; monto: number } | undefined;
+  valorAnterior: number | null;
+}
+
+// formulario de la cuenta elegida, montado con key={cuenta.id} desde
+// CargaRapida -- cambiar de cuenta reinicia todo este estado via remount en
+// vez de un efecto que llama varios setState seguidos para "resetear el
+// formulario" (el patron que react recomienda para esto: computar el estado
+// inicial a partir de las props en vez de resetearlo en un effect). el unico
+// effect que queda aca es el legitimo: buscar la tasa de cambio al montar.
+function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: FormularioCargaRapidaProps) {
+  const router = useRouter();
+
   const [valor, setValor] = useState("");
   const [valorEditadoManualmente, setValorEditadoManualmente] = useState(false);
   const [tasaCambio, setTasaCambio] = useState<number | null>(null);
   const [tasaFecha, setTasaFecha] = useState<string | null>(null);
-  const [cargandoTasa, setCargandoTasa] = useState(false);
+  // arranca en true cuando la cuenta no es clp -- ya se sabe en el primer
+  // render que el effect de mas abajo va a disparar un fetch de inmediato.
+  const [cargandoTasa, setCargandoTasa] = useState(cuenta.moneda !== "CLP");
   const [errorTasa, setErrorTasa] = useState<string | null>(null);
-  const [incluyeMovimiento, setIncluyeMovimiento] = useState(false);
-  const [movimientoTipo, setMovimientoTipo] = useState<TipoMovimiento>("aporte");
-  const [movimientoMonto, setMovimientoMonto] = useState("");
+  const [incluyeMovimiento, setIncluyeMovimiento] = useState(!!movimientoSemilla);
+  const [movimientoTipo, setMovimientoTipo] = useState<TipoMovimiento>(movimientoSemilla?.tipo ?? "aporte");
+  const [movimientoMonto, setMovimientoMonto] = useState(
+    movimientoSemilla ? String(movimientoSemilla.monto) : ""
+  );
   const [guardando, setGuardando] = useState(false);
   const [resultado, setResultado] = useState<"ok" | string | null>(null);
 
-  const tieneMovimientoOriginal = !!(cuenta && movimientosHoy[cuenta.id]);
+  const tieneMovimientoOriginal = !!movimientoSemilla;
   const tasaRequestId = useRef(0);
 
+  // usada por el boton reintentar (un event handler, sin restricciones de
+  // pureza) -- el effect de mas abajo NO llama esta funcion: el lint marca
+  // como "setState sincrono dentro de un effect" cualquier llamado a una
+  // funcion local que en algun punto de su cuerpo termine llamando setState,
+  // sea antes o despues de un await, asi que el fetch inicial se escribe
+  // aparte, en linea, dentro del effect mismo.
   async function cargarTasa(c: Cuenta) {
     const requestId = ++tasaRequestId.current;
     setCargandoTasa(true);
@@ -108,26 +185,37 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
     setErrorTasa(null);
   }
 
-  // al cambiar de cuenta, reiniciar todo el formulario -- si la cuenta
-  // elegida ya tiene un aporte/retiro registrado hoy, precargarlo (mismo
-  // criterio que el seed de SnapshotForm).
+  // busca la tasa de cambio al montar, solo si la cuenta no es clp -- el
+  // remount por key={cuenta.id} ya se encargo de dejar el formulario en su
+  // estado inicial (cargandoTasa ya arranca en true arriba). fetch en linea
+  // con .then()/.catch(), no una llamada a cargarTasa: el patron que el
+  // propio mensaje de la regla del lint recomienda ("callback... cuando
+  // cambia el estado externo"), en vez de una funcion nombrada que dispara
+  // el aviso de "setState sincrono dentro de un effect".
   useEffect(() => {
-    tasaRequestId.current++;
-    const seed = cuenta ? movimientosHoy[cuenta.id] : undefined;
-    setValor("");
-    setValorEditadoManualmente(false);
-    setTasaCambio(null);
-    setTasaFecha(null);
-    setErrorTasa(null);
-    setCargandoTasa(false);
-    setIncluyeMovimiento(!!seed);
-    setMovimientoTipo(seed?.tipo ?? "aporte");
-    setMovimientoMonto(seed ? String(seed.monto) : "");
-    setResultado(null);
-
-    if (cuenta && cuenta.moneda !== "CLP") cargarTasa(cuenta);
+    if (cuenta.moneda === "CLP") return;
+    const requestId = ++tasaRequestId.current;
+    let cancelado = false;
+    obtenerTasaCambio(cuenta.moneda as Exclude<Moneda, "CLP">)
+      .then(({ valor: v, fecha }) => {
+        if (cancelado || tasaRequestId.current !== requestId) return;
+        setTasaCambio(v);
+        setTasaFecha(fecha);
+        setCargandoTasa(false);
+      })
+      .catch((err) => {
+        if (cancelado || tasaRequestId.current !== requestId) return;
+        console.error(err);
+        setTasaCambio(null);
+        setTasaFecha(null);
+        setCargandoTasa(false);
+        setErrorTasa("no se pudo obtener la tasa de cambio, revisa tu conexion e intenta de nuevo");
+      });
+    return () => {
+      cancelado = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cuentaId]);
+  }, []);
 
   function cambiarMovimiento(patch: {
     incluyeMovimiento?: boolean;
@@ -143,13 +231,12 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
     if (patch.movimientoMonto !== undefined) setMovimientoMonto(patch.movimientoMonto);
 
     const debeSugerir = siguienteIncluye && !tieneMovimientoOriginal && !valorEditadoManualmente;
-    if (debeSugerir && cuenta) {
-      setValor(calcularValorSugerido(valorAnteriorPorCuenta[cuenta.id] ?? null, siguienteMonto, siguienteTipo));
+    if (debeSugerir) {
+      setValor(calcularValorSugerido(valorAnterior, siguienteMonto, siguienteTipo));
     }
   }
 
   async function guardar() {
-    if (!cuenta) return;
     setResultado(null);
 
     if (valor.trim() === "") {
@@ -157,8 +244,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
       return;
     }
 
-    const anterior = valorAnteriorPorCuenta[cuenta.id];
-    const valorSinCambio = incluyeMovimiento && anterior != null && Number(valor) === anterior;
+    const valorSinCambio = incluyeMovimiento && valorAnterior != null && Number(valor) === valorAnterior;
 
     if (valorSinCambio) {
       const confirma = window.confirm(
@@ -169,7 +255,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
         return;
       }
     } else {
-      const pct = estimarRendimientoPct(anterior, Number(valor), incluyeMovimiento, movimientoTipo, movimientoMonto);
+      const pct = estimarRendimientoPct(valorAnterior, Number(valor), incluyeMovimiento, movimientoTipo, movimientoMonto);
       if (pct != null && Math.abs(pct) >= UMBRAL_RENDIMIENTO_IMPLAUSIBLE) {
         const confirma = window.confirm(
           `Con este valor, el rendimiento de "${cuenta.nombre}" sería de ${pct.toFixed(1)}% respecto al registro anterior — ¿el valor es correcto? Cancela para revisarlo.`
@@ -228,47 +314,8 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
     router.refresh();
   }
 
-  if (cuentas.length === 0) return null;
-
   return (
-    <section
-      id="carga-rapida"
-      className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)] scroll-mt-6"
-    >
-      <div className="flex items-center gap-1.5 mb-1">
-        <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Carga rápida</p>
-        <Ayuda>
-          Registra el valor de hoy de una sola cuenta. Para actualizar varias cuentas a la vez, usa
-          &quot;actualizar varias cuentas de una vez&quot; más abajo.
-        </Ayuda>
-      </div>
-      <p className="text-[11.5px] text-[#8892A0] mb-4">Registra el valor de hoy de una cuenta</p>
-
-      <label className="flex flex-col gap-1">
-        <span className="text-[11px] font-semibold text-[#8892A0]">Cuenta</span>
-        {cuentas.length > 5 && (
-          <input
-            type="text"
-            placeholder="Buscar por nombre o plataforma…"
-            value={busquedaCuenta}
-            onChange={(e) => setBusquedaCuenta(e.target.value)}
-            className="h-9 px-3 mb-1.5 rounded-[10px] border border-white/[0.14] text-[13px] bg-white/[0.04] text-[#F2F5F9] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
-          />
-        )}
-        <select
-          value={cuentaId}
-          onChange={(e) => setCuentaId(e.target.value)}
-          className="h-10 px-3 rounded-[10px] border border-white/[0.14] text-[13px] bg-white/[0.04] text-[#F2F5F9] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
-        >
-          {!hayCoincidencias && <option disabled>ninguna cuenta coincide</option>}
-          {cuentas.map((c) => (
-            <option key={c.id} value={c.id} style={{ display: coincideBusqueda(c) ? undefined : "none" }}>
-              {c.nombre} · {c.plataforma}
-            </option>
-          ))}
-        </select>
-      </label>
-
+    <>
       <div className="grid grid-cols-2 gap-3 mt-3">
         <div>
           <span className="text-[11px] font-semibold text-[#8892A0]">Fecha</span>
@@ -296,7 +343,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
         </label>
       </div>
 
-      {cuenta && cuenta.moneda !== "CLP" && (
+      {cuenta.moneda !== "CLP" && (
         <div className="mt-3 flex flex-col gap-1">
           <div className="flex items-center justify-between gap-3">
             <span className="text-[11px] font-semibold text-[#8892A0]">tasa de cambio</span>
@@ -320,11 +367,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
           {errorTasa && (
             <span className="text-[11px] text-[var(--neg)] flex items-center justify-end gap-2">
               {errorTasa}
-              <button
-                type="button"
-                onClick={() => cuenta && cargarTasa(cuenta)}
-                className="underline shrink-0"
-              >
+              <button type="button" onClick={() => cargarTasa(cuenta)} className="underline shrink-0">
                 reintentar
               </button>
             </span>
@@ -389,6 +432,6 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
       {resultado && resultado !== "ok" && (
         <p className="mt-2.5 text-[12px] font-semibold text-center text-[var(--neg)]">{resultado}</p>
       )}
-    </section>
+    </>
   );
 }

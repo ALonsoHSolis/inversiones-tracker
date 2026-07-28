@@ -56,6 +56,12 @@ export function CuentaForm() {
   // que la respuesta en curso se descarte al llegar.
   const tasaRequestId = useRef(0);
 
+  // usada por el boton reintentar (un event handler, sin restricciones de
+  // pureza) -- el effect de mas abajo no llama esta funcion: el lint marca
+  // como "setState sincrono dentro de un effect" cualquier llamado a una
+  // funcion local que en algun punto de su cuerpo termine llamando setState
+  // (antes o despues de un await), asi que el fetch al cambiar de moneda se
+  // escribe aparte, en linea, dentro del effect mismo.
   async function cargarTasa(m: Exclude<Moneda, "CLP">) {
     const requestId = ++tasaRequestId.current;
     setCargandoTasa(true);
@@ -77,17 +83,57 @@ export function CuentaForm() {
     }
   }
 
-  useEffect(() => {
+  // al cambiar de moneda (a clp se limpia, a una moneda con tasa se marca
+  // "cargando" de inmediato) -- esto se ajusta durante el render (no en un
+  // effect) siguiendo el patron que recomienda react para "resetear estado
+  // derivado cuando cambia otro valor": comparar contra la moneda del
+  // render anterior y, si cambio, actualizar de una vez en vez de esperar a
+  // un effect que dispare un render en cascada. el ref de tasaRequestId NO
+  // se toca aca -- mutar un ref durante el render esta prohibido, ese bump
+  // vive en el effect de mas abajo.
+  const [monedaAnterior, setMonedaAnterior] = useState(moneda);
+  if (moneda !== monedaAnterior) {
+    setMonedaAnterior(moneda);
+    setErrorTasa(null);
+    setCargandoTasa(moneda !== "CLP");
+    // tasaCambio/tasaFecha solo se limpian al volver a clp -- si se cambia
+    // directo entre dos monedas no-clp (ej. usd -> uf), la tasa vieja queda
+    // visible hasta que la nueva termine de cargar, igual que el
+    // comportamiento original de esta funcion.
     if (moneda === "CLP") {
-      tasaRequestId.current++;
       setTasaCambio(null);
       setTasaFecha(null);
-      setErrorTasa(null);
-      setCargandoTasa(false);
-      return;
     }
+  }
 
-    cargarTasa(moneda);
+  // buscar la tasa de cambio SI es un efecto legitimo (sincroniza con
+  // mindicador.cl, un sistema externo). fetch en linea con .then()/.catch(),
+  // no una llamada a cargarTasa: el patron que el propio mensaje de la regla
+  // del lint recomienda ("callback... cuando cambia el estado externo"), en
+  // vez de una funcion nombrada que dispara el aviso de "setState sincrono
+  // dentro de un effect".
+  useEffect(() => {
+    if (moneda === "CLP") return;
+    const requestId = ++tasaRequestId.current;
+    let cancelado = false;
+    obtenerTasaCambio(moneda as Exclude<Moneda, "CLP">)
+      .then(({ valor, fecha }) => {
+        if (cancelado || tasaRequestId.current !== requestId) return;
+        setTasaCambio(valor);
+        setTasaFecha(fecha);
+        setCargandoTasa(false);
+      })
+      .catch((err) => {
+        if (cancelado || tasaRequestId.current !== requestId) return;
+        console.error(err);
+        setTasaCambio(null);
+        setTasaFecha(null);
+        setCargandoTasa(false);
+        setErrorTasa("no se pudo obtener la tasa de cambio, revisa tu conexion e intenta de nuevo");
+      });
+    return () => {
+      cancelado = true;
+    };
   }, [moneda]);
 
   function editarTasaManualmente(valor: number | null) {

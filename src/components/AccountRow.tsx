@@ -27,6 +27,10 @@ interface AccountRowProps {
   // se toma de capital_por_cuenta y no de rendimiento a proposito: cubre
   // tambien cuentas con un solo snapshot, que rendimiento_actual excluye.
   ultimaFechaFallback: string | null;
+  // "ahora" calculado una sola vez en dashboard/page.tsx (mismo hoyMs que ya
+  // usa esa pagina) y pasado como prop -- llamar Date.now() directo aca
+  // adentro violaria la regla de pureza del render (react-hooks/purity).
+  ahoraMs: number;
 }
 
 const CHIP_COLORES: Record<string, { bg: string; fg: string }> = {
@@ -61,6 +65,7 @@ export function AccountRow({
   valorClpFallback,
   capitalAportadoFallback,
   ultimaFechaFallback,
+  ahoraMs,
 }: AccountRowProps) {
   const valor = rendimiento?.valor ?? valorActualFallback;
   const valorClp = rendimiento?.valor_clp ?? valorClpFallback;
@@ -69,11 +74,11 @@ export function AccountRow({
   // >14 dias (dos semanas) sin actualizar, no >=, para no marcar como
   // antigua una cuenta actualizada exactamente hace dos semanas justas.
   const diasDesdeUltimoDato = ultimaFechaFallback
-    ? (Date.now() - new Date(ultimaFechaFallback).getTime()) / (1000 * 60 * 60 * 24)
+    ? (ahoraMs - new Date(ultimaFechaFallback).getTime()) / (1000 * 60 * 60 * 24)
     : null;
   const esDatoAntiguo = diasDesdeUltimoDato != null && diasDesdeUltimoDato > UMBRAL_DATO_ANTIGUO_DIAS;
 
-  const diasTranscurridos = (Date.now() - new Date(cuenta.created_at).getTime()) / (1000 * 60 * 60 * 24);
+  const diasTranscurridos = (ahoraMs - new Date(cuenta.created_at).getTime()) / (1000 * 60 * 60 * 24);
   const rendimientoAnualizado =
     valor != null && capitalAportadoFallback != null
       ? calcularRendimientoAnualizado(capitalAportadoFallback, valor, diasTranscurridos)

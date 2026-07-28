@@ -560,6 +560,7 @@ export default async function DashboardPage() {
                   valorClpFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual_clp ?? null}
                   capitalAportadoFallback={capitalPorCuentaMap.get(cuenta.id)?.capital_aportado ?? null}
                   ultimaFechaFallback={capitalPorCuentaMap.get(cuenta.id)?.ultima_fecha ?? null}
+                  ahoraMs={hoyMs}
                 />
               ))}
               {cuentasConDatos.length === 0 && <EmptyAccountsState />}
