@@ -21,3 +21,6 @@ graphify-out/
 
 # estado local del CLI de supabase (project-ref, pooler-url): no se versiona
 supabase/.temp/
+
+# cache incremental de tsc
+*.tsbuildinfo
