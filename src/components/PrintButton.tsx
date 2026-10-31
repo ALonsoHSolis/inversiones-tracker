@@ -10,7 +10,7 @@ export function PrintButton() {
     <button
       type="button"
       onClick={() => window.print()}
-      className="h-[34px] px-3.5 rounded-[9px] border border-white/[0.1] bg-white/[0.03] text-[13px] font-medium text-[#C7CDD6] hover:border-white/[0.2]"
+      className="h-[34px] px-3.5 rounded-[9px] border border-white/[0.1] bg-white/[0.03] text-small font-medium text-fg-soft hover:border-white/[0.2]"
     >
       Exportar a PDF
     </button>

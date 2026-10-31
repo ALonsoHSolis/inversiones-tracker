@@ -66,9 +66,9 @@ export function AccountComparison({
   });
 
   return (
-    <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
+    <section className="card p-5">
       <div className="flex items-center gap-1.5 mb-1">
-        <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Análisis de rendimiento</p>
+        <p className="text-small font-semibold text-fg">Análisis de rendimiento</p>
         <Ayuda>
           El TWR (time-weighted return) encadena el rendimiento de cada período de tu portafolio
           completo, ya descontando aportes y retiros en cada uno — mide qué tan bien se desempeñó tu
@@ -82,29 +82,29 @@ export function AccountComparison({
           recuperó entre dos actualizaciones tuyas, no queda reflejado.
         </Ayuda>
       </div>
-      <p className="text-[11.5px] text-[#8892A0] mb-4">Rendimiento compuesto y comparación entre tus cuentas</p>
+      <p className="text-micro text-fg-muted mb-4">Rendimiento compuesto y comparación entre tus cuentas</p>
 
       <div className="grid grid-cols-3 gap-3.5">
         <div>
-          <p className="text-[11px] font-medium text-[#8892A0]">TWR del portafolio</p>
+          <p className="text-micro font-medium text-fg-muted">TWR del portafolio</p>
           <p
             className="money-value mt-1 font-mono-tabular font-semibold text-base"
-            style={{ color: twrPortafolio == null ? "#F2F5F9" : twrPortafolio >= 0 ? "var(--pos)" : "var(--neg)" }}
+            style={{ color: twrPortafolio == null ? "var(--color-fg)" : twrPortafolio >= 0 ? "var(--pos)" : "var(--neg)" }}
           >
             {twrPortafolio != null ? formatoPct(twrPortafolio) : "—"}
           </p>
         </div>
         <div>
-          <p className="text-[11px] font-medium text-[#8892A0]">Peor caída registrada</p>
+          <p className="text-micro font-medium text-fg-muted">Peor caída registrada</p>
           <p className="money-value mt-1 font-mono-tabular font-semibold text-base" style={{ color: "var(--neg)" }}>
             {drawdownPortafolio != null && drawdownPortafolio < 0 ? formatoPct(drawdownPortafolio) : "sin caídas"}
           </p>
         </div>
         <div>
-          <p className="text-[11px] font-medium text-[#8892A0]">XIRR del portafolio</p>
+          <p className="text-micro font-medium text-fg-muted">XIRR del portafolio</p>
           <p
             className="money-value mt-1 font-mono-tabular font-semibold text-base"
-            style={{ color: xirrPortafolio == null ? "#F2F5F9" : xirrPortafolio >= 0 ? "var(--pos)" : "var(--neg)" }}
+            style={{ color: xirrPortafolio == null ? "var(--color-fg)" : xirrPortafolio >= 0 ? "var(--pos)" : "var(--neg)" }}
           >
             {xirrPortafolio != null ? formatoPct(xirrPortafolio) : "—"}
           </p>
@@ -114,7 +114,7 @@ export function AccountComparison({
       <div className="h-px bg-white/[0.07] my-4" />
 
       <div className="flex items-center justify-between gap-3 mb-3">
-        <p className="text-[11.5px] text-[#8892A0]">Por cuenta</p>
+        <p className="text-micro text-fg-muted">Por cuenta</p>
         <div className="flex gap-0.5 bg-white/[0.04] p-[3px] rounded-[9px]">
           <button
             type="button"
@@ -122,7 +122,7 @@ export function AccountComparison({
             className="h-6 px-2.5 rounded-md text-xs font-semibold"
             style={{
               background: orden === "anualizado" ? "rgba(255,255,255,.1)" : "transparent",
-              color: orden === "anualizado" ? "#F2F5F9" : "#7C8798",
+              color: orden === "anualizado" ? "var(--color-fg)" : "var(--color-fg-muted)",
             }}
           >
             Anualizado
@@ -133,7 +133,7 @@ export function AccountComparison({
             className="h-6 px-2.5 rounded-md text-xs font-semibold"
             style={{
               background: orden === "contribucion" ? "rgba(255,255,255,.1)" : "transparent",
-              color: orden === "contribucion" ? "#F2F5F9" : "#7C8798",
+              color: orden === "contribucion" ? "var(--color-fg)" : "var(--color-fg-muted)",
             }}
           >
             Contribución
@@ -147,25 +147,25 @@ export function AccountComparison({
           return (
             <div key={c.id} className="border border-white/[0.07] rounded-xl px-[15px] py-[13px]">
               <div className="flex items-start justify-between gap-3">
-                <span className="text-[13.5px] font-semibold text-[#F2F5F9]">{c.nombre}</span>
+                <span className="text-small font-semibold text-fg">{c.nombre}</span>
                 <div className="text-right whitespace-nowrap">
                   <p
-                    className="font-mono-tabular text-[13.5px] font-semibold"
+                    className="font-mono-tabular text-small font-semibold"
                     style={{
                       color:
                         c.rendimientoAnualizado == null
-                          ? "#8892A0"
+                          ? "var(--color-fg-muted)"
                           : c.rendimientoAnualizado >= 0
                             ? "var(--pos)"
                             : "var(--neg)",
                     }}
                   >
                     {c.rendimientoAnualizado != null ? formatoPct(c.rendimientoAnualizado) : "—"}{" "}
-                    <span className="text-[#5B6472] font-medium">anualizado</span>
+                    <span className="text-fg-subtle font-medium">anualizado</span>
                   </p>
                 </div>
               </div>
-              <p className="mt-1.5 text-[11px] text-[#8892A0]">
+              <p className="mt-1.5 text-micro text-fg-muted">
                 {contribucion != null ? `${formatoPct(contribucion)} del rendimiento total` : "sin contribución medible"}
                 {" · "}
                 {textoRacha(c.racha)}

@@ -60,13 +60,13 @@ function TooltipPersonalizado({
 
   return (
     <div className="rounded-[10px] bg-[rgba(10,13,19,0.94)] border border-white/[0.1] backdrop-blur-[10px] px-3 py-2.5 min-w-[160px] shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
-      <p className="text-[10.5px] text-[#8892A0] mb-1.5">{formatoFechaCorta(punto.fecha)}</p>
+      <p className="text-micro text-fg-muted mb-1.5">{formatoFechaCorta(punto.fecha)}</p>
       <div className="flex flex-col gap-1">
         {grupos.map((g) => (
           <div key={g.nombre} className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-[2px] shrink-0" style={{ background: g.color }} />
-            <span className="text-[10.5px] text-[#8892A0] truncate max-w-[90px]">{g.nombre}</span>
-            <span className="font-mono-tabular text-[11px] font-semibold text-white ml-auto">
+            <span className="text-micro text-fg-muted truncate max-w-[90px]">{g.nombre}</span>
+            <span className="font-mono-tabular text-micro font-semibold text-white ml-auto">
               {formatoPesos(Number(punto[g.nombre]) || 0)}
             </span>
           </div>
@@ -98,10 +98,10 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
   }, [todosLosPuntos, periodo]);
 
   return (
-    <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
+    <section className="card p-5">
       <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
         <div className="flex items-center gap-1.5">
-          <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Composición histórica</p>
+          <p className="text-small font-semibold text-fg">Composición histórica</p>
           <Ayuda>
             Cómo ha evolucionado en el tiempo la distribución de tu portafolio, en pesos, por
             plataforma o por tipo de activo. Cada punto usa el último valor conocido de cada
@@ -116,7 +116,7 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
             className="h-6 px-2.5 rounded-md text-xs font-semibold"
             style={{
               background: dimension === "plataforma" ? "rgba(255,255,255,.1)" : "transparent",
-              color: dimension === "plataforma" ? "#F2F5F9" : "#7C8798",
+              color: dimension === "plataforma" ? "var(--color-fg)" : "var(--color-fg-muted)",
             }}
           >
             Plataforma
@@ -127,7 +127,7 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
             className="h-6 px-2.5 rounded-md text-xs font-semibold"
             style={{
               background: dimension === "tipo" ? "rgba(255,255,255,.1)" : "transparent",
-              color: dimension === "tipo" ? "#F2F5F9" : "#7C8798",
+              color: dimension === "tipo" ? "var(--color-fg)" : "var(--color-fg-muted)",
             }}
           >
             Tipo
@@ -136,7 +136,7 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
       </div>
 
       {todosLosPuntos.length < 2 ? (
-        <p className="text-[12.5px] text-[#8892A0] py-8 text-center">
+        <p className="text-micro text-fg-muted py-8 text-center">
           todavía no hay suficiente historial para graficar — vuelve cuando tengas al menos dos
           fechas con valores guardados.
         </p>
@@ -154,7 +154,7 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
                     className="h-6 px-2.5 rounded-md text-xs font-semibold"
                     style={{
                       background: activo ? "rgba(255,255,255,.1)" : "transparent",
-                      color: activo ? "#F2F5F9" : "#7C8798",
+                      color: activo ? "var(--color-fg)" : "var(--color-fg-muted)",
                       boxShadow: activo ? "0 1px 2px rgba(0,0,0,.3)" : "none",
                     }}
                   >
@@ -179,7 +179,7 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
                 <XAxis
                   dataKey="fecha"
                   tickFormatter={formatoMes}
-                  tick={{ fontSize: 10.5, fill: "#5B6472" }}
+                  tick={{ fontSize: 12, fill: "var(--color-fg-subtle)" }}
                   axisLine={{ stroke: "rgba(255,255,255,.06)" }}
                   tickLine={false}
                   minTickGap={40}
@@ -208,7 +208,7 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
             {grupos.map((g) => (
               <span
                 key={g.nombre}
-                className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#8892A0]"
+                className="inline-flex items-center gap-1.5 text-micro font-medium text-fg-muted"
               >
                 <span className="w-2.5 h-2.5 rounded-[3px] shrink-0" style={{ background: g.color }} />
                 {g.nombre}

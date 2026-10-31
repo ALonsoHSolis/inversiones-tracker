@@ -27,16 +27,16 @@ export const PREGUNTAS = [
 export function TrustFaq() {
   return (
     <section className="mt-8">
-      <div className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl divide-y divide-white/[0.07]">
+      <div className="card divide-y divide-white/[0.07]">
         {PREGUNTAS.map((item) => (
           <details key={item.pregunta} className="group p-[18px]">
             <summary className="flex items-center justify-between gap-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-              <span className="text-[13.5px] font-semibold text-[#F2F5F9]">{item.pregunta}</span>
-              <span className="text-[#8892A0] transition-transform duration-200 group-open:rotate-45 text-lg leading-none">
+              <span className="text-small font-semibold text-fg">{item.pregunta}</span>
+              <span className="text-fg-muted transition-transform duration-200 group-open:rotate-45 text-lg leading-none">
                 +
               </span>
             </summary>
-            <p className="mt-2.5 text-[13px] text-[#97A2B4] leading-relaxed">{item.respuesta}</p>
+            <p className="mt-2.5 text-small text-fg-muted leading-relaxed">{item.respuesta}</p>
           </details>
         ))}
       </div>

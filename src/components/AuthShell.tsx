@@ -12,11 +12,11 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen md:grid md:grid-cols-[46%_54%]">
       <div
         className="hidden md:flex flex-col justify-between overflow-hidden relative px-11 py-10 border-r border-white/[0.06]"
-        style={{ background: "linear-gradient(160deg, #101A2B 0%, #0A0D13 70%)" }}
+        style={{ background: "linear-gradient(160deg, var(--color-surface-raised) 0%, var(--color-ink) 70%)" }}
       >
         <div
           className="absolute -top-[120px] -right-[100px] w-[420px] h-[420px] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(139,92,246,.22), transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, rgba(205,174,118,.22), transparent 70%)" }}
         />
         <Logo href="/" light />
 
@@ -27,8 +27,8 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           </h2>
           <div className="flex flex-col gap-3 mt-[26px]">
             {FEATURES.map((texto) => (
-              <span key={texto} className="inline-flex items-center gap-2.5 text-[13.5px] text-[#C7CDD6]">
-                <span className="w-[18px] h-[18px] rounded-md bg-[rgba(139,92,246,0.18)] inline-flex items-center justify-center text-[10px] text-[#C4B5FD] shrink-0">
+              <span key={texto} className="inline-flex items-center gap-2.5 text-small text-fg-soft">
+                <span className="w-[18px] h-[18px] rounded-md bg-[rgba(205,174,118,0.18)] inline-flex items-center justify-center text-micro text-accent-hi shrink-0">
                   ✓
                 </span>
                 {texto}
@@ -39,10 +39,10 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
 
         <div className="relative bg-white/[0.05] border border-white/[0.1] rounded-2xl px-[18px] py-4">
           <div className="flex items-center justify-between">
-            <span className="text-[10.5px] uppercase tracking-[0.09em] text-white/65 font-semibold">
+            <span className="text-micro uppercase tracking-[0.09em] text-white/65 font-semibold">
               Valor total
             </span>
-            <span className="font-mono-tabular text-[11px] font-semibold text-[var(--pos)]">▲ +10,0%</span>
+            <span className="font-mono-tabular text-micro font-semibold text-[var(--pos)]">▲ +10,0%</span>
           </div>
           <p className="font-mono-tabular mt-1.5 text-[22px] font-semibold text-white">$17.491.080</p>
           <svg
@@ -71,11 +71,11 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="flex flex-col px-5 py-6 md:px-7 bg-[#0A0D13] min-h-screen">
+      <div className="flex flex-col px-5 py-6 md:px-7 bg-ink min-h-screen">
         <div>
           <Link
             href="/"
-            className="inline-block px-1 py-2 text-[13px] font-medium text-[#5B6472] hover:text-[#97A2B4]"
+            className="inline-block px-1 py-2 text-small font-medium text-fg-subtle hover:text-fg-muted"
           >
             ← Volver al inicio
           </Link>
@@ -83,7 +83,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="flex-1 flex items-center justify-center py-6">
           <div className="w-full max-w-[384px] auth-fade-up">{children}</div>
         </div>
-        <p className="text-center text-[11px] text-[#3E4650]">Mi portafolio · seguimiento de rendimiento real</p>
+        <p className="text-center text-micro text-fg-subtle">Mi portafolio · seguimiento de rendimiento real</p>
       </div>
     </div>
   );

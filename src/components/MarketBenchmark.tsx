@@ -37,7 +37,7 @@ function Ring({ label, pct }: { label: string; pct: number }) {
         />
       </svg>
       <div className="min-w-0">
-        <p className="text-[9.5px] font-semibold text-[#5B6472] whitespace-nowrap overflow-hidden text-ellipsis">
+        <p className="text-micro font-semibold text-fg-subtle whitespace-nowrap overflow-hidden text-ellipsis">
           {label}
         </p>
         <p className="font-mono-tabular mt-px text-xs font-semibold" style={{ color }}>

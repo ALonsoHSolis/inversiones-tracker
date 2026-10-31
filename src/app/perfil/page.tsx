@@ -19,19 +19,19 @@ export default async function PerfilPage() {
     <main className="max-w-[560px] mx-auto px-6 pt-[26px] pb-16">
       <div className="flex items-center justify-between gap-4 mb-6">
         <Logo />
-        <Link href="/dashboard" className="text-[12.5px] text-[#8892A0] border-b border-white/[0.14]">
+        <Link href="/dashboard" className="text-micro text-fg-muted border-b border-white/[0.14]">
           ← volver al dashboard
         </Link>
       </div>
 
-      <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-6 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
-        <h1 className="text-[19px] font-semibold tracking-[-0.02em] text-[#F2F5F9]">Perfil</h1>
-        <p className="mt-1 text-[13px] text-[#8892A0]">{user.email}</p>
+      <section className="card p-6">
+        <h1 className="text-[19px] font-semibold tracking-[-0.02em] text-fg">Perfil</h1>
+        <p className="mt-1 text-small text-fg-muted">{user.email}</p>
 
         <div className="mt-6 pt-6 border-t border-white/[0.07] flex items-center justify-between gap-4">
           <div>
-            <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Recordatorios semanales</p>
-            <p className="mt-1 text-[12.5px] text-[#8892A0] max-w-[320px]">
+            <p className="text-small font-semibold text-fg">Recordatorios semanales</p>
+            <p className="mt-1 text-micro text-fg-muted max-w-[320px]">
               Un correo semanal para recordarte actualizar el valor de tus cuentas.
             </p>
           </div>
@@ -41,8 +41,8 @@ export default async function PerfilPage() {
               type="submit"
               className={
                 recordatoriosActivos
-                  ? "h-9 px-4 rounded-[9px] border border-white/[0.14] bg-white/[0.04] text-[12.5px] font-semibold text-[#F2F5F9] whitespace-nowrap"
-                  : "h-9 px-4 rounded-[9px] bg-[var(--accent)] text-[#0A0D13] text-[12.5px] font-semibold whitespace-nowrap"
+                  ? "h-9 px-4 rounded-[9px] border border-white/[0.14] bg-white/[0.04] text-micro font-semibold text-fg whitespace-nowrap"
+                  : "h-9 px-4 rounded-[9px] bg-[var(--accent)] text-ink text-micro font-semibold whitespace-nowrap"
               }
             >
               {recordatoriosActivos ? "Desactivar" : "Activar"}
@@ -52,8 +52,8 @@ export default async function PerfilPage() {
 
         <div className="mt-4 pt-4 border-t border-white/[0.07] flex items-center justify-between gap-4">
           <div>
-            <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Reporte mensual de rendimiento</p>
-            <p className="mt-1 text-[12.5px] text-[#8892A0] max-w-[320px]">
+            <p className="text-small font-semibold text-fg">Reporte mensual de rendimiento</p>
+            <p className="mt-1 text-micro text-fg-muted max-w-[320px]">
               Un correo a fin de mes con tu valor total, capital aportado, ganancia y cómo te fue en
               el mes.
             </p>
@@ -64,8 +64,8 @@ export default async function PerfilPage() {
               type="submit"
               className={
                 reporteMensualActivo
-                  ? "h-9 px-4 rounded-[9px] border border-white/[0.14] bg-white/[0.04] text-[12.5px] font-semibold text-[#F2F5F9] whitespace-nowrap"
-                  : "h-9 px-4 rounded-[9px] bg-[var(--accent)] text-[#0A0D13] text-[12.5px] font-semibold whitespace-nowrap"
+                  ? "h-9 px-4 rounded-[9px] border border-white/[0.14] bg-white/[0.04] text-micro font-semibold text-fg whitespace-nowrap"
+                  : "h-9 px-4 rounded-[9px] bg-[var(--accent)] text-ink text-micro font-semibold whitespace-nowrap"
               }
             >
               {reporteMensualActivo ? "Desactivar" : "Activar"}

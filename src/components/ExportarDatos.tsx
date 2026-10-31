@@ -86,7 +86,7 @@ export function ExportarDatos() {
         type="button"
         onClick={exportar}
         disabled={exportando}
-        className="h-[34px] px-3.5 rounded-[9px] border border-white/[0.1] bg-white/[0.03] text-[13px] font-medium text-[#C7CDD6] disabled:opacity-50 hover:border-white/[0.2]"
+        className="h-[34px] px-3.5 rounded-[9px] border border-white/[0.1] bg-white/[0.03] text-small font-medium text-fg-soft disabled:opacity-50 hover:border-white/[0.2]"
       >
         {exportando ? "Exportando…" : "Exportar"}
       </button>

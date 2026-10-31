@@ -43,21 +43,21 @@ export default async function MetasPage() {
     <main className="max-w-[560px] mx-auto px-6 pt-[26px] pb-16">
       <div className="flex items-center justify-between gap-4 mb-6">
         <Logo />
-        <Link href="/dashboard" className="text-[12.5px] text-[#8892A0] border-b border-white/[0.14]">
+        <Link href="/dashboard" className="text-micro text-fg-muted border-b border-white/[0.14]">
           ← volver al dashboard
         </Link>
       </div>
 
       <div className="flex items-center justify-between gap-4 mb-1">
-        <h1 className="text-[19px] font-semibold tracking-[-0.02em] text-[#F2F5F9]">Tus metas de ahorro</h1>
+        <h1 className="text-[19px] font-semibold tracking-[-0.02em] text-fg">Tus metas de ahorro</h1>
         <Link
           href="/metas/nueva"
-          className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] no-underline"
+          className="inline-flex items-center gap-1 text-micro font-semibold text-[var(--accent)] no-underline"
         >
           + agregar meta
         </Link>
       </div>
-      <p className="text-[13px] text-[#8892A0] mb-6">
+      <p className="text-small text-fg-muted mb-6">
         El progreso suma el valor actual (en CLP) de las cuentas que asociaste a cada meta.
       </p>
       <MetasList metas={metasConProgreso} />

@@ -33,37 +33,37 @@ export function Hero({
   const gananciaEsPositiva = gananciaTotal >= 0;
 
   return (
-    <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[28px] border border-white/[0.08] rounded-[18px] px-7 py-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)] animate-fade-up">
+    <section className="card px-7 py-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)] animate-fade-up">
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(280px,1fr)_minmax(360px,1.35fr)] gap-8">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.09em] text-[#7C8798]">
+          <p className="text-micro font-semibold uppercase tracking-[0.09em] text-fg-muted">
             Valor total del portafolio
           </p>
-          <p className="money-value mt-2.5 font-mono-tabular font-semibold text-[44px] leading-none tracking-[-0.02em] text-[#F2F5F9]">
+          <p className="money-value mt-2.5 font-mono-tabular font-semibold text-[44px] leading-none tracking-[-0.02em] text-fg">
             {formatoPesos(valorTotal)}
           </p>
           <div
             className="inline-flex items-center gap-1.5 mt-3.5 py-1 pl-2.5 pr-3 rounded-full"
             style={{ background: cambioEsPositivo ? "rgba(62,217,163,0.14)" : "rgba(255,107,107,0.14)" }}
           >
-            <span className="text-[11px]" style={{ color: cambioEsPositivo ? "var(--pos)" : "var(--neg)" }}>
+            <span className="text-micro" style={{ color: cambioEsPositivo ? "var(--pos)" : "var(--neg)" }}>
               {cambioEsPositivo ? "▲" : "▼"}
             </span>
             <span
-              className="money-value font-mono-tabular text-[13.5px] font-semibold"
+              className="money-value font-mono-tabular text-small font-semibold"
               style={{ color: cambioEsPositivo ? "var(--pos)" : "var(--neg)" }}
             >
               {formatoPesosSigned(cambioNominal)}
             </span>
             <span
-              className="text-[12.5px] font-semibold"
+              className="text-micro font-semibold"
               style={{ color: cambioEsPositivo ? "var(--pos)" : "var(--neg)" }}
             >
               ({formatoPct(cambioNominalPct)})
             </span>
           </div>
           <div className="flex items-center gap-1.5 mt-1.5">
-            <p className="text-xs text-[#8892A0]">cambio nominal esta semana</p>
+            <p className="text-xs text-fg-muted">cambio nominal esta semana</p>
             <Ayuda>
               &quot;Nominal&quot; incluye cualquier aporte o retiro que hayas hecho esta semana — no es
               tu ganancia real, que se muestra abajo como &quot;ganancia total&quot;.
@@ -74,20 +74,20 @@ export function Hero({
 
           <div className="grid grid-cols-3 gap-3.5">
             <div>
-              <p className="text-[11px] font-medium text-[#8892A0]">Capital aportado</p>
-              <p className="money-value mt-1 font-mono-tabular font-semibold text-base text-[#F2F5F9]">
+              <p className="text-micro font-medium text-fg-muted">Capital aportado</p>
+              <p className="money-value mt-1 font-mono-tabular font-semibold text-base text-fg">
                 {formatoPesos(capitalAportadoClp)}
               </p>
             </div>
             <div>
-              <p className="text-[11px] font-medium text-[#8892A0]">Valor actual</p>
-              <p className="money-value mt-1 font-mono-tabular font-semibold text-base text-[#F2F5F9]">
+              <p className="text-micro font-medium text-fg-muted">Valor actual</p>
+              <p className="money-value mt-1 font-mono-tabular font-semibold text-base text-fg">
                 {formatoPesos(valorActualClp)}
               </p>
             </div>
             <div>
               <div className="flex items-center gap-1">
-                <p className="text-[11px] font-medium text-[#8892A0]">Ganancia total</p>
+                <p className="text-micro font-medium text-fg-muted">Ganancia total</p>
                 <Ayuda>
                   &quot;Capital aportado&quot; es todo lo que depositaste menos lo que retiraste, sumando
                   todas tus cuentas desde que las creaste. &quot;Valor actual&quot; es cuánto valen hoy.
@@ -101,7 +101,7 @@ export function Hero({
               >
                 {formatoPesosSigned(gananciaTotal)}
                 {gananciaPct !== null && (
-                  <span className="text-[12.5px]"> ({formatoPct(gananciaPct)})</span>
+                  <span className="text-micro"> ({formatoPct(gananciaPct)})</span>
                 )}
               </p>
             </div>

@@ -38,7 +38,17 @@ import { fechaHoyChile } from "@/lib/fecha";
 // paleta ciclica para el grafico de composicion historica -- la cantidad de
 // grupos (plataformas o tipos) es dinamica, no fija, asi que no alcanza con
 // 2-3 colores nombrados como en otros graficos de esta app.
-const PALETA_COMPOSICION = ["#8B5CF6", "#3ED9A3", "#E8A857", "#8FA3BF", "#FF6B6B", "#B9A6F7", "#7EE8C4", "#F0BD7E"];
+// sin verde ni rojo a proposito: esos colores significan ganancia/perdida.
+const PALETA_COMPOSICION = [
+  "var(--color-accent)",
+  "var(--color-slate)",
+  "var(--color-copper)",
+  "var(--color-mauve)",
+  "var(--color-accent-hi)",
+  "var(--color-steel)",
+  "var(--color-clay)",
+  "var(--color-stone)",
+];
 
 // pivotea valor_diario_por_cuenta (una fila por fecha+cuenta) agrupando por
 // el nombre de grupo que le corresponda a cada cuenta -- reusada para las
@@ -478,20 +488,20 @@ export default async function DashboardPage() {
             <ExportarDatos />
             <PrintButton />
             <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
-            <FeedbackLink className="text-[11.5px] text-[#8892A0] border-b border-white/[0.14]">
+            <FeedbackLink className="text-micro text-fg-muted border-b border-white/[0.14]">
               escríbenos
             </FeedbackLink>
             <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
-            <Link href="/perfil" className="text-[11.5px] text-[#8892A0] border-b border-white/[0.14]">
+            <Link href="/perfil" className="text-micro text-fg-muted border-b border-white/[0.14]">
               perfil
             </Link>
             <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
             <div className="text-right leading-tight">
-              <p className="text-[12.5px] font-medium text-[#C7CDD6]">{user?.email}</p>
+              <p className="text-micro font-medium text-fg-soft">{user?.email}</p>
               <form action={logout}>
                 <button
                   type="submit"
-                  className="text-[11.5px] text-[#8892A0] border-b border-white/[0.14]"
+                  className="text-micro text-fg-muted border-b border-white/[0.14]"
                 >
                   cerrar sesión
                 </button>
@@ -528,18 +538,18 @@ export default async function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4 mt-4 items-start">
-          <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
+          <section className="card p-5">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Tus cuentas</p>
+              <p className="text-small font-semibold text-fg">Tus cuentas</p>
               <Link
                 href="/cuentas/nueva"
-                className="no-print inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] no-underline"
+                className="no-print inline-flex items-center gap-1 text-micro font-semibold text-[var(--accent)] no-underline"
               >
                 + agregar cuenta
               </Link>
             </div>
             <div className="flex items-center gap-1.5 mb-3.5">
-              <p className="text-[11.5px] text-[#8892A0]">
+              <p className="text-micro text-fg-muted">
                 Rendimiento en moneda nativa · ya descuenta aportes y retiros
               </p>
               <Ayuda>
@@ -569,7 +579,7 @@ export default async function DashboardPage() {
             {(cuentasInactivasCount ?? 0) > 0 && (
               <Link
                 href="/cuentas/inactivas"
-                className="inline-block mt-3 text-[11.5px] text-[#8892A0] border-b border-white/[0.14]"
+                className="inline-block mt-3 text-micro text-fg-muted border-b border-white/[0.14]"
               >
                 ver cuentas dadas de baja
               </Link>
@@ -583,7 +593,7 @@ export default async function DashboardPage() {
               valorAnteriorPorCuenta={valorAnteriorPorCuenta}
             />
             <details className="group">
-              <summary className="text-[12.5px] font-semibold text-[var(--accent)] cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+              <summary className="text-micro font-semibold text-[var(--accent)] cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 actualizar varias cuentas de una vez
               </summary>
               <div className="mt-3">
@@ -597,17 +607,17 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)] mt-4">
+        <section className="card p-5 mt-4">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Tus metas</p>
+            <p className="text-small font-semibold text-fg">Tus metas</p>
             <Link
               href="/metas/nueva"
-              className="no-print inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] no-underline"
+              className="no-print inline-flex items-center gap-1 text-micro font-semibold text-[var(--accent)] no-underline"
             >
               + agregar meta
             </Link>
           </div>
-          <p className="text-[11.5px] text-[#8892A0] mb-3.5">
+          <p className="text-micro text-fg-muted mb-3.5">
             El progreso suma el valor actual (en CLP) de las cuentas que asociaste a cada meta
           </p>
           <MetasList metas={metasConProgreso} />
@@ -626,7 +636,7 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <p className="mt-6 text-[11px] text-[#5B6472] text-center">
+        <p className="mt-6 text-micro text-fg-subtle text-center">
           El % real aparece cuando hay al menos dos registros para comparar
         </p>
       </main>

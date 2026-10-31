@@ -50,19 +50,19 @@ function TooltipPersonalizado({ active, payload }: { active?: boolean; payload?:
 
   return (
     <div className="rounded-[10px] bg-[rgba(10,13,19,0.94)] border border-white/[0.1] backdrop-blur-[10px] px-3 py-2.5 min-w-[148px] shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
-      <p className="text-[10.5px] text-[#8892A0] mb-1.5">{formatoFechaCorta(punto.fecha)}</p>
+      <p className="text-micro text-fg-muted mb-1.5">{formatoFechaCorta(punto.fecha)}</p>
       <div className="flex items-center gap-2 mb-1.5">
         <span className="w-2 h-2 rounded-[2px] bg-white/[0.3]" />
-        <span className="text-[10.5px] text-[#8892A0]">Capital</span>
-        <span className="font-mono-tabular text-[11.5px] font-semibold text-white ml-auto">
+        <span className="text-micro text-fg-muted">Capital</span>
+        <span className="font-mono-tabular text-micro font-semibold text-white ml-auto">
           {formatoPesos(punto.capitalAportadoClp)}
         </span>
       </div>
       <div className="flex items-center gap-2">
         <span className="w-2 h-2 rounded-[2px]" style={{ background: "rgba(62, 217, 163, 0.6)" }} />
-        <span className="text-[10.5px] text-[#8892A0]">Ganancia</span>
+        <span className="text-micro text-fg-muted">Ganancia</span>
         <span
-          className="font-mono-tabular text-[11.5px] font-semibold ml-auto"
+          className="font-mono-tabular text-micro font-semibold ml-auto"
           style={{ color: esPositivo ? "var(--pos)" : "var(--neg)" }}
         >
           {formatoPesosSigned(punto.gananciaClp)}
@@ -104,9 +104,9 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
     return (
       <div>
         <div className="flex items-center justify-between mb-2">
-          <p className="text-[12.5px] font-semibold text-[#C7CDD6]">Evolución del portafolio</p>
+          <p className="text-micro font-semibold text-fg-soft">Evolución del portafolio</p>
         </div>
-        <p className="text-[12.5px] text-[#8892A0] py-8 text-center">
+        <p className="text-micro text-fg-muted py-8 text-center">
           todavía no hay suficiente historial para graficar — vuelve cuando tengas al menos dos fechas
           con valores guardados.
         </p>
@@ -115,13 +115,13 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
   }
 
   const gananciaEsPositivaHoy = puntos[puntos.length - 1].gananciaClp >= 0;
-  const colorGanancia = gananciaEsPositivaHoy ? "#3ED9A3" : "#FF6B6B";
+  const colorGanancia = gananciaEsPositivaHoy ? "var(--color-pos)" : "var(--color-neg)";
 
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
-          <p className="text-[12.5px] font-semibold text-[#C7CDD6]">Evolución del portafolio</p>
+          <p className="text-micro font-semibold text-fg-soft">Evolución del portafolio</p>
           <Ayuda>
             El área gris es el capital que has aportado, acumulado (crece en escalones, cuando haces
             un aporte o retiro). El área verde o roja encima es tu ganancia o pérdida real sobre ese
@@ -139,7 +139,7 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
                 className="h-6 px-2.5 rounded-md text-xs font-semibold"
                 style={{
                   background: activo ? "rgba(255,255,255,.1)" : "transparent",
-                  color: activo ? "#F2F5F9" : "#7C8798",
+                  color: activo ? "var(--color-fg)" : "var(--color-fg-muted)",
                   boxShadow: activo ? "0 1px 2px rgba(0,0,0,.3)" : "none",
                 }}
               >
@@ -166,7 +166,7 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
             <XAxis
               dataKey="fecha"
               tickFormatter={formatoMes}
-              tick={{ fontSize: 10.5, fill: "#5B6472" }}
+              tick={{ fontSize: 12, fill: "var(--color-fg-subtle)" }}
               axisLine={{ stroke: "rgba(255,255,255,.06)" }}
               tickLine={false}
               minTickGap={40}
@@ -207,7 +207,7 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
               stroke="var(--accent)"
               strokeWidth={2.2}
               dot={false}
-              activeDot={{ r: 4.5, fill: "#12161F", stroke: "var(--accent)", strokeWidth: 2.4 }}
+              activeDot={{ r: 4.5, fill: "var(--color-surface-raised)", stroke: "var(--accent)", strokeWidth: 2.4 }}
               isAnimationActive
               animationDuration={900}
             />
@@ -215,11 +215,11 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
         </ResponsiveContainer>
       </div>
       <div className="flex gap-4 mt-2.5">
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#8892A0]">
+        <span className="inline-flex items-center gap-1.5 text-micro font-medium text-fg-muted">
           <span className="w-2.5 h-2.5 rounded-[3px] bg-white/[0.08] border border-white/[0.28]" />
           Capital aportado
         </span>
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#8892A0]">
+        <span className="inline-flex items-center gap-1.5 text-micro font-medium text-fg-muted">
           <span className="w-2.5 h-2.5 rounded-[3px]" style={{ background: "rgba(62, 217, 163, 0.3)" }} />
           Ganancia real
         </span>
