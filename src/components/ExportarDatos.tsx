@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { filasACsv, descargarCsv } from "@/lib/csv";
+import { fechaHoyChile } from "@/lib/fecha";
 
 const ENCABEZADO = [
   "cuenta",
@@ -16,7 +17,7 @@ const ENCABEZADO = [
   "movimiento_monto",
 ];
 
-export function ExportarDatos() {
+export function ExportarDatos({ className }: { className?: string }) {
   const [exportando, setExportando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,7 +71,7 @@ export function ExportarDatos() {
         });
 
       const csv = filasACsv(ENCABEZADO, filas);
-      const hoy = new Date().toISOString().slice(0, 10);
+      const hoy = fechaHoyChile();
       descargarCsv(csv, `inversiones-tracker-${hoy}.csv`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "hubo un error al exportar");
@@ -80,16 +81,16 @@ export function ExportarDatos() {
   }
 
   return (
-    <div className="flex flex-col items-end">
+    <div className="flex flex-col">
       <button
         type="button"
         onClick={exportar}
         disabled={exportando}
-        className="h-[34px] px-3.5 rounded-[9px] border border-white/[0.1] bg-white/[0.03] text-[13px] font-medium text-[#C7CDD6] disabled:opacity-50 hover:border-white/[0.2]"
+        className={className}
       >
-        {exportando ? "Exportando…" : "Exportar"}
+        {exportando ? "Exportando…" : "Exportar datos (CSV)"}
       </button>
-      {error && <p className="text-xs text-[var(--neg)] mt-1">{error}</p>}
+      {error && <p className="px-3 pb-1.5 text-micro text-neg">{error}</p>}
     </div>
   );
 }

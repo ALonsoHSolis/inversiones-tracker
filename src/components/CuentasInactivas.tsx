@@ -42,8 +42,8 @@ export function CuentasInactivas({ cuentas }: CuentasInactivasProps) {
 
   if (cuentas.length === 0) {
     return (
-      <div className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-6">
-        <p className="text-[13.5px] text-[#8892A0]">no tienes cuentas dadas de baja.</p>
+      <div className="card p-6">
+        <p className="text-small text-fg-muted">no tienes cuentas dadas de baja.</p>
       </div>
     );
   }
@@ -53,23 +53,23 @@ export function CuentasInactivas({ cuentas }: CuentasInactivasProps) {
       {cuentas.map((cuenta) => (
         <div
           key={cuenta.id}
-          className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl px-5 py-4"
+          className="card px-5 py-4"
         >
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-[13.5px] font-semibold text-[#F2F5F9]">{cuenta.nombre}</p>
-              <p className="text-[11.5px] text-[#8892A0]">{cuenta.plataforma}</p>
+              <p className="text-small font-semibold text-fg">{cuenta.nombre}</p>
+              <p className="text-micro text-fg-muted">{cuenta.plataforma}</p>
             </div>
             <button
               type="button"
               onClick={() => reactivar(cuenta)}
               disabled={reactivandoId === cuenta.id}
-              className="text-[12.5px] font-semibold text-[var(--accent)] underline disabled:opacity-50 shrink-0"
+              className="text-micro font-semibold text-[var(--accent)] underline disabled:opacity-50 shrink-0"
             >
               {reactivandoId === cuenta.id ? "reactivando..." : "reactivar"}
             </button>
           </div>
-          {errores[cuenta.id] && <p className="mt-2 text-[12.5px] text-[var(--neg)]">{errores[cuenta.id]}</p>}
+          {errores[cuenta.id] && <p className="mt-2 text-micro text-[var(--neg)]">{errores[cuenta.id]}</p>}
         </div>
       ))}
     </div>

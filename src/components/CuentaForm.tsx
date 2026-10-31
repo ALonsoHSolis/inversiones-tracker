@@ -13,8 +13,8 @@ import type { Moneda, TipoCuenta } from "@/types/database";
 const MONEDAS: Moneda[] = ["CLP", "USD", "UF"];
 
 const inputClass =
-  "h-11 px-3 rounded-[10px] border border-white/[0.14] text-[14px] text-[#F2F5F9] bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
-const labelClass = "text-[11px] font-semibold text-[#8892A0]";
+  "h-11 px-3 rounded-[10px] border border-white/[0.14] text-[14px] text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+const labelClass = "text-micro font-semibold text-fg-muted";
 
 // traduce errores tecnicos del rpc crear_cuenta_con_aporte_inicial (o de la
 // conexion) a mensajes entendibles -- antes se mostraba error.message crudo
@@ -178,7 +178,7 @@ export function CuentaForm() {
   }
 
   return (
-    <div className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-6 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
+    <div className="card p-6">
       <div className="flex flex-col gap-[15px]">
         <label className="flex flex-col gap-[7px]">
           <span className={labelClass}>nombre</span>
@@ -267,15 +267,15 @@ export function CuentaForm() {
               className={`${inputClass} text-right font-mono-tabular`}
             />
             {cargandoTasa && (
-              <span className="text-[11.5px] text-[#8892A0]">buscando tasa en mindicador.cl...</span>
+              <span className="text-micro text-fg-muted">buscando tasa en mindicador.cl...</span>
             )}
             {!cargandoTasa && tasaFecha && (
-              <span className="text-[11.5px] text-[#8892A0]">
+              <span className="text-micro text-fg-muted">
                 según Banco Central, {formatoFecha(tasaFecha)}
               </span>
             )}
             {errorTasa && (
-              <span className="text-[11.5px] text-[var(--neg)] flex items-center gap-2">
+              <span className="text-micro text-[var(--neg)] flex items-center gap-2">
                 {errorTasa}
                 <button
                   type="button"
@@ -289,13 +289,13 @@ export function CuentaForm() {
           </label>
         )}
 
-        {errorGuardado && <p className="text-[12.5px] text-[var(--neg)]">{errorGuardado}</p>}
+        {errorGuardado && <p className="text-micro text-[var(--neg)]">{errorGuardado}</p>}
 
         <button
           type="button"
           onClick={guardarCuenta}
           disabled={guardando || cargandoTasa}
-          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-[#0A0D13] text-[14px] font-semibold disabled:opacity-50"
+          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-ink text-[14px] font-semibold disabled:opacity-50"
         >
           {guardando ? "guardando..." : "crear cuenta"}
         </button>

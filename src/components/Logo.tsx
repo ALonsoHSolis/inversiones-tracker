@@ -27,12 +27,12 @@ export function Logo({
         <img src="/logo-icon.png" alt="" className="w-8 h-8 object-contain" />
       </div>
       <div>
-        <p className={`text-[15px] font-semibold tracking-[-0.01em] ${light ? "text-white" : "text-[#F2F5F9]"}`}>
+        <p className={`text-[15px] font-semibold tracking-[-0.01em] ${light ? "text-white" : "text-fg"}`}>
           Mi portafolio
         </p>
         <p
           className={`mt-0.5 text-xs ${hideSubtitleOnMobile ? "hidden sm:block" : ""} ${
-            light ? "text-white/70" : "text-[#97A2B4]"
+            light ? "text-white/70" : "text-fg-muted"
           }`}
         >
           {subtitle}

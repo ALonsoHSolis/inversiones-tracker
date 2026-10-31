@@ -10,6 +10,7 @@ import { AccountRow } from "@/components/AccountRow";
 import { CargaRapida } from "@/components/CargaRapida";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import { ExportarDatos } from "@/components/ExportarDatos";
+import { MenuCuenta, ITEM_MENU } from "@/components/MenuCuenta";
 import { PrintButton } from "@/components/PrintButton";
 import { PrivacyShell, PrivacyToggleButton } from "@/components/PrivacyShell";
 import { AccountComparison, type CuentaComparacion } from "@/components/AccountComparison";
@@ -33,62 +34,21 @@ import { Logo } from "@/components/Logo";
 import { FeedbackLink } from "@/components/FeedbackLink";
 import { EmptyAccountsState } from "@/components/EmptyAccountsState";
 import Link from "next/link";
-
-// paleta ciclica para el grafico de composicion historica -- la cantidad de
-// grupos (plataformas o tipos) es dinamica, no fija, asi que no alcanza con
-// 2-3 colores nombrados como en otros graficos de esta app.
-const PALETA_COMPOSICION = ["#8B5CF6", "#3ED9A3", "#E8A857", "#8FA3BF", "#FF6B6B", "#B9A6F7", "#7EE8C4", "#F0BD7E"];
-
-// pivotea valor_diario_por_cuenta (una fila por fecha+cuenta) agrupando por
-// el nombre de grupo que le corresponda a cada cuenta -- reusada para las
-// dos dimensiones del grafico (plataforma y tipo), mismo dato crudo para
-// ambas, cada una con su propio mapa cuenta -> nombre de grupo.
-function construirComposicion(
-  filas: { fecha: string | null; cuenta_id: string | null; valor_clp: number | null }[],
-  nombrePorCuenta: Map<string, string>
-): DatosComposicion {
-  const validas = filas.filter(
-    (f): f is { fecha: string; cuenta_id: string; valor_clp: number } =>
-      f.fecha !== null && f.cuenta_id !== null && f.valor_clp !== null
-  );
-
-  const totalPorGrupo = new Map<string, number>();
-  validas.forEach((f) => {
-    const nombre = nombrePorCuenta.get(f.cuenta_id) ?? "otro";
-    totalPorGrupo.set(nombre, (totalPorGrupo.get(nombre) ?? 0) + f.valor_clp);
-  });
-  const nombresOrdenados = Array.from(totalPorGrupo.keys()).sort(
-    (a, b) => (totalPorGrupo.get(b) ?? 0) - (totalPorGrupo.get(a) ?? 0)
-  );
-  const grupos = nombresOrdenados.map((nombre, i) => ({
-    nombre,
-    color: PALETA_COMPOSICION[i % PALETA_COMPOSICION.length],
-  }));
-
-  const porFecha = new Map<string, PuntoComposicion>();
-  validas.forEach((f) => {
-    const nombre = nombrePorCuenta.get(f.cuenta_id) ?? "otro";
-    const punto = porFecha.get(f.fecha) ?? { fecha: f.fecha };
-    punto[nombre] = (Number(punto[nombre]) || 0) + f.valor_clp;
-    porFecha.set(f.fecha, punto);
-  });
-
-  const puntos = Array.from(porFecha.values()).sort((a, b) => a.fecha.localeCompare(b.fecha));
-  // cada punto necesita un valor explicito por grupo (no undefined) para que
-  // el area apilada de recharts no deje huecos en fechas donde ese grupo en
-  // particular no tenia datos.
-  puntos.forEach((p) => {
-    grupos.forEach((g) => {
-      if (!(g.nombre in p)) p[g.nombre] = 0;
-    });
-  });
-
-  return { puntos, grupos };
-}
+import { fechaHoyChile } from "@/lib/fecha";
+import {
+  agruparCapital,
+  calcularAlertasSalud,
+  calcularMetasConProgreso,
+  construirComposicion,
+  nombreGrupoPorCuenta,
+  porCategoria,
+  porPlataforma,
+  porTipo,
+} from "@/lib/dashboard";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const hoy = new Date().toISOString().slice(0, 10);
+  const hoy = fechaHoyChile();
 
   // benchmarkSp500/benchmarkUf van en el mismo Promise.all que las consultas
   // a supabase (no en uno aparte despues): son servicios externos opcionales,
@@ -213,124 +173,30 @@ export default async function DashboardPage() {
   const capitalAportadoClp = (capitalPorCuenta ?? []).reduce((acc, c) => acc + (c.capital_aportado_clp ?? 0), 0);
   const valorActualClp = (capitalPorCuenta ?? []).reduce((acc, c) => acc + (c.valor_actual_clp ?? 0), 0);
 
-  // agrupa por plataforma (texto libre, no enum) para ver cuanto hay en cada
-  // banco/corredora. la clave se normaliza (trim + minusculas) para que un
-  // despiste de tipeo no genere dos grupos separados, pero el nombre que se
-  // muestra usa el texto tal cual lo escribio el usuario la primera vez.
-  const plataformasMap = new Map<
-    string,
-    { nombre: string; capitalAportadoClp: number; valorActualClp: number }
-  >();
-  (cuentas ?? []).forEach((cuenta) => {
-    const clave = cuenta.plataforma.trim().toLowerCase();
-    const datos = capitalPorCuentaMap.get(cuenta.id);
-    const grupo = plataformasMap.get(clave) ?? {
-      nombre: cuenta.plataforma.trim(),
-      capitalAportadoClp: 0,
-      valorActualClp: 0,
-    };
-    grupo.capitalAportadoClp += datos?.capital_aportado_clp ?? 0;
-    grupo.valorActualClp += datos?.valor_actual_clp ?? 0;
-    plataformasMap.set(clave, grupo);
-  });
-  const plataformas = Array.from(plataformasMap.values()).sort((a, b) => b.valorActualClp - a.valorActualClp);
+  // agrupaciones de capital y valor actual (ya en CLP) para los desgloses y la composicion historica.
+  const etiquetaPorTipo = new Map<string, string>(TIPOS.map((t) => [t.value, t.label]));
+  const cuentasActivas = cuentas ?? [];
+  const plataformas = agruparCapital(cuentasActivas, capitalPorCuentaMap, porPlataforma);
+  const tipos = agruparCapital(cuentasActivas, capitalPorCuentaMap, porTipo(etiquetaPorTipo));
+  const categorias = agruparCapital(cuentasActivas, capitalPorCuentaMap, porCategoria);
 
-  // agrupa por tipo de activo (fondo_mutuo, acciones, etc. -- un enum fijo,
-  // no texto libre como plataforma, asi que no hace falta normalizar la
-  // clave). TIPOS ya trae la etiqueta legible de cada valor, reusada de
-  // CuentaForm.tsx en vez de duplicar la lista de nombres una tercera vez.
-  const etiquetaPorTipo = new Map(TIPOS.map((t) => [t.value, t.label]));
-  const tiposMap = new Map<string, { nombre: string; capitalAportadoClp: number; valorActualClp: number }>();
-  (cuentas ?? []).forEach((cuenta) => {
-    const datos = capitalPorCuentaMap.get(cuenta.id);
-    const grupo = tiposMap.get(cuenta.tipo) ?? {
-      nombre: etiquetaPorTipo.get(cuenta.tipo as TipoCuenta) ?? cuenta.tipo,
-      capitalAportadoClp: 0,
-      valorActualClp: 0,
-    };
-    grupo.capitalAportadoClp += datos?.capital_aportado_clp ?? 0;
-    grupo.valorActualClp += datos?.valor_actual_clp ?? 0;
-    tiposMap.set(cuenta.tipo, grupo);
-  });
-  const tipos = Array.from(tiposMap.values()).sort((a, b) => b.valorActualClp - a.valorActualClp);
-
-  // agrupa por categoria personalizada (fase 3 del roadmap) -- texto libre
-  // igual que plataforma, asi que se normaliza la clave igual (trim +
-  // minusculas). cuentas sin categoria (el caso mas comun, es un campo
-  // opcional) simplemente no entran a este mapa -- CategoryBreakdown ya
-  // devuelve null si queda vacio.
-  const categoriasMap = new Map<
-    string,
-    { nombre: string; capitalAportadoClp: number; valorActualClp: number }
-  >();
-  (cuentas ?? []).forEach((cuenta) => {
-    const categoriaCruda = cuenta.categoria?.trim();
-    if (!categoriaCruda) return;
-    const clave = categoriaCruda.toLowerCase();
-    const datos = capitalPorCuentaMap.get(cuenta.id);
-    const grupo = categoriasMap.get(clave) ?? {
-      nombre: categoriaCruda,
-      capitalAportadoClp: 0,
-      valorActualClp: 0,
-    };
-    grupo.capitalAportadoClp += datos?.capital_aportado_clp ?? 0;
-    grupo.valorActualClp += datos?.valor_actual_clp ?? 0;
-    categoriasMap.set(clave, grupo);
-  });
-  const categorias = Array.from(categoriasMap.values()).sort((a, b) => b.valorActualClp - a.valorActualClp);
-
-  // composicion historica (fase 3 del roadmap): mismo dato crudo
-  // (valor_diario_por_cuenta) agrupado por plataforma o por tipo -- el
-  // toggle dentro de CompositionChart decide cual de los dos mostrar, no
-  // vuelve a pedir datos. la clave de plataforma se normaliza igual que en
-  // plataformasMap (trim + minusculas) para no separar un mismo banco en dos
-  // grupos por un despiste de tipeo.
-  const nombreCanonicoPorClavePlataforma = new Map<string, string>();
-  (cuentas ?? []).forEach((cuenta) => {
-    const clave = cuenta.plataforma.trim().toLowerCase();
-    if (!nombreCanonicoPorClavePlataforma.has(clave)) {
-      nombreCanonicoPorClavePlataforma.set(clave, cuenta.plataforma.trim());
-    }
-  });
-  const nombrePlataformaPorCuenta = new Map(
-    (cuentas ?? []).map((c) => [
-      c.id,
-      nombreCanonicoPorClavePlataforma.get(c.plataforma.trim().toLowerCase()) ?? c.plataforma,
-    ])
+  const composicionPorPlataforma = construirComposicion(
+    valorDiarioPorCuenta ?? [],
+    nombreGrupoPorCuenta(cuentasActivas, porPlataforma)
   );
-  const nombreTipoPorCuenta = new Map(
-    (cuentas ?? []).map((c) => [c.id, etiquetaPorTipo.get(c.tipo as TipoCuenta) ?? c.tipo])
+  const composicionPorTipo = construirComposicion(
+    valorDiarioPorCuenta ?? [],
+    nombreGrupoPorCuenta(cuentasActivas, porTipo(etiquetaPorTipo))
   );
-  const composicionPorPlataforma = construirComposicion(valorDiarioPorCuenta ?? [], nombrePlataformaPorCuenta);
-  const composicionPorTipo = construirComposicion(valorDiarioPorCuenta ?? [], nombreTipoPorCuenta);
 
-  // metas de ahorro (fase 3 del roadmap): el progreso de cada meta suma
-  // valor_actual_clp (de capital_por_cuenta, ya consultado arriba) de las
-  // cuentas asociadas via meta_cuentas -- si una cuenta asociada se da de
-  // baja, capital_por_cuenta ya la excluye (where activa = true), asi que su
-  // aporte a la meta simplemente deja de contar, mismo criterio que el resto
-  // del dashboard aplica a cuentas inactivas.
+  // metas de ahorro: el progreso suma valor_actual_clp de las cuentas asociadas.
   const nombrePorCuentaId = new Map((cuentas ?? []).map((c) => [c.id, c.nombre]));
-  const cuentaIdsPorMeta = new Map<string, string[]>();
-  (metaCuentas ?? []).forEach((mc) => {
-    const lista = cuentaIdsPorMeta.get(mc.meta_id) ?? [];
-    lista.push(mc.cuenta_id);
-    cuentaIdsPorMeta.set(mc.meta_id, lista);
-  });
-  const metasConProgreso: MetaConProgreso[] = (metas ?? []).map((meta) => {
-    const cuentaIds = cuentaIdsPorMeta.get(meta.id) ?? [];
-    return {
-      id: meta.id,
-      nombre: meta.nombre,
-      montoObjetivo: meta.monto_objetivo,
-      montoActualClp: cuentaIds.reduce(
-        (acc, id) => acc + (capitalPorCuentaMap.get(id)?.valor_actual_clp ?? 0),
-        0
-      ),
-      fechaObjetivo: meta.fecha_objetivo,
-      cuentasAsociadas: cuentaIds.map((id) => nombrePorCuentaId.get(id)).filter((n): n is string => !!n),
-    };
-  });
+  const metasConProgreso: MetaConProgreso[] = calcularMetasConProgreso(
+    metas ?? [],
+    metaCuentas ?? [],
+    capitalPorCuentaMap,
+    nombrePorCuentaId
+  );
 
   // valor_actual (moneda nativa, no clp) de capital_por_cuenta -- el ultimo
   // valor conocido de cada cuenta, usado por SnapshotForm para sugerir el
@@ -436,66 +302,30 @@ export default async function DashboardPage() {
   flujosPortafolio.push({ fecha: hoy, monto: valorActualClp });
   const xirrPortafolio = calcularXIRR(flujosPortafolio);
 
-  // umbrales propios de la vista de salud (no se comparten con
-  // CargaRapida/SnapshotForm/HistorialForm a proposito -- misma convencion ya
-  // establecida en el proyecto de no compartir estos umbrales chicos entre
-  // archivos distintos).
-  const UMBRAL_RENDIMIENTO_IMPLAUSIBLE_SALUD = 80;
-  const UMBRAL_GAP_DIAS = 45;
-  const UMBRAL_DATO_ANTIGUO_DIAS_SALUD = 14;
+  const alertasSalud: AlertaSalud[] = calcularAlertasSalud(cuentas ?? [], capitalPorCuentaMap, historialPorCuenta, hoyMs);
 
-  const alertasSalud: AlertaSalud[] = (cuentas ?? []).map((cuenta) => {
-    const datosCapital = capitalPorCuentaMap.get(cuenta.id);
-    const historial = historialPorCuenta.get(cuenta.id) ?? [];
-
-    const ultimaFecha = datosCapital?.ultima_fecha;
-    const diasSinActualizarCrudo = ultimaFecha ? (hoyMs - new Date(ultimaFecha).getTime()) / (1000 * 60 * 60 * 24) : null;
-    const diasSinActualizar =
-      diasSinActualizarCrudo != null && diasSinActualizarCrudo > UMBRAL_DATO_ANTIGUO_DIAS_SALUD
-        ? diasSinActualizarCrudo
-        : null;
-
-    const saltos = historial
-      .filter((h) => h.rendimientoPct != null && Math.abs(h.rendimientoPct) >= UMBRAL_RENDIMIENTO_IMPLAUSIBLE_SALUD)
-      .map((h) => ({ fecha: h.fecha, pct: h.rendimientoPct! }));
-
-    const gaps = historial.slice(1).flatMap((h, i) => {
-      const diasGap = (new Date(h.fecha).getTime() - new Date(historial[i].fecha).getTime()) / (1000 * 60 * 60 * 24);
-      return diasGap > UMBRAL_GAP_DIAS ? [{ diasGap, fechaFin: h.fecha }] : [];
-    });
-
-    return { cuentaId: cuenta.id, nombre: cuenta.nombre, diasSinActualizar, saltos, gaps };
-  });
 
   return (
     <PrivacyShell>
       <main className="max-w-[1160px] mx-auto px-6 pt-[26px] pb-16">
-        <header className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+        <header className="flex items-center justify-between gap-4 mb-7 flex-wrap">
           <Logo />
-          <div className="flex items-center gap-2 flex-wrap justify-end no-print">
+          <div className="flex items-center gap-2 no-print">
             <PrivacyToggleButton />
-            <ExportarDatos />
-            <PrintButton />
-            <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
-            <FeedbackLink className="text-[11.5px] text-[#8892A0] border-b border-white/[0.14]">
-              escríbenos
-            </FeedbackLink>
-            <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
-            <Link href="/perfil" className="text-[11.5px] text-[#8892A0] border-b border-white/[0.14]">
-              perfil
-            </Link>
-            <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
-            <div className="text-right leading-tight">
-              <p className="text-[12.5px] font-medium text-[#C7CDD6]">{user?.email}</p>
+            <MenuCuenta email={user?.email ?? ""}>
+              <ExportarDatos className={ITEM_MENU} />
+              <PrintButton className={ITEM_MENU} />
+              <Link href="/perfil" role="menuitem" className={ITEM_MENU}>
+                Perfil
+              </Link>
+              <FeedbackLink className={ITEM_MENU}>Escríbenos</FeedbackLink>
+              <div className="h-px bg-white/[0.07] my-1.5" />
               <form action={logout}>
-                <button
-                  type="submit"
-                  className="text-[11.5px] text-[#8892A0] border-b border-white/[0.14]"
-                >
-                  cerrar sesión
+                <button type="submit" role="menuitem" className={ITEM_MENU}>
+                  Cerrar sesión
                 </button>
               </form>
-            </div>
+            </MenuCuenta>
           </div>
         </header>
 
@@ -516,29 +346,19 @@ export default async function DashboardPage() {
           }
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <PlatformBreakdown plataformas={plataformas} />
-          <AssetTypeBreakdown tipos={tipos} />
-          <CategoryBreakdown categorias={categorias} />
-        </div>
-
-        <div className="mt-4">
-          <CompositionChart porPlataforma={composicionPorPlataforma} porTipo={composicionPorTipo} />
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4 mt-4 items-start">
-          <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
+          <section className="card p-5">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Tus cuentas</p>
+              <p className="text-small font-semibold text-fg">Estado de tus cuentas</p>
               <Link
                 href="/cuentas/nueva"
-                className="no-print inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] no-underline"
+                className="no-print inline-flex items-center gap-1 text-micro font-semibold text-[var(--accent)] no-underline"
               >
                 + agregar cuenta
               </Link>
             </div>
             <div className="flex items-center gap-1.5 mb-3.5">
-              <p className="text-[11.5px] text-[#8892A0]">
+              <p className="text-micro text-fg-muted">
                 Rendimiento en moneda nativa · ya descuenta aportes y retiros
               </p>
               <Ayuda>
@@ -568,7 +388,7 @@ export default async function DashboardPage() {
             {(cuentasInactivasCount ?? 0) > 0 && (
               <Link
                 href="/cuentas/inactivas"
-                className="inline-block mt-3 text-[11.5px] text-[#8892A0] border-b border-white/[0.14]"
+                className="inline-block mt-3 text-micro text-fg-muted border-b border-white/[0.14]"
               >
                 ver cuentas dadas de baja
               </Link>
@@ -582,7 +402,7 @@ export default async function DashboardPage() {
               valorAnteriorPorCuenta={valorAnteriorPorCuenta}
             />
             <details className="group">
-              <summary className="text-[12.5px] font-semibold text-[var(--accent)] cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+              <summary className="text-micro font-semibold text-[var(--accent)] cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 actualizar varias cuentas de una vez
               </summary>
               <div className="mt-3">
@@ -596,36 +416,62 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-5 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)] mt-4">
+        <section className="card p-5 mt-4">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-[13.5px] font-semibold text-[#F2F5F9]">Tus metas</p>
+            <p className="text-small font-semibold text-fg">Tus metas</p>
             <Link
               href="/metas/nueva"
-              className="no-print inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] no-underline"
+              className="no-print inline-flex items-center gap-1 text-micro font-semibold text-[var(--accent)] no-underline"
             >
               + agregar meta
             </Link>
           </div>
-          <p className="text-[11.5px] text-[#8892A0] mb-3.5">
+          <p className="text-micro text-fg-muted mb-3.5">
             El progreso suma el valor actual (en CLP) de las cuentas que asociaste a cada meta
           </p>
           <MetasList metas={metasConProgreso} />
         </section>
 
-        {cuentasConDatos.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 items-start">
-            <AccountComparison
-              cuentas={comparacionCuentas}
-              gananciaTotalClp={gananciaTotalClp}
-              twrPortafolio={twrPortafolio}
-              drawdownPortafolio={drawdownPortafolio}
-              xirrPortafolio={xirrPortafolio}
-            />
-            <DataHealthView alertas={alertasSalud} />
-          </div>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <PlatformBreakdown plataformas={plataformas} />
+          <AssetTypeBreakdown tipos={tipos} />
+          <CategoryBreakdown categorias={categorias} />
+        </div>
 
-        <p className="mt-6 text-[11px] text-[#5B6472] text-center">
+
+        <details className="group mt-6">
+          <summary className="no-print card flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:border-white/[0.16] focus-visible:outline-2 focus-visible:outline-accent">
+            <span>
+              <span className="block text-small font-semibold text-fg">Análisis avanzado</span>
+              <span className="block mt-0.5 text-micro text-fg-muted">
+                Composición histórica, comparación de cuentas (TWR, XIRR, drawdown) y salud de los datos
+              </span>
+            </span>
+            <span aria-hidden="true" className="text-fg-muted transition-transform group-open:rotate-180">
+              ▾
+            </span>
+          </summary>
+          <div className="mt-4 flex flex-col gap-4 print:block">
+        <div>
+          <CompositionChart porPlataforma={composicionPorPlataforma} porTipo={composicionPorTipo} />
+        </div>
+
+            {cuentasConDatos.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                <AccountComparison
+                  cuentas={comparacionCuentas}
+                  gananciaTotalClp={gananciaTotalClp}
+                  twrPortafolio={twrPortafolio}
+                  drawdownPortafolio={drawdownPortafolio}
+                  xirrPortafolio={xirrPortafolio}
+                />
+                <DataHealthView alertas={alertasSalud} />
+              </div>
+            )}
+          </div>
+        </details>
+
+        <p className="mt-6 text-micro text-fg-subtle text-center">
           El % real aparece cuando hay al menos dos registros para comparar
         </p>
       </main>

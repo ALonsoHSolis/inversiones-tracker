@@ -56,8 +56,8 @@ export function MetasList({ metas }: MetasListProps) {
 
   if (metas.length === 0) {
     return (
-      <div className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-6">
-        <p className="text-[13.5px] text-[#8892A0]">todavía no tienes metas de ahorro.</p>
+      <div className="card p-6">
+        <p className="text-small text-fg-muted">todavía no tienes metas de ahorro.</p>
       </div>
     );
   }
@@ -74,9 +74,9 @@ export function MetasList({ metas }: MetasListProps) {
           <div key={meta.id} className="border border-white/[0.07] rounded-xl px-[15px] py-[13px]">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-[13.5px] font-semibold text-[#F2F5F9]">{meta.nombre}</p>
+                <p className="text-small font-semibold text-fg">{meta.nombre}</p>
                 {meta.fechaObjetivo && (
-                  <p className="mt-0.5 text-[11px] text-[#8892A0] font-mono-tabular">
+                  <p className="mt-0.5 text-micro text-fg-muted font-mono-tabular">
                     meta: {formatoFecha(meta.fechaObjetivo)}
                   </p>
                 )}
@@ -85,7 +85,7 @@ export function MetasList({ metas }: MetasListProps) {
                 type="button"
                 onClick={() => eliminarMeta(meta)}
                 disabled={eliminandoId === meta.id}
-                className="text-[11px] text-[#6B7684] border-b border-white/[0.12] shrink-0 disabled:opacity-50"
+                className="text-micro text-fg-subtle border-b border-white/[0.12] shrink-0 disabled:opacity-50"
               >
                 {eliminandoId === meta.id ? "eliminando..." : "eliminar"}
               </button>
@@ -99,20 +99,20 @@ export function MetasList({ metas }: MetasListProps) {
             </div>
 
             <div className="flex items-baseline justify-between">
-              <span className="font-mono-tabular text-[12.5px] font-semibold text-[#F2F5F9]">
+              <span className="font-mono-tabular text-micro font-semibold text-fg">
                 {formatoPesos(meta.montoActualClp)}{" "}
-                <span className="text-[#8892A0] font-normal">de {formatoPesos(meta.montoObjetivo)}</span>
+                <span className="text-fg-muted font-normal">de {formatoPesos(meta.montoObjetivo)}</span>
               </span>
-              <span className="font-mono-tabular text-[11.5px] font-semibold" style={{ color: cumplida ? "var(--pos)" : "#8892A0" }}>
+              <span className="font-mono-tabular text-micro font-semibold" style={{ color: cumplida ? "var(--pos)" : "var(--color-fg-muted)" }}>
                 {cumplida ? "cumplida" : `${formatoPesos(faltante)} restante`}
               </span>
             </div>
 
             {meta.cuentasAsociadas.length > 0 && (
-              <p className="mt-1.5 text-[11px] text-[#8892A0]">aporta: {meta.cuentasAsociadas.join(", ")}</p>
+              <p className="mt-1.5 text-micro text-fg-muted">aporta: {meta.cuentasAsociadas.join(", ")}</p>
             )}
 
-            {errores[meta.id] && <p className="mt-2 text-[12px] text-[var(--neg)]">{errores[meta.id]}</p>}
+            {errores[meta.id] && <p className="mt-2 text-micro text-[var(--neg)]">{errores[meta.id]}</p>}
           </div>
         );
       })}

@@ -1,16 +1,71 @@
 @import "tailwindcss";
 
+/* sistema de diseno: unica fuente de verdad de color y tipografia.
+   direccion "premium financiero": tinta casi negra, superficies planas con
+   borde fino, champan como unico acento, y verde/rojo reservados SOLO para
+   ganancia/perdida (nunca como color decorativo ni de categoria).
+   `static` fuerza a emitir todas las variables aunque ninguna clase las use:
+   varios componentes las consumen como var(--color-*) desde strings de js
+   (props de recharts, style={{}}), que tailwind no puede detectar.
+   contraste verificado (WCAG) contra --color-ink y --color-surface:
+   fg 16:1 - fg-soft 12.7:1 - fg-muted 7.6:1 - fg-subtle 5.1:1 - accent 8.5:1. */
+@theme static {
+  --color-ink: #0b0d12;
+  --color-surface: #12161e;
+  --color-surface-raised: #181d27;
+
+  --color-fg: #f3f1ec;
+  --color-fg-soft: #d5d8de;
+  --color-fg-muted: #a0a8b5;
+  --color-fg-subtle: #808998;
+
+  --color-accent: #cdae76;
+  --color-accent-hi: #e3cc9c;
+
+  --color-pos: #3ed9a3;
+  --color-pos-soft: #7ee8c4;
+  --color-neg: #ff6b6b;
+  --color-neg-soft: #f2a6a6;
+
+  --color-warn: #e8a857;
+  --color-copper: #d39a6a;
+  --color-slate: #9fb0c8;
+  /* categoricos para graficos y chips: ninguno es verde ni rojo */
+  --color-mauve: #a99bc0;
+  --color-steel: #7f93ae;
+  --color-clay: #b98b73;
+  --color-stone: #8e8a80;
+
+  /* escala tipografica: antes habia ~12 tamanos sueltos entre 10px y 15px,
+     la mayoria bajo 12px. ahora el minimo legible es 12px. */
+  --text-micro: 0.75rem;
+  --text-small: 0.8125rem;
+}
+
 :root {
-  --accent: #8b5cf6;
-  --pos: #3ed9a3;
-  --neg: #ff6b6b;
+  /* alias historicos: cientos de componentes usan var(--accent/--pos/--neg) */
+  --accent: var(--color-accent);
+  --pos: var(--color-pos);
+  --neg: var(--color-neg);
+  --line: rgba(255, 255, 255, 0.08);
 }
 
 body {
-  background-color: #0a0d13;
-  color: #f2f5f9;
+  background-color: var(--color-ink);
+  color: var(--color-fg);
   font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  /* superficie estandar: plana, borde fino, sin vidrio (el blur en cada tarjeta
+     se leia como plantilla y es caro de pintar en celulares) */
+  .card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 18px 40px -24px rgba(0, 0, 0, 0.6);
+  }
 }
 
 .font-mono-tabular {
@@ -136,7 +191,7 @@ body {
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: #f2f5f9;
+  color: var(--color-fg);
 }
 
 .contenido-post h3 {
@@ -144,7 +199,7 @@ body {
   margin-bottom: 0.4rem;
   font-size: 15px;
   font-weight: 600;
-  color: #f2f5f9;
+  color: var(--color-fg);
 }
 
 .contenido-post p {
@@ -177,14 +232,14 @@ body {
 
 .contenido-post strong {
   font-weight: 600;
-  color: #f2f5f9;
+  color: var(--color-fg);
 }
 
 .contenido-post blockquote {
   margin-top: 0.75rem;
   padding-left: 1rem;
   border-left: 3px solid rgba(255, 255, 255, 0.14);
-  color: #97a2b4;
+  color: var(--color-fg-muted);
 }
 
 .contenido-post code {

@@ -15,3 +15,12 @@ next-env.d.ts
 .agents/
 .claude/skills/
 skills-lock.json
+
+# Salida generada por graphify (grafo de conocimiento), regenerable
+graphify-out/
+
+# estado local del CLI de supabase (project-ref, pooler-url): no se versiona
+supabase/.temp/
+
+# cache incremental de tsc
+*.tsbuildinfo

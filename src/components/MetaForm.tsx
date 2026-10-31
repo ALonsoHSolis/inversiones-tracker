@@ -16,8 +16,8 @@ interface MetaFormProps {
 }
 
 const inputClass =
-  "h-11 px-3 rounded-[10px] border border-white/[0.14] text-[14px] text-[#F2F5F9] bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
-const labelClass = "text-[11px] font-semibold text-[#8892A0]";
+  "h-11 px-3 rounded-[10px] border border-white/[0.14] text-[14px] text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+const labelClass = "text-micro font-semibold text-fg-muted";
 
 // mismo criterio que CuentaForm/EditarCuentaForm: nunca error.message crudo.
 function mensajeErrorAmigable(mensaje: string): string {
@@ -105,7 +105,7 @@ export function MetaForm({ cuentas }: MetaFormProps) {
   }
 
   return (
-    <div className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[20px] border border-white/[0.08] rounded-2xl p-6 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.5)]">
+    <div className="card p-6">
       <div className="flex flex-col gap-[15px]">
         <label className="flex flex-col gap-[7px]">
           <span className={labelClass}>nombre de la meta</span>
@@ -151,21 +151,21 @@ export function MetaForm({ cuentas }: MetaFormProps) {
                     onChange={() => alternarCuenta(c.id)}
                     className="w-[15px] h-[15px] accent-[var(--accent)]"
                   />
-                  <span className="text-[13px] text-[#F2F5F9]">{c.nombre}</span>
-                  <span className="text-[11px] text-[#8892A0]">{c.plataforma}</span>
+                  <span className="text-small text-fg">{c.nombre}</span>
+                  <span className="text-micro text-fg-muted">{c.plataforma}</span>
                 </label>
               ))}
             </div>
           </div>
         )}
 
-        {errorGuardado && <p className="text-[12.5px] text-[var(--neg)]">{errorGuardado}</p>}
+        {errorGuardado && <p className="text-micro text-[var(--neg)]">{errorGuardado}</p>}
 
         <button
           type="button"
           onClick={guardarMeta}
           disabled={guardando}
-          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-[#0A0D13] text-[14px] font-semibold disabled:opacity-50"
+          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-ink text-[14px] font-semibold disabled:opacity-50"
         >
           {guardando ? "creando..." : "crear meta"}
         </button>

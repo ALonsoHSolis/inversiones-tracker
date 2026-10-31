@@ -11,11 +11,13 @@ interface HeroProps {
   benchmark: ReactNode;
 }
 
-// combina lo que antes eran PortfolioSummary y CapitalSummary en una sola
-// tarjeta protagonista: numero grande = valor total del portafolio (con su
-// cambio nominal semanal debajo), y una fila de tres cifras acumuladas desde
-// que se creo cada cuenta (capital aportado / valor actual / ganancia total)
-// -- estructura tomada del hero de Dashboard.dc.html.
+// tarjeta protagonista del dashboard. jerarquia de tres niveles:
+//   1. el valor total (la cifra grande),
+//   2. la GANANCIA REAL -- la razon de ser del producto: un aporte no es
+//      ganancia -- con una barra que separa visualmente capital aportado de
+//      ganancia,
+//   3. el cambio nominal de la semana, deliberadamente pequeno y debajo
+//      (incluye aportes, asi que no es tu ganancia).
 export function Hero({
   valorTotal,
   valorTotalAnterior,
@@ -31,80 +33,96 @@ export function Hero({
   const gananciaTotal = valorActualClp - capitalAportadoClp;
   const gananciaPct = capitalAportadoClp > 0 ? (gananciaTotal / capitalAportadoClp) * 100 : null;
   const gananciaEsPositiva = gananciaTotal >= 0;
+  const colorGanancia = gananciaEsPositiva ? "var(--color-pos)" : "var(--color-neg)";
+
+  // barra: con ganancia, [capital | ganancia] sobre el valor actual; con
+  // perdida, [lo que queda del capital | perdida] sobre el capital aportado.
+  const baseBarra = Math.max(capitalAportadoClp, valorActualClp);
+  const capitalPctBarra = baseBarra > 0 ? (Math.min(capitalAportadoClp, valorActualClp) / baseBarra) * 100 : 0;
+  const deltaPctBarra = baseBarra > 0 ? (Math.abs(gananciaTotal) / baseBarra) * 100 : 0;
 
   return (
-    <section className="bg-[rgba(22,27,38,0.55)] backdrop-blur-[28px] border border-white/[0.08] rounded-[18px] px-7 py-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)] animate-fade-up">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(280px,1fr)_minmax(360px,1.35fr)] gap-8">
+    <section className="card px-7 py-7 animate-fade-up">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(300px,1fr)_minmax(380px,1.3fr)] gap-10">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.09em] text-[#7C8798]">
+          <p className="text-micro font-semibold uppercase tracking-[0.12em] text-fg-subtle">
             Valor total del portafolio
           </p>
-          <p className="money-value mt-2.5 font-mono-tabular font-semibold text-[44px] leading-none tracking-[-0.02em] text-[#F2F5F9]">
+          <p className="money-value mt-3 font-mono-tabular font-medium text-[44px] sm:text-[52px] leading-none tracking-[-0.025em] text-fg">
             {formatoPesos(valorTotal)}
           </p>
-          <div
-            className="inline-flex items-center gap-1.5 mt-3.5 py-1 pl-2.5 pr-3 rounded-full"
-            style={{ background: cambioEsPositivo ? "rgba(62,217,163,0.14)" : "rgba(255,107,107,0.14)" }}
-          >
-            <span className="text-[11px]" style={{ color: cambioEsPositivo ? "var(--pos)" : "var(--neg)" }}>
-              {cambioEsPositivo ? "▲" : "▼"}
-            </span>
-            <span
-              className="money-value font-mono-tabular text-[13.5px] font-semibold"
-              style={{ color: cambioEsPositivo ? "var(--pos)" : "var(--neg)" }}
-            >
-              {formatoPesosSigned(cambioNominal)}
-            </span>
-            <span
-              className="text-[12.5px] font-semibold"
-              style={{ color: cambioEsPositivo ? "var(--pos)" : "var(--neg)" }}
-            >
-              ({formatoPct(cambioNominalPct)})
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 mt-1.5">
-            <p className="text-xs text-[#8892A0]">cambio nominal esta semana</p>
-            <Ayuda>
-              &quot;Nominal&quot; incluye cualquier aporte o retiro que hayas hecho esta semana — no es
-              tu ganancia real, que se muestra abajo como &quot;ganancia total&quot;.
-            </Ayuda>
-          </div>
 
-          <div className="h-px bg-white/[0.07] my-5" />
+          <div className="mt-7">
+            <div className="flex items-center gap-1.5">
+              <p className="text-micro font-semibold uppercase tracking-[0.12em] text-fg-muted">Ganancia real</p>
+              <Ayuda>
+                &quot;Capital aportado&quot; es todo lo que depositaste menos lo que retiraste, sumando todas tus
+                cuentas desde que las creaste. &quot;Valor actual&quot; es cuánto valen hoy. &quot;Ganancia
+                real&quot; es la diferencia entre ambos: lo que tu dinero realmente produjo, sin contar lo que
+                tú pusiste.
+              </Ayuda>
+            </div>
+            <p
+              className="money-value mt-1.5 font-mono-tabular text-[28px] font-semibold leading-tight tracking-[-0.01em]"
+              style={{ color: colorGanancia }}
+            >
+              {formatoPesosSigned(gananciaTotal)}
+              {gananciaPct !== null && <span className="ml-2 text-base font-medium">({formatoPct(gananciaPct)})</span>}
+            </p>
 
-          <div className="grid grid-cols-3 gap-3.5">
-            <div>
-              <p className="text-[11px] font-medium text-[#8892A0]">Capital aportado</p>
-              <p className="money-value mt-1 font-mono-tabular font-semibold text-base text-[#F2F5F9]">
-                {formatoPesos(capitalAportadoClp)}
-              </p>
+            <div
+              className="mt-4 h-2 rounded-full bg-white/[0.06] overflow-hidden flex"
+              role="img"
+              aria-label={`Del valor actual, el capital aportado es ${capitalPctBarra.toFixed(0)}% y la ${
+                gananciaEsPositiva ? "ganancia" : "pérdida"
+              } ${deltaPctBarra.toFixed(0)}%`}
+            >
+              <div className="h-full bg-accent/70" style={{ width: `${capitalPctBarra}%` }} />
+              <div className="h-full" style={{ width: `${deltaPctBarra}%`, background: colorGanancia }} />
             </div>
-            <div>
-              <p className="text-[11px] font-medium text-[#8892A0]">Valor actual</p>
-              <p className="money-value mt-1 font-mono-tabular font-semibold text-base text-[#F2F5F9]">
-                {formatoPesos(valorActualClp)}
-              </p>
-            </div>
-            <div>
-              <div className="flex items-center gap-1">
-                <p className="text-[11px] font-medium text-[#8892A0]">Ganancia total</p>
-                <Ayuda>
-                  &quot;Capital aportado&quot; es todo lo que depositaste menos lo que retiraste, sumando
-                  todas tus cuentas desde que las creaste. &quot;Valor actual&quot; es cuánto valen hoy.
-                  &quot;Ganancia total&quot; es la diferencia real entre ambos — no confundir con el
-                  cambio nominal de arriba.
-                </Ayuda>
+
+            <dl className="mt-3.5 grid grid-cols-2 gap-4">
+              <div>
+                <dt className="flex items-center gap-1.5 text-micro text-fg-muted">
+                  <span aria-hidden="true" className="inline-block w-2 h-2 rounded-sm bg-accent/70" />
+                  Capital aportado
+                </dt>
+                <dd className="money-value mt-1 font-mono-tabular text-sm font-semibold text-fg">
+                  {formatoPesos(capitalAportadoClp)}
+                </dd>
               </div>
-              <p
-                className="money-value mt-1 font-mono-tabular font-semibold text-base"
-                style={{ color: gananciaEsPositiva ? "var(--pos)" : "var(--neg)" }}
-              >
-                {formatoPesosSigned(gananciaTotal)}
-                {gananciaPct !== null && (
-                  <span className="text-[12.5px]"> ({formatoPct(gananciaPct)})</span>
-                )}
-              </p>
-            </div>
+              <div>
+                <dt className="flex items-center gap-1.5 text-micro text-fg-muted">
+                  <span
+                    aria-hidden="true"
+                    className="inline-block w-2 h-2 rounded-sm"
+                    style={{ background: colorGanancia }}
+                  />
+                  Valor actual
+                </dt>
+                <dd className="money-value mt-1 font-mono-tabular text-sm font-semibold text-fg">
+                  {formatoPesos(valorActualClp)}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div className="mt-6 pt-5 border-t border-white/[0.07] flex items-center gap-2.5 flex-wrap">
+            <span
+              className="inline-flex items-center gap-1.5 font-mono-tabular text-small font-medium"
+              style={{ color: cambioEsPositivo ? "var(--color-pos)" : "var(--color-neg)" }}
+            >
+              <span aria-hidden="true" className="text-micro">
+                {cambioEsPositivo ? "▲" : "▼"}
+              </span>
+              <span className="money-value">{formatoPesosSigned(cambioNominal)}</span>
+              <span>({formatoPct(cambioNominalPct)})</span>
+            </span>
+            <span className="text-small text-fg-muted">cambio nominal esta semana</span>
+            <Ayuda>
+              &quot;Nominal&quot; incluye cualquier aporte o retiro que hayas hecho esta semana — no es tu ganancia
+              real, que se muestra arriba.
+            </Ayuda>
           </div>
         </div>
 
