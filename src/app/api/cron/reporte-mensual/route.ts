@@ -31,39 +31,39 @@ function construirCorreo(
   const linkPerfil = `${origin}/perfil`;
 
   return `
-    <div style="font-family: sans-serif; font-size: 14px; color: #171A20; line-height: 1.6;">
+    <div style="font-family: sans-serif; font-size: 14px; border-top: 3px solid #CDAE76; padding-top: 18px; color: #0B0D12; line-height: 1.6;">
       <p>Hola,</p>
       <p>Este es tu resumen del mes en Mi portafolio.</p>
       <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
         <tr>
-          <td style="padding: 8px 0; color: #8A929E;">Valor total actual</td>
+          <td style="padding: 8px 0; color: #6B7380;">Valor total actual</td>
           <td style="padding: 8px 0; text-align: right; font-weight: 600;">${formatoPesos(t.valorActualClp)}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; color: #8A929E;">Capital aportado</td>
+          <td style="padding: 8px 0; color: #6B7380;">Capital aportado</td>
           <td style="padding: 8px 0; text-align: right; font-weight: 600;">${formatoPesos(t.capitalAportadoClp)}</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; color: #8A929E;">Ganancia total</td>
+          <td style="padding: 8px 0; color: #6B7380;">Ganancia total</td>
           <td style="padding: 8px 0; text-align: right; font-weight: 600;">${formatoPesosSigned(t.gananciaTotalClp)}${
             t.gananciaTotalPct != null ? ` (${formatoPct(t.gananciaTotalPct)})` : ""
           }</td>
         </tr>
         <tr>
-          <td style="padding: 8px 0; color: #8A929E; border-top: 1px solid #E5E8EC;">Cambio este mes</td>
+          <td style="padding: 8px 0; color: #6B7380; border-top: 1px solid #E5E8EC;">Cambio este mes</td>
           <td style="padding: 8px 0; text-align: right; font-weight: 600; border-top: 1px solid #E5E8EC;">${formatoPesosSigned(t.gananciaMesClp)}${
             t.gananciaMesPct != null ? ` (${formatoPct(t.gananciaMesPct)})` : ""
           }</td>
         </tr>
       </table>
-      <p style="font-size: 12px; color: #8A929E;">
+      <p style="font-size: 12px; color: #6B7380;">
         "Cambio este mes" y "ganancia total" ya descuentan los aportes y retiros que hiciste — nunca
         confunden un depósito con una ganancia.
       </p>
-      <p><a href="${linkDashboard}" style="color: #2A5F94; font-weight: 600;">Ver el detalle en tu dashboard →</a></p>
-      <p style="margin-top: 24px; font-size: 12px; color: #8A929E;">
+      <p><a href="${linkDashboard}" style="color: #8A6D2F; font-weight: 600;">Ver el detalle en tu dashboard →</a></p>
+      <p style="margin-top: 24px; font-size: 12px; color: #6B7380;">
         Si no quieres recibir este reporte, puedes desactivarlo desde
-        <a href="${linkPerfil}" style="color: #8A929E;">tu perfil</a>.
+        <a href="${linkPerfil}" style="color: #6B7380;">tu perfil</a>.
       </p>
     </div>
   `;

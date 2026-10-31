@@ -18,18 +18,18 @@ export default function Image() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          background: "#171A20",
-          color: "white",
+          background: "linear-gradient(135deg, #12161E 0%, #0B0D12 70%)",
+          color: "#F3F1EC",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ width: 14, height: 14, borderRadius: 999, background: "#14508C", display: "flex" }} />
-          <div style={{ fontSize: 32, fontWeight: 600, color: "#AEB5C0", display: "flex" }}>Mi portafolio</div>
+          <div style={{ width: 14, height: 14, borderRadius: 999, background: "#CDAE76", display: "flex" }} />
+          <div style={{ fontSize: 32, fontWeight: 600, color: "#A0A8B5", display: "flex" }}>Mi portafolio</div>
         </div>
         <div style={{ fontSize: 58, fontWeight: 700, marginTop: 28, maxWidth: 920, lineHeight: 1.15, display: "flex" }}>
           Todas tus inversiones en un solo lugar, con tu ganancia real.
         </div>
-        <div style={{ fontSize: 26, color: "#8FE3C0", marginTop: 24, display: "flex" }}>
+        <div style={{ fontSize: 26, color: "#E3CC9C", marginTop: 24, display: "flex" }}>
           No con espejismos — sin conectar tu banco.
         </div>
       </div>

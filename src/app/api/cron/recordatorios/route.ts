@@ -7,14 +7,14 @@ function construirCorreo(origin: string) {
   const linkCarga = `${origin}/dashboard#carga-rapida`;
   const linkPerfil = `${origin}/perfil`;
   return `
-    <div style="font-family: sans-serif; font-size: 14px; color: #171A20; line-height: 1.6;">
+    <div style="font-family: sans-serif; font-size: 14px; border-top: 3px solid #CDAE76; padding-top: 18px; color: #0B0D12; line-height: 1.6;">
       <p>Hola,</p>
       <p>Van unos días desde tu última actualización. Registra el valor de hoy de tus cuentas
       para que tu rendimiento real siga siendo preciso.</p>
-      <p><a href="${linkCarga}" style="color: #2A5F94; font-weight: 600;">Actualizar ahora →</a></p>
-      <p style="margin-top: 24px; font-size: 12px; color: #8A929E;">
+      <p><a href="${linkCarga}" style="color: #8A6D2F; font-weight: 600;">Actualizar ahora →</a></p>
+      <p style="margin-top: 24px; font-size: 12px; color: #6B7380;">
         Si no quieres recibir este recordatorio, puedes desactivarlo desde
-        <a href="${linkPerfil}" style="color: #8A929E;">tu perfil</a>.
+        <a href="${linkPerfil}" style="color: #6B7380;">tu perfil</a>.
       </p>
     </div>
   `;
