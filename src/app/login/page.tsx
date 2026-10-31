@@ -29,7 +29,7 @@ export default async function LoginPage({
         <SubmitButton labelInactivo="Entrar" labelActivo="Entrando..." />
       </form>
 
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex flex-col items-start gap-2.5 mt-5">
         <p className="text-small text-fg-muted">
           ¿No tienes cuenta?{" "}
           <Link href="/signup" className="font-semibold text-[var(--accent)]">

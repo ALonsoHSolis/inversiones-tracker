@@ -26,7 +26,7 @@ export const PREGUNTAS = [
 // en desktop y mobile.
 export function TrustFaq() {
   return (
-    <section className="mt-8">
+    <div>
       <div className="card divide-y divide-white/[0.07]">
         {PREGUNTAS.map((item) => (
           <details key={item.pregunta} className="group p-[18px]">
@@ -40,6 +40,6 @@ export function TrustFaq() {
           </details>
         ))}
       </div>
-    </section>
+    </div>
   );
 }

@@ -120,8 +120,17 @@ body {
   }
 }
 
+/* entrada escalonada: cada bloque de la pagina define --i (0,1,2...) y
+   aparece 70 ms despues del anterior. ease-out marcado, no el "ease" generico. */
 .animate-fade-up {
-  animation: fadeUp 0.5s ease both;
+  animation: fadeUp 0.5s cubic-bezier(0.23, 1, 0.32, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    animation: none;
+  }
 }
 
 @keyframes authFadeUp {

@@ -315,6 +315,9 @@ export default async function DashboardPage() {
             <MenuCuenta email={user?.email ?? ""}>
               <ExportarDatos className={ITEM_MENU} />
               <PrintButton className={ITEM_MENU} />
+              <Link href="/informe" role="menuitem" className={ITEM_MENU}>
+                Informe mensual
+              </Link>
               <Link href="/perfil" role="menuitem" className={ITEM_MENU}>
                 Perfil
               </Link>
@@ -346,7 +349,7 @@ export default async function DashboardPage() {
           }
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4 mt-4 items-start">
+        <div className="animate-fade-up grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4 mt-4 items-start" style={{ "--i": 1 } as React.CSSProperties}>
           <section className="card p-5">
             <div className="flex items-center justify-between mb-1">
               <p className="text-small font-semibold text-fg">Estado de tus cuentas</p>
@@ -416,7 +419,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <section className="card p-5 mt-4">
+        <section className="animate-fade-up card p-5 mt-4" style={{ "--i": 2 } as React.CSSProperties}>
           <div className="flex items-center justify-between mb-1">
             <p className="text-small font-semibold text-fg">Tus metas</p>
             <Link
@@ -432,14 +435,14 @@ export default async function DashboardPage() {
           <MetasList metas={metasConProgreso} />
         </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="animate-fade-up grid grid-cols-1 md:grid-cols-2 gap-4 mt-4" style={{ "--i": 3 } as React.CSSProperties}>
           <PlatformBreakdown plataformas={plataformas} />
           <AssetTypeBreakdown tipos={tipos} />
           <CategoryBreakdown categorias={categorias} />
         </div>
 
 
-        <details className="group mt-6">
+        <details className="animate-fade-up group mt-6" style={{ "--i": 4 } as React.CSSProperties}>
           <summary className="no-print card flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:border-white/[0.16] focus-visible:outline-2 focus-visible:outline-accent">
             <span>
               <span className="block text-small font-semibold text-fg">Análisis avanzado</span>
