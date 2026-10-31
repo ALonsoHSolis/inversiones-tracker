@@ -33,6 +33,7 @@ import { Logo } from "@/components/Logo";
 import { FeedbackLink } from "@/components/FeedbackLink";
 import { EmptyAccountsState } from "@/components/EmptyAccountsState";
 import Link from "next/link";
+import { fechaHoyChile } from "@/lib/fecha";
 
 // paleta ciclica para el grafico de composicion historica -- la cantidad de
 // grupos (plataformas o tipos) es dinamica, no fija, asi que no alcanza con
@@ -88,7 +89,7 @@ function construirComposicion(
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const hoy = new Date().toISOString().slice(0, 10);
+  const hoy = fechaHoyChile();
 
   // benchmarkSp500/benchmarkUf van en el mismo Promise.all que las consultas
   // a supabase (no en uno aparte despues): son servicios externos opcionales,

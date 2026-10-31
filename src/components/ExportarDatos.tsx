@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { filasACsv, descargarCsv } from "@/lib/csv";
+import { fechaHoyChile } from "@/lib/fecha";
 
 const ENCABEZADO = [
   "cuenta",
@@ -70,7 +71,7 @@ export function ExportarDatos() {
         });
 
       const csv = filasACsv(ENCABEZADO, filas);
-      const hoy = new Date().toISOString().slice(0, 10);
+      const hoy = fechaHoyChile();
       descargarCsv(csv, `inversiones-tracker-${hoy}.csv`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "hubo un error al exportar");

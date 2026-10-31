@@ -8,6 +8,7 @@ import { Ayuda } from "@/components/Ayuda";
 import { InputMonto } from "@/components/InputMonto";
 import { formatoFecha } from "@/lib/formato";
 import type { Cuenta, Moneda, TipoMovimiento } from "@/types/database";
+import { fechaHoyChile } from "@/lib/fecha";
 
 interface SnapshotFormProps {
   cuentas: Cuenta[];
@@ -202,7 +203,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
 
     setGuardando(true);
     const supabase = createClient();
-    const hoy = new Date().toISOString().slice(0, 10);
+    const hoy = fechaHoyChile();
 
     const resultados = await Promise.allSettled(
       aGuardar.map(async (cuenta) => {
@@ -279,7 +280,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
           se cuente como ganancia.
         </Ayuda>
       </div>
-      <p className="text-[11.5px] text-[#8892A0] mb-4">Fecha de hoy: {formatoFecha(new Date().toISOString())}</p>
+      <p className="text-[11.5px] text-[#8892A0] mb-4">Fecha de hoy: {formatoFecha(fechaHoyChile())}</p>
       {/* una sola columna a proposito, sin breakpoint de viewport: este
           formulario vive dentro de un sidebar angosto (ver page.tsx), y
           sm:grid-cols-2 se activaba por el ancho de la ventana, no del

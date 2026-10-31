@@ -8,6 +8,7 @@ import { Ayuda } from "@/components/Ayuda";
 import { InputMonto } from "@/components/InputMonto";
 import { formatoFecha } from "@/lib/formato";
 import type { Cuenta, Moneda, TipoMovimiento } from "@/types/database";
+import { fechaHoyChile } from "@/lib/fecha";
 
 interface CargaRapidaProps {
   cuentas: Cuenta[];
@@ -282,7 +283,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
 
     setGuardando(true);
     const supabase = createClient();
-    const hoy = new Date().toISOString().slice(0, 10);
+    const hoy = fechaHoyChile();
 
     const { error } = await supabase.rpc("guardar_snapshot_con_movimiento", {
       p_cuenta_id: cuenta.id,
@@ -320,7 +321,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
         <div>
           <span className="text-[11px] font-semibold text-[#8892A0]">Fecha</span>
           <p className="mt-1 h-10 px-3 rounded-[10px] bg-white/[0.03] flex items-center text-[13px] text-[#8892A0] font-mono-tabular">
-            {formatoFecha(new Date().toISOString())}
+            {formatoFecha(fechaHoyChile())}
           </p>
         </div>
         <label className="flex flex-col gap-1">

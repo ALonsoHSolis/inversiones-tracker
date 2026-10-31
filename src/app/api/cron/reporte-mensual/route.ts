@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { obtenerOrigin } from "@/lib/origin";
 import { formatoPesos, formatoPesosSigned, formatoPct } from "@/lib/formato";
+import { fechaChileHaceDias, fechaHoyChile } from "@/lib/fecha";
 
 interface TotalesUsuario {
   valorActualClp: number;
@@ -81,8 +82,8 @@ export async function GET(request: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const remitente = process.env.RESEND_FROM_EMAIL ?? "Mi portafolio <onboarding@resend.dev>";
 
-  const hoy = new Date().toISOString().slice(0, 10);
-  const haceUnMes = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  const hoy = fechaHoyChile();
+  const haceUnMes = fechaChileHaceDias(30);
   const primerDiaDelMes = `${hoy.slice(0, 7)}-01`;
 
   const { data: cuentas, error: errorCuentas } = await supabase
