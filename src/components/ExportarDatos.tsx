@@ -17,7 +17,7 @@ const ENCABEZADO = [
   "movimiento_monto",
 ];
 
-export function ExportarDatos() {
+export function ExportarDatos({ className }: { className?: string }) {
   const [exportando, setExportando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -81,16 +81,16 @@ export function ExportarDatos() {
   }
 
   return (
-    <div className="flex flex-col items-end">
+    <div className="flex flex-col">
       <button
         type="button"
         onClick={exportar}
         disabled={exportando}
-        className="h-[34px] px-3.5 rounded-[9px] border border-white/[0.1] bg-white/[0.03] text-small font-medium text-fg-soft disabled:opacity-50 hover:border-white/[0.2]"
+        className={className}
       >
-        {exportando ? "Exportando…" : "Exportar"}
+        {exportando ? "Exportando…" : "Exportar datos (CSV)"}
       </button>
-      {error && <p className="text-xs text-[var(--neg)] mt-1">{error}</p>}
+      {error && <p className="px-3 pb-1.5 text-micro text-neg">{error}</p>}
     </div>
   );
 }

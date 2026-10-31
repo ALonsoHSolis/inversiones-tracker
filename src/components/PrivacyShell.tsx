@@ -35,10 +35,20 @@ export function PrivacyToggleButton() {
     <button
       type="button"
       onClick={toggle}
-      className="inline-flex items-center gap-1.5 h-[34px] px-3.5 rounded-[9px] border border-white/[0.1] bg-white/[0.03] text-small font-medium text-fg-soft hover:border-white/[0.2]"
+      aria-pressed={oculto}
+      title={oculto ? "Mostrar los montos" : "Ocultar los montos (modo privado)"}
+      className={`inline-flex items-center gap-2 h-[34px] px-3.5 rounded-full border text-small font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+        oculto
+          ? "border-accent/60 bg-accent/15 text-accent-hi"
+          : "border-white/[0.1] bg-white/[0.03] text-fg-soft hover:border-white/[0.2]"
+      }`}
     >
-      <span className="w-[7px] h-[7px] rounded-full bg-[var(--accent)]" />
-      {oculto ? "Mostrar" : "Ocultar"}
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+        <circle cx="12" cy="12" r="3" />
+        {oculto && <path d="M3 3l18 18" />}
+      </svg>
+      {oculto ? "Montos ocultos" : "Ocultar montos"}
     </button>
   );
 }

@@ -10,6 +10,7 @@ import { AccountRow } from "@/components/AccountRow";
 import { CargaRapida } from "@/components/CargaRapida";
 import { SnapshotForm } from "@/components/SnapshotForm";
 import { ExportarDatos } from "@/components/ExportarDatos";
+import { MenuCuenta, ITEM_MENU } from "@/components/MenuCuenta";
 import { PrintButton } from "@/components/PrintButton";
 import { PrivacyShell, PrivacyToggleButton } from "@/components/PrivacyShell";
 import { AccountComparison, type CuentaComparacion } from "@/components/AccountComparison";
@@ -307,32 +308,24 @@ export default async function DashboardPage() {
   return (
     <PrivacyShell>
       <main className="max-w-[1160px] mx-auto px-6 pt-[26px] pb-16">
-        <header className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+        <header className="flex items-center justify-between gap-4 mb-7 flex-wrap">
           <Logo />
-          <div className="flex items-center gap-2 flex-wrap justify-end no-print">
+          <div className="flex items-center gap-2 no-print">
             <PrivacyToggleButton />
-            <ExportarDatos />
-            <PrintButton />
-            <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
-            <FeedbackLink className="text-micro text-fg-muted border-b border-white/[0.14]">
-              escríbenos
-            </FeedbackLink>
-            <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
-            <Link href="/perfil" className="text-micro text-fg-muted border-b border-white/[0.14]">
-              perfil
-            </Link>
-            <div className="w-px h-[22px] bg-white/[0.1] mx-1" />
-            <div className="text-right leading-tight">
-              <p className="text-micro font-medium text-fg-soft">{user?.email}</p>
+            <MenuCuenta email={user?.email ?? ""}>
+              <ExportarDatos className={ITEM_MENU} />
+              <PrintButton className={ITEM_MENU} />
+              <Link href="/perfil" role="menuitem" className={ITEM_MENU}>
+                Perfil
+              </Link>
+              <FeedbackLink className={ITEM_MENU}>Escríbenos</FeedbackLink>
+              <div className="h-px bg-white/[0.07] my-1.5" />
               <form action={logout}>
-                <button
-                  type="submit"
-                  className="text-micro text-fg-muted border-b border-white/[0.14]"
-                >
-                  cerrar sesión
+                <button type="submit" role="menuitem" className={ITEM_MENU}>
+                  Cerrar sesión
                 </button>
               </form>
-            </div>
+            </MenuCuenta>
           </div>
         </header>
 
@@ -353,20 +346,10 @@ export default async function DashboardPage() {
           }
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <PlatformBreakdown plataformas={plataformas} />
-          <AssetTypeBreakdown tipos={tipos} />
-          <CategoryBreakdown categorias={categorias} />
-        </div>
-
-        <div className="mt-4">
-          <CompositionChart porPlataforma={composicionPorPlataforma} porTipo={composicionPorTipo} />
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4 mt-4 items-start">
           <section className="card p-5">
             <div className="flex items-center justify-between mb-1">
-              <p className="text-small font-semibold text-fg">Tus cuentas</p>
+              <p className="text-small font-semibold text-fg">Estado de tus cuentas</p>
               <Link
                 href="/cuentas/nueva"
                 className="no-print inline-flex items-center gap-1 text-micro font-semibold text-[var(--accent)] no-underline"
@@ -449,18 +432,44 @@ export default async function DashboardPage() {
           <MetasList metas={metasConProgreso} />
         </section>
 
-        {cuentasConDatos.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 items-start">
-            <AccountComparison
-              cuentas={comparacionCuentas}
-              gananciaTotalClp={gananciaTotalClp}
-              twrPortafolio={twrPortafolio}
-              drawdownPortafolio={drawdownPortafolio}
-              xirrPortafolio={xirrPortafolio}
-            />
-            <DataHealthView alertas={alertasSalud} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <PlatformBreakdown plataformas={plataformas} />
+          <AssetTypeBreakdown tipos={tipos} />
+          <CategoryBreakdown categorias={categorias} />
+        </div>
+
+
+        <details className="group mt-6">
+          <summary className="no-print card flex items-center justify-between gap-3 px-5 py-4 cursor-pointer list-none [&::-webkit-details-marker]:hidden hover:border-white/[0.16] focus-visible:outline-2 focus-visible:outline-accent">
+            <span>
+              <span className="block text-small font-semibold text-fg">Análisis avanzado</span>
+              <span className="block mt-0.5 text-micro text-fg-muted">
+                Composición histórica, comparación de cuentas (TWR, XIRR, drawdown) y salud de los datos
+              </span>
+            </span>
+            <span aria-hidden="true" className="text-fg-muted transition-transform group-open:rotate-180">
+              ▾
+            </span>
+          </summary>
+          <div className="mt-4 flex flex-col gap-4 print:block">
+        <div>
+          <CompositionChart porPlataforma={composicionPorPlataforma} porTipo={composicionPorTipo} />
+        </div>
+
+            {cuentasConDatos.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                <AccountComparison
+                  cuentas={comparacionCuentas}
+                  gananciaTotalClp={gananciaTotalClp}
+                  twrPortafolio={twrPortafolio}
+                  drawdownPortafolio={drawdownPortafolio}
+                  xirrPortafolio={xirrPortafolio}
+                />
+                <DataHealthView alertas={alertasSalud} />
+              </div>
+            )}
           </div>
-        )}
+        </details>
 
         <p className="mt-6 text-micro text-fg-subtle text-center">
           El % real aparece cuando hay al menos dos registros para comparar
