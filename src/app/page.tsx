@@ -129,13 +129,13 @@ export default function LandingPage() {
             <div className="flex flex-wrap items-center gap-3 mt-8">
               <Link
                 href="/signup"
-                className="inline-flex items-center whitespace-nowrap h-12 px-6 rounded-[11px] bg-[var(--accent)] text-ink text-[15px] font-semibold no-underline transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98]"
+                className="inline-flex items-center justify-center whitespace-nowrap h-12 px-6 w-full sm:w-auto rounded-[11px] bg-[var(--accent)] text-ink text-[15px] font-semibold no-underline transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98]"
               >
                 Crear cuenta gratis
               </Link>
               <Link
                 href="/login"
-                className="inline-flex items-center whitespace-nowrap h-12 px-5 rounded-[11px] border border-white/[0.14] text-[15px] font-semibold text-fg no-underline transition-[transform,border-color] duration-150 hover:border-white/[0.28] active:scale-[0.98]"
+                className="inline-flex items-center justify-center whitespace-nowrap h-12 px-5 w-full sm:w-auto rounded-[11px] border border-white/[0.14] text-[15px] font-semibold text-fg no-underline transition-[transform,border-color] duration-150 hover:border-white/[0.28] active:scale-[0.98]"
               >
                 Ya tengo cuenta
               </Link>
@@ -253,7 +253,7 @@ export default function LandingPage() {
               </dl>
               <div className="mt-5 pt-5 border-t border-white/[0.07]">
                 <p className="text-micro text-fg-muted">“Ganancia” de la semana</p>
-                <p className="font-mono-tabular mt-1 text-[28px] font-semibold text-warn">+$1.000.000 (+10%)</p>
+                <p className="font-mono-tabular mt-1 text-[22px] sm:text-[28px] font-semibold text-warn">+$1.000.000 (+10%)</p>
                 <p className="mt-2 text-micro text-fg-muted">Parece ganancia, pero es tu propio depósito.</p>
               </div>
             </div>
@@ -274,7 +274,7 @@ export default function LandingPage() {
               </dl>
               <div className="mt-5 pt-5 border-t border-white/[0.07]">
                 <p className="text-micro text-fg-muted">Ganancia real de la semana</p>
-                <p className="font-mono-tabular mt-1 text-[28px] font-semibold text-fg">$0 (0,0%)</p>
+                <p className="font-mono-tabular mt-1 text-[22px] sm:text-[28px] font-semibold text-fg">$0 (0,0%)</p>
                 <p className="mt-2 text-micro text-fg-muted">Lo que tu dinero produjo, sin contar lo que pusiste.</p>
               </div>
             </div>
@@ -363,7 +363,7 @@ export default function LandingPage() {
 
         {/* cierre */}
         <section className="mt-16 md:mt-24">
-          <div className="relative overflow-hidden rounded-[22px] border border-accent/25 bg-surface px-8 py-12 md:px-12 md:py-14 flex items-center justify-between gap-8 flex-wrap">
+          <div className="relative overflow-hidden rounded-[22px] border border-accent/25 bg-surface px-6 py-10 md:px-12 md:py-14 flex items-center justify-between gap-8 flex-wrap">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -right-24 -top-32 w-[420px] h-[420px] rounded-full"
@@ -372,14 +372,13 @@ export default function LandingPage() {
             <div className="relative">
               <h2 className="text-fg text-[28px] md:text-[34px] font-semibold tracking-[-0.025em] leading-[1.12]">
                 Empieza a medir lo que
-                <br />
-                de verdad ganas.
+                <br className="hidden md:block" /> de verdad ganas.
               </h2>
               <p className="mt-3 text-fg-muted text-[15px]">Gratis, sin conectar tu banco.</p>
             </div>
             <Link
               href="/signup"
-              className="relative inline-flex items-center h-12 px-7 rounded-[11px] bg-[var(--accent)] text-ink text-[15px] font-semibold no-underline whitespace-nowrap transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98]"
+              className="relative inline-flex items-center justify-center h-12 px-7 w-full sm:w-auto rounded-[11px] bg-[var(--accent)] text-ink text-[15px] font-semibold no-underline whitespace-nowrap transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98]"
             >
               Crear cuenta gratis
             </Link>
