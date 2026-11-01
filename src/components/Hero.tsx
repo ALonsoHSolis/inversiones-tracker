@@ -50,7 +50,7 @@ export function Hero({
   const deltaPctBarra = baseBarra > 0 ? (Math.abs(gananciaTotal) / baseBarra) * 100 : 0;
 
   return (
-    <section className="card px-5 py-6 sm:px-7 sm:py-7 animate-fade-up" aria-label="Resumen del portafolio">
+    <section className="card card-hero px-5 py-6 sm:px-7 sm:py-7 animate-fade-up" aria-label="Resumen del portafolio">
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-8 lg:gap-12">
         <div>
           <p className="text-micro font-semibold uppercase tracking-[0.12em] text-fg-subtle">

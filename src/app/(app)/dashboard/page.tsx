@@ -9,6 +9,9 @@ import { Ayuda } from "@/components/Ayuda";
 import { AccountRow } from "@/components/AccountRow";
 import { CargaRapida } from "@/components/CargaRapida";
 import { SnapshotForm } from "@/components/SnapshotForm";
+import { AccionesRapidas } from "@/components/AccionesRapidas";
+import { ActividadReciente } from "@/components/ActividadReciente";
+import { construirActividad } from "@/lib/actividad";
 import { MetasList, type MetaConProgreso } from "@/components/MetasList";
 import { TIPOS } from "@/lib/tipos-cuenta";
 import type { Cuenta, RendimientoActual, TipoCuenta, TipoMovimiento } from "@/types/database";
@@ -193,6 +196,8 @@ export default async function DashboardPage() {
       }
     />
 
+    <AccionesRapidas />
+
     {cuentasActivas.length > 0 && (
       <MetricasSecundarias
         twr={metricasPortafolio.twr}
@@ -270,6 +275,14 @@ export default async function DashboardPage() {
         </details>
       </div>
     </div>
+
+    <ActividadReciente
+      grupos={construirActividad({
+        movimientos: movimientosTodos ?? [],
+        cuentas: cuentasActivas.map((c) => ({ id: c.id, nombre: c.nombre, moneda: c.moneda })),
+        hoy,
+      })}
+    />
 
     <section className="animate-fade-up card p-5" style={{ "--i": 2 } as React.CSSProperties}>
       <div className="flex items-center justify-between mb-1">

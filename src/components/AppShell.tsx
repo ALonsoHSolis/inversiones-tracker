@@ -218,31 +218,32 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
         </main>
       </div>
 
-      {/* navegacion inferior en celular */}
+      {/* navegacion inferior en celular: pildora flotante (patron de apps de
+          billetera). el item activo lleva un circulo champan; todos conservan
+          su etiqueta visible. */}
       <nav
         aria-label="Navegación principal"
-        className="no-print lg:hidden fixed inset-x-0 bottom-0 z-30 border-t border-[var(--line)] bg-ink/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)]"
+        className="no-print lg:hidden fixed inset-x-0 bottom-0 z-30 px-3 pb-[calc(12px+env(safe-area-inset-bottom))] pointer-events-none"
       >
-        <ul className="mx-auto grid max-w-[560px] grid-cols-5">
+        <ul className="pointer-events-auto mx-auto grid max-w-[480px] grid-cols-5 rounded-full border border-white/[0.1] bg-surface-raised/92 px-1.5 py-1.5 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.75)] backdrop-blur-xl">
           {secciones(SECCIONES_MOVIL).map((s) => {
             const Icono = ICONOS[s.id];
             const esActiva = s.id === activa;
-            const destacado = s.id === "registrar";
             return (
               <li key={s.id}>
                 <Link
                   href={s.href}
                   aria-current={esActiva ? "page" : undefined}
-                  className={`flex h-16 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors duration-150 ${FOCO} ${
-                    esActiva ? "text-accent-hi" : "text-fg-muted active:text-fg"
+                  className={`flex h-[60px] flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-medium transition-colors duration-150 motion-reduce:transition-none ${FOCO} ${
+                    esActiva ? "text-fg" : "text-fg-muted active:text-fg"
                   }`}
                 >
                   <span
-                    className={`grid place-items-center ${
-                      destacado ? "h-8 w-11 rounded-full bg-accent text-ink" : "h-6"
+                    className={`grid h-8 w-11 place-items-center rounded-full transition-colors duration-200 motion-reduce:transition-none ${
+                      esActiva ? "bg-accent text-ink" : ""
                     }`}
                   >
-                    <Icono size={destacado ? 18 : 20} strokeWidth={esActiva || destacado ? 2.1 : 1.8} aria-hidden="true" />
+                    <Icono size={19} strokeWidth={esActiva ? 2.1 : 1.8} aria-hidden="true" />
                   </span>
                   {ETIQUETA_MOVIL[s.id] ?? s.etiqueta}
                 </Link>
@@ -255,12 +256,16 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
               onClick={() => setMasAbierto(true)}
               aria-haspopup="dialog"
               aria-expanded={masAbierto}
-              className={`flex h-16 w-full flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors duration-150 ${FOCO} ${
-                SECCIONES_MAS.includes(activa as SeccionId) ? "text-accent-hi" : "text-fg-muted active:text-fg"
+              className={`flex h-[60px] w-full flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-medium transition-colors duration-150 motion-reduce:transition-none ${FOCO} ${
+                SECCIONES_MAS.includes(activa as SeccionId) ? "text-fg" : "text-fg-muted active:text-fg"
               }`}
             >
-              <span className="grid h-6 place-items-center">
-                <Ellipsis size={20} strokeWidth={1.8} aria-hidden="true" />
+              <span
+                className={`grid h-8 w-11 place-items-center rounded-full transition-colors duration-200 motion-reduce:transition-none ${
+                  SECCIONES_MAS.includes(activa as SeccionId) ? "bg-accent text-ink" : ""
+                }`}
+              >
+                <Ellipsis size={19} strokeWidth={1.8} aria-hidden="true" />
               </span>
               Más
             </button>
