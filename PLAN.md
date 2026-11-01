@@ -43,8 +43,8 @@ Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
 |---|------|--------|
 | 1 | Tokens, tipografía Geist, íconos Lucide, contraste AA | PR #11 |
 | 2 | Layout, sidebar colapsable, barra superior, navegación móvil | PR #12 |
-| 3 | Dashboard (hero, gráfico, comparadores, métricas secundarias) | esta rama |
-| 4 | Cuentas e instituciones (filas compactas, tabla ordenable/filtrable) | pendiente |
+| 3 | Dashboard (hero, gráfico, comparadores, métricas secundarias) | PR #13 |
+| 4 | Cuentas e instituciones (filas compactas, tabla ordenable/filtrable) | esta rama |
 | 5 | Registro, formularios, metas, análisis | pendiente |
 | 6 | QA responsive (320–1440), accesibilidad, hallazgos financieros previos | pendiente |
 
@@ -70,3 +70,9 @@ Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
 - Comparadores en tarjetas cuyo texto envuelve (nunca se recorta); sin datos de UF/S&P se muestra "No disponible" en vez de ocultarlos.
 - Métricas secundarias: TWR, XIRR y peor caída, cada una con su propio nombre y ayuda; no se presentan como equivalentes. Los cálculos viven en `src/lib/metricas-portafolio.ts` (movidos tal cual desde `/analisis`, con tests); `/analisis` y el dashboard usan el mismo módulo.
 - `Ayuda` ahora tiene nombre accesible y foco visible.
+
+### Decisiones de la fase 4
+
+- `/cuentas`: tabla en escritorio (cabeceras ordenables con `aria-sort`, búsqueda sin tildes, filtros por tipo/plataforma/moneda, agrupar por plataforma con subtotales, total de lo mostrado) y filas compactas en móvil (nombre → historial, lápiz → editar, 44 px de objetivo táctil, selector de orden). Lógica pura en `src/lib/cuentas-tabla.ts` con tests; los valores faltantes siempre van al final.
+- Las cifras de cada fila son las mismas que usaba `AccountRow` (`rendimiento_actual` / `capital_por_cuenta`): valor en CLP, rendimiento en moneda nativa (con la moneda a la vista), anualizado simple. Un chip "+ aporte / − retiro" avisa que hubo un movimiento que no cuenta como rendimiento.
+- Distribuciones: `DistribucionCard` reemplaza a `PlatformBreakdown`, `AssetTypeBreakdown` y `CategoryBreakdown` (eran copias). Barra apilada con colores categóricos (sin verde ni rojo), fila por grupo con su color, % del total, ganancia % y detalle desplegable; aviso de concentración ≥ 40 % igual que antes.
