@@ -1,8 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { Hero } from "@/components/Hero";
-import { PlatformBreakdown } from "@/components/PlatformBreakdown";
-import { AssetTypeBreakdown } from "@/components/AssetTypeBreakdown";
-import { CategoryBreakdown } from "@/components/CategoryBreakdown";
+import { DistribucionCard } from "@/components/DistribucionCard";
 import { PortfolioChart } from "@/components/PortfolioChart";
 import { MarketBenchmark } from "@/components/MarketBenchmark";
 import { MetricasSecundarias } from "@/components/MetricasSecundarias";
@@ -290,9 +288,24 @@ export default async function DashboardPage() {
     </section>
 
     <div className="animate-fade-up grid grid-cols-1 md:grid-cols-2 gap-4" style={{ "--i": 3 } as React.CSSProperties}>
-      <PlatformBreakdown plataformas={plataformas} />
-      <AssetTypeBreakdown tipos={tipos} />
-      <CategoryBreakdown categorias={categorias} />
+      <DistribucionCard
+        titulo="Por plataforma"
+        subtitulo="Cuánto tienes en cada banco o corredora"
+        ayuda="Agrupa tus cuentas por banco o corredora para ver cuánto tienes en cada una, sumando el capital aportado y el valor actual de las cuentas de esa plataforma."
+        grupos={plataformas}
+      />
+      <DistribucionCard
+        titulo="Por tipo de activo"
+        subtitulo="Cómo está repartido tu portafolio"
+        ayuda="Agrupa tus cuentas por tipo (fondo mutuo, acciones, depósito a plazo, etc.) para ver cómo está repartido tu portafolio, sumando el capital aportado y el valor actual de las cuentas de ese tipo."
+        grupos={tipos}
+      />
+      <DistribucionCard
+        titulo="Por categoría"
+        subtitulo="Cómo está repartido tu portafolio según tus propias metas"
+        ayuda='Agrupa tus cuentas por la categoría personalizada que les asignaste (ej. "jubilación", "fondo de emergencia"), sumando el capital aportado y el valor actual de las cuentas de esa categoría. Cuentas sin categoría no aparecen aquí.'
+        grupos={categorias}
+      />
     </div>
 
 
