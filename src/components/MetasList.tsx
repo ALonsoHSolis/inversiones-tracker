@@ -57,7 +57,7 @@ export function MetasList({ metas }: MetasListProps) {
   if (metas.length === 0) {
     return (
       <div className="card p-6">
-        <p className="text-small text-fg-muted">todavía no tienes metas de ahorro.</p>
+        <p className="text-small text-fg-muted">Todavía no tienes metas de ahorro.</p>
       </div>
     );
   }

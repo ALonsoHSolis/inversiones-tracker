@@ -3,6 +3,7 @@
 import { useId, useMemo, useState } from "react";
 import { Area, CartesianGrid, ComposedChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Ayuda } from "@/components/Ayuda";
+import { calcularEjeX } from "@/lib/graficos";
 import { formatoPesos } from "@/lib/formato";
 
 export interface GrupoComposicion {
@@ -33,6 +34,10 @@ const DIAS_POR_PERIODO: Record<Exclude<Periodo, "Máx">, number> = {
   "6M": 182,
   "1A": 365,
 };
+
+function formatoDia(fechaIso: string) {
+  return new Date(fechaIso).toLocaleDateString("es-CL", { day: "2-digit", month: "2-digit", timeZone: "UTC" });
+}
 
 function formatoMes(fechaIso: string) {
   const mes = new Date(fechaIso).toLocaleDateString("es-CL", { month: "short", timeZone: "UTC" });
@@ -97,6 +102,7 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
     return filtrados.length >= 2 ? filtrados : todosLosPuntos;
   }, [todosLosPuntos, periodo]);
 
+  const ejeX = calcularEjeX(puntos.map((p) => p.fecha));
   return (
     <section className="card p-5">
       <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
@@ -178,11 +184,13 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
                 <CartesianGrid horizontal vertical={false} stroke="rgba(255,255,255,.06)" />
                 <XAxis
                   dataKey="fecha"
-                  tickFormatter={formatoMes}
+                  ticks={ejeX.ticks}
+                  interval={0}
+                  padding={{ left: 16, right: 16 }}
+                  tickFormatter={ejeX.porDia ? formatoDia : formatoMes}
                   tick={{ fontSize: 12, fill: "var(--color-fg-subtle)" }}
                   axisLine={{ stroke: "rgba(255,255,255,.06)" }}
                   tickLine={false}
-                  minTickGap={40}
                 />
                 <YAxis hide />
                 <Tooltip

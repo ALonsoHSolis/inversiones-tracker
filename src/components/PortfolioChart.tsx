@@ -3,6 +3,7 @@
 import { useId, useMemo, useState } from "react";
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Ayuda } from "@/components/Ayuda";
+import { calcularEjeX } from "@/lib/graficos";
 import { formatoPesos, formatoPesosSigned } from "@/lib/formato";
 import type { EvolucionPortafolio } from "@/types/database";
 
@@ -32,6 +33,10 @@ function formatoFechaCorta(fechaIso: string) {
     month: "2-digit",
     timeZone: "UTC",
   });
+}
+
+function formatoDia(fechaIso: string) {
+  return new Date(fechaIso).toLocaleDateString("es-CL", { day: "2-digit", month: "2-digit", timeZone: "UTC" });
 }
 
 function formatoMes(fechaIso: string) {
@@ -103,11 +108,11 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
   if (todosLosPuntos.length < 2) {
     return (
       <div>
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between flex-wrap gap-x-3 gap-y-2 mb-2">
           <p className="text-micro font-semibold text-fg-soft">Evolución del portafolio</p>
         </div>
         <p className="text-micro text-fg-muted py-8 text-center">
-          todavía no hay suficiente historial para graficar — vuelve cuando tengas al menos dos fechas
+          Todavía no hay suficiente historial para graficar — vuelve cuando tengas al menos dos fechas
           con valores guardados.
         </p>
       </div>
@@ -116,10 +121,11 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
 
   const gananciaEsPositivaHoy = puntos[puntos.length - 1].gananciaClp >= 0;
   const colorGanancia = gananciaEsPositivaHoy ? "var(--color-pos)" : "var(--color-neg)";
+  const ejeX = calcularEjeX(puntos.map((p) => p.fecha));
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between flex-wrap gap-x-3 gap-y-2 mb-2">
         <div className="flex items-center gap-1.5">
           <p className="text-micro font-semibold text-fg-soft">Evolución del portafolio</p>
           <Ayuda>
@@ -165,11 +171,13 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
             <CartesianGrid horizontal vertical={false} stroke="rgba(255,255,255,.06)" />
             <XAxis
               dataKey="fecha"
-              tickFormatter={formatoMes}
+              ticks={ejeX.ticks}
+              interval={0}
+              padding={{ left: 16, right: 16 }}
+              tickFormatter={ejeX.porDia ? formatoDia : formatoMes}
               tick={{ fontSize: 12, fill: "var(--color-fg-subtle)" }}
               axisLine={{ stroke: "rgba(255,255,255,.06)" }}
               tickLine={false}
-              minTickGap={40}
             />
             <YAxis hide domain={["dataMin", "dataMax"]} />
             <Tooltip content={<TooltipPersonalizado />} cursor={{ stroke: "var(--accent)", strokeOpacity: 0.26 }} />

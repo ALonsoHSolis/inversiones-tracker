@@ -317,7 +317,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
               {cuenta.moneda !== "CLP" && (
                 <div className="mt-2.5 flex flex-col gap-1">
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-micro font-semibold text-fg-muted">tasa de cambio</span>
+                    <span className="text-micro font-semibold text-fg-muted">Tasa de cambio</span>
                     <input
                       type="number"
                       inputMode="decimal"
@@ -363,7 +363,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
               ) : (
                 <div className="mt-2.5 rounded-[10px] bg-white/[0.03] p-2.5 flex flex-col gap-2">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-micro font-medium text-fg-muted">esto incluye un aporte o retiro</span>
+                    <span className="text-micro font-medium text-fg-muted">Esto incluye un aporte o retiro</span>
                     <button
                       type="button"
                       onClick={() => actualizarMovimiento(cuenta, { incluyeMovimiento: false })}
@@ -385,8 +385,8 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                       }
                       className="h-9 px-2 rounded-lg border border-white/[0.14] text-small bg-white/[0.04] text-fg shrink-0"
                     >
-                      <option value="aporte">aporte</option>
-                      <option value="retiro">retiro</option>
+                      <option value="aporte">Aporte</option>
+                      <option value="retiro">Retiro</option>
                     </select>
                     <InputMonto
                       placeholder="monto"

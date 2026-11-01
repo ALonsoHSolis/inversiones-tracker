@@ -208,7 +208,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
   if (filas.length === 0) {
     return (
       <div className="card p-6">
-        <p className="text-small text-fg-muted">todavía no hay historial para esta cuenta.</p>
+        <p className="text-small text-fg-muted">Todavía no hay historial para esta cuenta.</p>
       </div>
     );
   }
@@ -225,7 +225,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
             <p className="text-micro text-fg-subtle font-mono-tabular mb-2">{formatoFecha(fila.fecha)}</p>
 
             <div className="flex items-center justify-between gap-3">
-              <span className="text-micro font-semibold text-fg-muted">valor</span>
+              <span className="text-micro font-semibold text-fg-muted">Valor</span>
               <InputMonto
                 className={`w-32 ${inputClass}`}
                 value={estado.valor}
@@ -235,7 +235,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
 
             {cuenta.moneda !== "CLP" && (
               <div className="mt-2 flex items-center justify-between gap-3">
-                <span className="text-micro text-fg-muted">tasa de cambio</span>
+                <span className="text-micro text-fg-muted">Tasa de cambio</span>
                 <input
                   type="number"
                   inputMode="decimal"
@@ -266,8 +266,8 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                   }
                   className="h-9 px-2 rounded-[8px] border border-white/[0.14] text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
                 >
-                  <option value="aporte">aporte</option>
-                  <option value="retiro">retiro</option>
+                  <option value="aporte">Aporte</option>
+                  <option value="retiro">Retiro</option>
                 </select>
                 <InputMonto
                   placeholder="monto"
@@ -279,7 +279,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
             )}
 
             <label className="mt-2.5 flex flex-col gap-1">
-              <span className="text-micro text-fg-muted">nota (opcional)</span>
+              <span className="text-micro text-fg-muted">Nota (opcional)</span>
               <input
                 type="text"
                 placeholder="ej. caída del mercado"
