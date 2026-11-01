@@ -54,7 +54,7 @@ function TooltipPersonalizado({ active, payload }: { active?: boolean; payload?:
   const esPositivo = punto.gananciaClp >= 0;
 
   return (
-    <div className="rounded-[10px] bg-[rgba(10,13,19,0.94)] border border-white/[0.1] backdrop-blur-[10px] px-3 py-2.5 min-w-[148px] shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
+    <div className="rounded-[10px] bg-[rgba(8,13,22,0.94)] border border-white/[0.1] backdrop-blur-[10px] px-3 py-2.5 min-w-[148px] shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
       <p className="text-micro text-fg-muted mb-1.5">{formatoFechaCorta(punto.fecha)}</p>
       <div className="flex items-center gap-2 mb-1.5">
         <span className="w-2 h-2 rounded-[2px] bg-white/[0.3]" />
@@ -64,7 +64,7 @@ function TooltipPersonalizado({ active, payload }: { active?: boolean; payload?:
         </span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="w-2 h-2 rounded-[2px]" style={{ background: "rgba(62, 217, 163, 0.6)" }} />
+        <span className="w-2 h-2 rounded-[2px]" style={{ background: "rgba(65,215,170, 0.6)" }} />
         <span className="text-micro text-fg-muted">Ganancia</span>
         <span
           className="font-mono-tabular text-micro font-semibold ml-auto"
@@ -228,7 +228,7 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
           Capital aportado
         </span>
         <span className="inline-flex items-center gap-1.5 text-micro font-medium text-fg-muted">
-          <span className="w-2.5 h-2.5 rounded-[3px]" style={{ background: "rgba(62, 217, 163, 0.3)" }} />
+          <span className="w-2.5 h-2.5 rounded-[3px]" style={{ background: "rgba(65,215,170, 0.3)" }} />
           Ganancia real
         </span>
       </div>

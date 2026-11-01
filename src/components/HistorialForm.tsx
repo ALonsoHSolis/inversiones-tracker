@@ -93,7 +93,7 @@ function mensajeErrorAmigable(mensaje: string): string {
 }
 
 const inputClass =
-  "h-9 px-2.5 rounded-[8px] border border-white/[0.14] text-right text-small font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+  "h-9 px-2.5 rounded-[8px] border border-control text-right text-small font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
 
 export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
   const [estados, setEstados] = useState<Record<string, FilaState>>(() =>
@@ -264,7 +264,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                   onChange={(e) =>
                     actualizarMovimiento(fila, { movimientoTipo: e.target.value as TipoMovimiento })
                   }
-                  className="h-9 px-2 rounded-[8px] border border-white/[0.14] text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+                  className="h-9 px-2 rounded-[8px] border border-control text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
                 >
                   <option value="aporte">Aporte</option>
                   <option value="retiro">Retiro</option>
@@ -285,7 +285,7 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                 placeholder="ej. caída del mercado"
                 value={estado.nota}
                 onChange={(e) => actualizarFila(fila.snapshotId, { nota: e.target.value })}
-                className="h-9 px-2.5 rounded-[8px] border border-white/[0.14] text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+                className="h-9 px-2.5 rounded-[8px] border border-control text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
               />
             </label>
 

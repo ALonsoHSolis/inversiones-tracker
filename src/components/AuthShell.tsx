@@ -16,7 +16,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       >
         <div
           className="absolute -top-[120px] -right-[100px] w-[420px] h-[420px] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(205,174,118,.22), transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, rgba(216,186,124,.22), transparent 70%)" }}
         />
         <Logo href="/" light />
 
@@ -28,7 +28,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           <div className="flex flex-col gap-3 mt-[26px]">
             {FEATURES.map((texto) => (
               <span key={texto} className="inline-flex items-center gap-2.5 text-small text-fg-soft">
-                <span className="w-[18px] h-[18px] rounded-md bg-[rgba(205,174,118,0.18)] inline-flex items-center justify-center text-micro text-accent-hi shrink-0">
+                <span className="w-[18px] h-[18px] rounded-md bg-[rgba(216,186,124,0.18)] inline-flex items-center justify-center text-micro text-accent-hi shrink-0">
                   ✓
                 </span>
                 {texto}
@@ -58,7 +58,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             />
             <path
               d="M0 48 C40 45,70 41,100 40 C140 38,165 30,195 27 C235 22,270 18,300 14 L300 31 L250 31 L250 38 L185 38 L185 46 L110 46 L110 54 L0 54 Z"
-              fill="rgba(62,217,163,.22)"
+              fill="rgba(65,215,170,.22)"
             />
             <path
               d="M0 48 C40 45,70 41,100 40 C140 38,165 30,195 27 C235 22,270 18,300 14"

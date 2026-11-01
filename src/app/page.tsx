@@ -107,7 +107,7 @@ export default function LandingPage() {
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -top-24 right-0 w-[560px] h-[560px] rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(205,174,118,0.10), transparent 65%)" }}
+            style={{ background: "radial-gradient(circle, rgba(216,186,124,0.10), transparent 65%)" }}
           />
           <div className="relative animate-fade-up">
             <span className="inline-flex items-center gap-[7px] px-3 py-1.5 rounded-full border border-accent/25 bg-accent/10 text-accent-hi text-micro font-semibold">
@@ -135,7 +135,7 @@ export default function LandingPage() {
               </Link>
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center whitespace-nowrap h-12 px-5 w-full sm:w-auto rounded-[11px] border border-white/[0.14] text-[15px] font-semibold text-fg no-underline transition-[transform,border-color] duration-150 hover:border-white/[0.28] active:scale-[0.98]"
+                className="inline-flex items-center justify-center whitespace-nowrap h-12 px-5 w-full sm:w-auto rounded-[11px] border border-control text-[15px] font-semibold text-fg no-underline transition-[transform,border-color] duration-150 hover:border-white/[0.28] active:scale-[0.98]"
               >
                 Ya tengo cuenta
               </Link>
@@ -149,7 +149,7 @@ export default function LandingPage() {
           </div>
 
           <div className="relative animate-fade-up" style={retraso(120)}>
-            <div className="card p-6 md:p-7 shadow-[0_60px_120px_-40px_rgba(205,174,118,0.16),0_30px_70px_-30px_rgba(0,0,0,0.75)]">
+            <div className="card p-6 md:p-7 shadow-[0_60px_120px_-40px_rgba(216,186,124,0.16),0_30px_70px_-30px_rgba(0,0,0,0.75)]">
               <p className="text-micro uppercase tracking-[0.12em] font-semibold text-fg-subtle">
                 Valor total del portafolio
               </p>
@@ -190,7 +190,7 @@ export default function LandingPage() {
                 />
                 <path
                   d="M0 70 C40 67,70 62,100 60 C140 57,165 48,195 43 C235 36,270 31,300 24 L300 46 L250 46 L250 56 L185 56 L185 68 L110 68 L110 78 L0 78 Z"
-                  fill="rgba(62,217,163,.12)"
+                  fill="rgba(65,215,170,.12)"
                 />
                 <path
                   d="M0 78 L110 78 L110 68 L185 68 L185 56 L250 56 L250 46 L300 46"
@@ -258,7 +258,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="card p-6 md:p-7 border-accent/40 shadow-[0_40px_90px_-40px_rgba(205,174,118,0.25)]">
+            <div className="card p-6 md:p-7 border-accent/40 shadow-[0_40px_90px_-40px_rgba(216,186,124,0.25)]">
               <p className="text-micro uppercase tracking-[0.12em] font-semibold text-accent">
                 Con Mi portafolio
               </p>
@@ -367,7 +367,7 @@ export default function LandingPage() {
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -right-24 -top-32 w-[420px] h-[420px] rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(205,174,118,0.16), transparent 68%)" }}
+              style={{ background: "radial-gradient(circle, rgba(216,186,124,0.16), transparent 68%)" }}
             />
             <div className="relative">
               <h2 className="text-fg text-[28px] md:text-[34px] font-semibold tracking-[-0.025em] leading-[1.12]">

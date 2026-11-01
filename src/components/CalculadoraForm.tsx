@@ -8,7 +8,7 @@ import { formatoPesos, formatoPesosSigned, formatoPct } from "@/lib/formato";
 import type { TipoMovimiento } from "@/types/database";
 
 const inputClass =
-  "h-11 px-3 rounded-[10px] border border-white/[0.14] text-right text-[14px] font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+  "h-11 px-3 rounded-[10px] border border-control text-right text-[14px] font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
 
 export function CalculadoraForm() {
   const [valorInicial, setValorInicial] = useState("");

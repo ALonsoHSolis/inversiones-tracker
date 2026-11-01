@@ -11,7 +11,7 @@ interface EditarCuentaFormProps {
 }
 
 const inputClass =
-  "h-11 px-3 rounded-[10px] border border-white/[0.14] text-[14px] text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+  "h-11 px-3 rounded-[10px] border border-control text-[14px] text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
 const labelClass = "text-micro font-semibold text-fg-muted";
 
 // mismo criterio que CuentaForm: nunca mostrar error.message crudo de
@@ -161,7 +161,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
             dar de baja esta cuenta
           </button>
         ) : (
-          <div className="bg-[rgba(255,107,107,0.08)] border border-[rgba(255,107,107,0.25)] rounded-[10px] px-3.5 py-3">
+          <div className="bg-[rgba(255,120,133,0.08)] border border-[rgba(255,120,133,0.25)] rounded-[10px] px-3.5 py-3">
             <p className="text-micro text-neg-soft leading-relaxed mb-2.5">
               ¿Dar de baja esta cuenta? No se borra el historial, pero dejará de aparecer en el portafolio.
             </p>
@@ -178,7 +178,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
                 type="button"
                 onClick={() => setBajaConfirm(false)}
                 disabled={accion !== null}
-                className="h-[34px] px-3.5 rounded-lg border border-white/[0.14] text-fg-soft text-micro font-semibold disabled:opacity-50"
+                className="h-[34px] px-3.5 rounded-lg border border-control text-fg-soft text-micro font-semibold disabled:opacity-50"
               >
                 cancelar
               </button>

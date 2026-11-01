@@ -13,7 +13,7 @@ import type { Moneda, TipoCuenta } from "@/types/database";
 const MONEDAS: Moneda[] = ["CLP", "USD", "UF"];
 
 const inputClass =
-  "h-11 px-3 rounded-[10px] border border-white/[0.14] text-[14px] text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+  "h-11 px-3 rounded-[10px] border border-control text-[14px] text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
 const labelClass = "text-micro font-semibold text-fg-muted";
 
 // traduce errores tecnicos del rpc crear_cuenta_con_aporte_inicial (o de la

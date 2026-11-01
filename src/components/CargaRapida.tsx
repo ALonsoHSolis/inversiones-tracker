@@ -90,13 +90,13 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
             placeholder="Buscar por nombre o plataforma…"
             value={busquedaCuenta}
             onChange={(e) => setBusquedaCuenta(e.target.value)}
-            className="h-9 px-3 mb-1.5 rounded-[10px] border border-white/[0.14] text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+            className="h-9 px-3 mb-1.5 rounded-[10px] border border-control text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
           />
         )}
         <select
           value={cuentaId}
           onChange={(e) => setCuentaId(e.target.value)}
-          className="h-10 px-3 rounded-[10px] border border-white/[0.14] text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+          className="h-10 px-3 rounded-[10px] border border-control text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
         >
           {!hayCoincidencias && <option disabled>Ninguna cuenta coincide</option>}
           {cuentas.map((c) => (
@@ -405,14 +405,14 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
             <select
               value={movimientoTipo}
               onChange={(e) => cambiarMovimiento({ movimientoTipo: e.target.value as TipoMovimiento })}
-              className="h-9 px-2 rounded-lg border border-white/[0.14] text-small bg-white/[0.04] text-fg shrink-0"
+              className="h-9 px-2 rounded-lg border border-control text-small bg-white/[0.04] text-fg shrink-0"
             >
               <option value="aporte">Aporte</option>
               <option value="retiro">Retiro</option>
             </select>
             <InputMonto
               placeholder="monto"
-              className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-white/[0.14] text-right text-small font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+              className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-control text-right text-small font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
               value={movimientoMonto}
               onChange={(m) => cambiarMovimiento({ movimientoMonto: m })}
             />

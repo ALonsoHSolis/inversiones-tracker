@@ -31,7 +31,7 @@ function construirCorreo(
   const linkPerfil = `${origin}/perfil`;
 
   return `
-    <div style="font-family: sans-serif; font-size: 14px; border-top: 3px solid #CDAE76; padding-top: 18px; color: #0B0D12; line-height: 1.6;">
+    <div style="font-family: sans-serif; font-size: 14px; border-top: 3px solid #d8ba7c; padding-top: 18px; color: #080d16; line-height: 1.6;">
       <p>Hola,</p>
       <p>Este es tu resumen del mes en Mi portafolio.</p>
       <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
