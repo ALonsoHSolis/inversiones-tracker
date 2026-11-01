@@ -31,7 +31,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <FeedbackLink className={ITEM_MENU}>Escríbenos</FeedbackLink>
             <div className="h-px bg-white/[0.07] my-1.5" />
             <form action={logout}>
-              <button type="submit" role="menuitem" className={ITEM_MENU}>
+              <button type="submit" className={ITEM_MENU}>
                 Cerrar sesión
               </button>
             </form>

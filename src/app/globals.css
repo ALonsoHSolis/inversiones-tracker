@@ -142,6 +142,17 @@ body {
   }
 }
 
+/* red de seguridad: con "reducir movimiento" no queda ninguna transicion ni
+   scroll suave, aunque un componente nuevo olvide su propia guarda. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @keyframes authFadeUp {
   from {
     opacity: 0;
