@@ -4,14 +4,13 @@ import { DataHealthView, type AlertaSalud } from "@/components/DataHealthView";
 import { CompositionChart } from "@/components/CompositionChart";
 import { TIPOS } from "@/lib/tipos-cuenta";
 import {
-  calcularMaxDrawdown,
   calcularRacha,
   calcularRendimientoAnualizado,
-  calcularRetornosPortafolio,
   calcularTWR,
   calcularXIRR,
   type FlujoCaja,
 } from "@/lib/rendimiento";
+import { calcularMetricasPortafolio } from "@/lib/metricas-portafolio";
 import { fechaHoyChile } from "@/lib/fecha";
 import {
   calcularAlertasSalud,
@@ -87,7 +86,6 @@ export default async function AnalisisPage() {
     lista.push({ fecha: m.fecha, tipo: m.tipo, monto: m.monto, tasaCambio: m.tasa_cambio });
     movimientosPorCuenta.set(m.cuenta_id, lista);
   });
-  const cuentaPorId = new Map((cuentas ?? []).map((c) => [c.id, c]));
 
   // reusa hoy (ya calculado arriba, mismo string de fecha que usa la
   // consulta de snapshotsHoy) en vez de un new Date()/Date.now() nuevo --
@@ -134,30 +132,19 @@ export default async function AnalisisPage() {
   });
   const gananciaTotalClp = comparacionCuentas.reduce((acc, c) => acc + (c.gananciaClp ?? 0), 0);
 
-  const retornosPortafolio = calcularRetornosPortafolio(
-    (evolucionPortafolio ?? [])
-      .filter((p) => p.valor_total_clp != null && p.capital_aportado_acumulado_clp != null)
-      .map((p) => ({
-        valorTotalClp: p.valor_total_clp!,
-        capitalAportadoAcumuladoClp: p.capital_aportado_acumulado_clp!,
-      }))
-  );
-  const twrPortafolio = calcularTWR(retornosPortafolio);
-  const drawdownPortafolio = calcularMaxDrawdown(retornosPortafolio);
-
-  // xirr del portafolio completo: mismos flujos que arriba, pero convertidos
-  // a clp con la tasa historica propia de cada movimiento (igual criterio
-  // que capital_por_cuenta) -- solo cuentas activas, mismo filtro que ya
-  // aplican capital_por_cuenta/evolucion_portafolio.
-  const flujosPortafolio: FlujoCaja[] = (movimientosTodos ?? [])
-    .filter((m): m is typeof m & { cuenta_id: string; fecha: string } => !!m.cuenta_id && !!m.fecha && cuentaPorId.has(m.cuenta_id))
-    .map((m) => {
-      const cuenta = cuentaPorId.get(m.cuenta_id)!;
-      const montoClp = cuenta.moneda !== "CLP" ? m.monto * (m.tasa_cambio ?? 1) : m.monto;
-      return { fecha: m.fecha, monto: m.tipo === "aporte" ? -montoClp : montoClp };
-    });
-  flujosPortafolio.push({ fecha: hoy, monto: valorActualClp });
-  const xirrPortafolio = calcularXIRR(flujosPortafolio);
+  // twr, drawdown y xirr del portafolio: mismas formulas de siempre, ahora en
+  // src/lib/metricas-portafolio.ts (compartidas con el dashboard).
+  const {
+    twr: twrPortafolio,
+    drawdown: drawdownPortafolio,
+    xirr: xirrPortafolio,
+  } = calcularMetricasPortafolio({
+    evolucion: evolucionPortafolio ?? [],
+    movimientos: movimientosTodos ?? [],
+    cuentas: cuentas ?? [],
+    valorActualClp,
+    hoy,
+  });
 
   const alertasSalud: AlertaSalud[] = calcularAlertasSalud(cuentas ?? [], capitalPorCuentaMap, historialPorCuenta, hoyMs);
 

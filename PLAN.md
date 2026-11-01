@@ -42,8 +42,8 @@ Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
 | # | Fase | Estado |
 |---|------|--------|
 | 1 | Tokens, tipografía Geist, íconos Lucide, contraste AA | PR #11 |
-| 2 | Layout, sidebar colapsable, barra superior, navegación móvil | esta rama |
-| 3 | Dashboard (hero, gráfico, comparadores, métricas secundarias) | pendiente |
+| 2 | Layout, sidebar colapsable, barra superior, navegación móvil | PR #12 |
+| 3 | Dashboard (hero, gráfico, comparadores, métricas secundarias) | esta rama |
 | 4 | Cuentas e instituciones (filas compactas, tabla ordenable/filtrable) | pendiente |
 | 5 | Registro, formularios, metas, análisis | pendiente |
 | 6 | QA responsive (320–1440), accesibilidad, hallazgos financieros previos | pendiente |
@@ -62,3 +62,11 @@ Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
 - **Corregido (regresión propia de la fase 5):** `Hero` (servidor) pasaba una función a `CountUp` (cliente); en la app real Next lo rechaza al serializar y el dashboard caía al error boundary. Los fixtures anteriores no lo detectaban porque renderizaban `Hero` desde un componente cliente. Ahora `CountUp` recibe el formato por nombre (`"pesos"` / `"pesosSigned"`).
 - **Previo, sin tocar:** `src/app/(app)/metas/page.tsx` calcula el progreso de metas inline, duplicando `calcularMetasConProgreso` de `src/lib/dashboard.ts`. No cambia números hoy, pero puede divergir.
 - Verificación visual con un Supabase simulado local (datos de prueba en CLP/USD/UF, sin tocar la base real); no cubre RLS ni las vistas SQL.
+
+### Decisiones de la fase 3
+
+- Hero: valor total protagonista, ganancia real en bloque propio (separada del cambio nominal semanal), capital aportado / valor actual, nota de moneda (CLP; conversión a tasa histórica solo si hay cuentas USD/UF) y "Último registro" tomado de `capital_por_cuenta.ultima_fecha` (solo si existe).
+- Gráfico a todo el ancho con eje Y compacto (`$12,6 M`), sin interpolación (escalones), períodos 1M/3M/6M/1A/Máx con `aria-pressed`, resumen para lectores de pantalla y aviso cuando el período pedido no tiene historial suficiente.
+- Comparadores en tarjetas cuyo texto envuelve (nunca se recorta); sin datos de UF/S&P se muestra "No disponible" en vez de ocultarlos.
+- Métricas secundarias: TWR, XIRR y peor caída, cada una con su propio nombre y ayuda; no se presentan como equivalentes. Los cálculos viven en `src/lib/metricas-portafolio.ts` (movidos tal cual desde `/analisis`, con tests); `/analisis` y el dashboard usan el mismo módulo.
+- `Ayuda` ahora tiene nombre accesible y foco visible.

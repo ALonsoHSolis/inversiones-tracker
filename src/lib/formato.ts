@@ -43,3 +43,17 @@ export function formatoFecha(fechaIso: string) {
     timeZone: "UTC",
   });
 }
+
+// etiqueta corta para ejes de graficos: "$12,6 M" (millones) o "$850 mil".
+// solo presentacion; no participa de ningun calculo.
+export function formatoPesosCompacto(valor: number): string {
+  const abs = Math.abs(valor);
+  const signo = valor < 0 ? "−" : "";
+  if (abs >= 1_000_000) {
+    return `${signo}$${(abs / 1_000_000).toLocaleString("es-CL", { maximumFractionDigits: 1 })} M`;
+  }
+  if (abs >= 1_000) {
+    return `${signo}$${Math.round(abs / 1_000).toLocaleString("es-CL")} mil`;
+  }
+  return `${signo}$${Math.round(abs).toLocaleString("es-CL")}`;
+}

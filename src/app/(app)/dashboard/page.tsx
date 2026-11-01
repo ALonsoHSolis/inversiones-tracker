@@ -5,6 +5,8 @@ import { AssetTypeBreakdown } from "@/components/AssetTypeBreakdown";
 import { CategoryBreakdown } from "@/components/CategoryBreakdown";
 import { PortfolioChart } from "@/components/PortfolioChart";
 import { MarketBenchmark } from "@/components/MarketBenchmark";
+import { MetricasSecundarias } from "@/components/MetricasSecundarias";
+import { calcularMetricasPortafolio } from "@/lib/metricas-portafolio";
 import { Ayuda } from "@/components/Ayuda";
 import { AccountRow } from "@/components/AccountRow";
 import { CargaRapida } from "@/components/CargaRapida";
@@ -36,6 +38,7 @@ export default async function DashboardPage() {
     { data: snapshotsHoy },
     { data: capitalPorCuenta },
     { data: evolucionPortafolio },
+    { data: movimientosTodos },
     { data: metas },
     { data: metaCuentas },
     { count: cuentasInactivasCount },
@@ -49,6 +52,7 @@ export default async function DashboardPage() {
     supabase.from("evolucion_portafolio").select("*").order("fecha"),
     // metas de ahorro (fase 3 del roadmap) -- el progreso se calcula aca
     // reusando capital_por_cuenta, ya consultado arriba, no vive en sql.
+    supabase.from("movimientos").select("cuenta_id, fecha, tipo, monto, tasa_cambio").order("fecha"),
     supabase.from("metas").select("*").order("created_at"),
     supabase.from("meta_cuentas").select("meta_id, cuenta_id"),
     supabase.from("cuentas").select("id", { count: "exact", head: true }).eq("activa", false),
@@ -150,6 +154,22 @@ export default async function DashboardPage() {
     valorAnteriorPorCuenta[cuenta.id] = capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null;
   });
 
+  // fecha del registro mas reciente entre todas las cuentas (dato real de
+  // capital_por_cuenta.ultima_fecha); null si ninguna cuenta tiene registros.
+  const ultimaActualizacion = (capitalPorCuenta ?? []).reduce<string | null>(
+    (max, c) => (c.ultima_fecha && (!max || c.ultima_fecha > max) ? c.ultima_fecha : max),
+    null
+  );
+
+  // twr / xirr / drawdown del portafolio: mismas formulas que /analisis.
+  const metricasPortafolio = calcularMetricasPortafolio({
+    evolucion: evolucionPortafolio ?? [],
+    movimientos: movimientosTodos ?? [],
+    cuentas: cuentasActivas,
+    valorActualClp,
+    hoy,
+  });
+
 
 
 
@@ -161,6 +181,8 @@ export default async function DashboardPage() {
       valorTotalAnterior={valorTotalAnterior}
       capitalAportadoClp={capitalAportadoClp}
       valorActualClp={valorActualClp}
+      ultimaActualizacion={ultimaActualizacion}
+      hayMonedaExtranjera={cuentasActivas.some((c) => c.moneda !== "CLP")}
       chart={<PortfolioChart datos={evolucionPortafolio ?? []} />}
       benchmark={
         <MarketBenchmark
@@ -172,6 +194,14 @@ export default async function DashboardPage() {
         />
       }
     />
+
+    {cuentasActivas.length > 0 && (
+      <MetricasSecundarias
+        twr={metricasPortafolio.twr}
+        xirr={metricasPortafolio.xirr}
+        drawdown={metricasPortafolio.drawdown}
+      />
+    )}
 
     <div className="animate-fade-up grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4  items-start" style={{ "--i": 1 } as React.CSSProperties}>
       <section className="card p-5">
