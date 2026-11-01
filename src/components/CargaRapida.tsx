@@ -98,7 +98,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }:
           onChange={(e) => setCuentaId(e.target.value)}
           className="h-10 px-3 rounded-[10px] border border-white/[0.14] text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
         >
-          {!hayCoincidencias && <option disabled>ninguna cuenta coincide</option>}
+          {!hayCoincidencias && <option disabled>Ninguna cuenta coincide</option>}
           {cuentas.map((c) => (
             <option key={c.id} value={c.id} style={{ display: coincideBusqueda(c) ? undefined : "none" }}>
               {c.nombre} · {c.plataforma}
@@ -347,7 +347,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
       {cuenta.moneda !== "CLP" && (
         <div className="mt-3 flex flex-col gap-1">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-micro font-semibold text-fg-muted">tasa de cambio</span>
+            <span className="text-micro font-semibold text-fg-muted">Tasa de cambio</span>
             <input
               type="number"
               inputMode="decimal"
@@ -387,7 +387,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
       ) : (
         <div className="mt-3 rounded-[10px] bg-white/[0.03] p-2.5 flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-micro font-medium text-fg-muted">esto incluye un aporte o retiro</span>
+            <span className="text-micro font-medium text-fg-muted">Esto incluye un aporte o retiro</span>
             <button
               type="button"
               onClick={() => cambiarMovimiento({ incluyeMovimiento: false })}
@@ -407,8 +407,8 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
               onChange={(e) => cambiarMovimiento({ movimientoTipo: e.target.value as TipoMovimiento })}
               className="h-9 px-2 rounded-lg border border-white/[0.14] text-small bg-white/[0.04] text-fg shrink-0"
             >
-              <option value="aporte">aporte</option>
-              <option value="retiro">retiro</option>
+              <option value="aporte">Aporte</option>
+              <option value="retiro">Retiro</option>
             </select>
             <InputMonto
               placeholder="monto"

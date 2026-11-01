@@ -83,7 +83,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
     <div className="card p-6">
       <div className="flex flex-col gap-[15px]">
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>nombre</span>
+          <span className={labelClass}>Nombre</span>
           <input
             type="text"
             required
@@ -94,7 +94,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
         </label>
 
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>plataforma</span>
+          <span className={labelClass}>Plataforma</span>
           <input
             type="text"
             required
@@ -105,7 +105,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
         </label>
 
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>tipo</span>
+          <span className={labelClass}>Tipo</span>
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value as TipoCuenta)}
@@ -120,7 +120,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
         </label>
 
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>categoría (opcional)</span>
+          <span className={labelClass}>Categoría (opcional)</span>
           <input
             type="text"
             placeholder="ej. jubilación, fondo de emergencia"
@@ -131,7 +131,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
         </label>
 
         <div className="flex flex-col gap-[7px]">
-          <span className={labelClass}>moneda</span>
+          <span className={labelClass}>Moneda</span>
           <p className="h-11 px-3 rounded-[10px] border border-white/[0.08] bg-white/[0.02] flex items-center text-[14px] text-fg-muted">
             {cuenta.moneda}
           </p>

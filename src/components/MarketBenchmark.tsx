@@ -21,7 +21,7 @@ function Ring({ label, pct }: { label: string; pct: number }) {
   const dasharray = `${relleno.toFixed(2)} ${(100 - relleno).toFixed(2)}`;
 
   return (
-    <div className="flex items-center gap-2 py-1.5 pl-1.5 pr-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex-1 min-w-0">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2 p-2.5 sm:py-1.5 sm:pl-1.5 sm:pr-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex-1 basis-0 min-w-0">
       <svg viewBox="0 0 36 36" width="32" height="32" className="shrink-0">
         <circle cx="18" cy="18" r="15.9155" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="4" />
         <circle
@@ -37,7 +37,7 @@ function Ring({ label, pct }: { label: string; pct: number }) {
         />
       </svg>
       <div className="min-w-0">
-        <p className="text-micro font-semibold text-fg-subtle whitespace-nowrap overflow-hidden text-ellipsis">
+        <p className="text-micro font-semibold text-fg-subtle leading-tight sm:whitespace-nowrap sm:overflow-hidden sm:text-ellipsis">
           {label}
         </p>
         <p className="font-mono-tabular mt-px text-xs font-semibold" style={{ color }}>

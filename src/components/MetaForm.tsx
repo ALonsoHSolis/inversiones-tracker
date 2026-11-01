@@ -108,7 +108,7 @@ export function MetaForm({ cuentas }: MetaFormProps) {
     <div className="card p-6">
       <div className="flex flex-col gap-[15px]">
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>nombre de la meta</span>
+          <span className={labelClass}>Nombre de la meta</span>
           <input
             type="text"
             required
@@ -120,7 +120,7 @@ export function MetaForm({ cuentas }: MetaFormProps) {
         </label>
 
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>monto objetivo</span>
+          <span className={labelClass}>Monto objetivo</span>
           <InputMonto
             value={montoObjetivo}
             onChange={setMontoObjetivo}
@@ -130,7 +130,7 @@ export function MetaForm({ cuentas }: MetaFormProps) {
         </label>
 
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>fecha objetivo (opcional)</span>
+          <span className={labelClass}>Fecha objetivo (opcional)</span>
           <input
             type="date"
             value={fechaObjetivo}
@@ -141,7 +141,7 @@ export function MetaForm({ cuentas }: MetaFormProps) {
 
         {cuentas.length > 0 && (
           <div className="flex flex-col gap-[7px]">
-            <span className={labelClass}>cuentas que aportan a esta meta (opcional)</span>
+            <span className={labelClass}>Cuentas que aportan a esta meta (opcional)</span>
             <div className="flex flex-col gap-1.5 rounded-[10px] border border-white/[0.14] bg-white/[0.02] p-2.5">
               {cuentas.map((c) => (
                 <label key={c.id} className="flex items-center gap-2.5 py-1 cursor-pointer">
@@ -167,7 +167,7 @@ export function MetaForm({ cuentas }: MetaFormProps) {
           disabled={guardando}
           className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-ink text-[14px] font-semibold disabled:opacity-50"
         >
-          {guardando ? "creando..." : "crear meta"}
+          {guardando ? "Creando..." : "Crear meta"}
         </button>
       </div>
     </div>

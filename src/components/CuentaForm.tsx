@@ -181,7 +181,7 @@ export function CuentaForm() {
     <div className="card p-6">
       <div className="flex flex-col gap-[15px]">
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>nombre</span>
+          <span className={labelClass}>Nombre</span>
           <input
             type="text"
             required
@@ -192,7 +192,7 @@ export function CuentaForm() {
         </label>
 
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>plataforma</span>
+          <span className={labelClass}>Plataforma</span>
           <input
             type="text"
             required
@@ -203,7 +203,7 @@ export function CuentaForm() {
         </label>
 
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>tipo</span>
+          <span className={labelClass}>Tipo</span>
           <select
             value={tipo}
             onChange={(e) => setTipo(e.target.value as TipoCuenta)}
@@ -218,7 +218,7 @@ export function CuentaForm() {
         </label>
 
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>categoría (opcional)</span>
+          <span className={labelClass}>Categoría (opcional)</span>
           <input
             type="text"
             placeholder="ej. jubilación, fondo de emergencia"
@@ -229,7 +229,7 @@ export function CuentaForm() {
         </label>
 
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>moneda</span>
+          <span className={labelClass}>Moneda</span>
           <select
             value={moneda}
             onChange={(e) => setMoneda(e.target.value as Moneda)}
@@ -244,18 +244,21 @@ export function CuentaForm() {
         </label>
 
         <label className="flex flex-col gap-[7px]">
-          <span className={labelClass}>monto inicial</span>
+          <span className={labelClass}>Monto inicial</span>
           <InputMonto
             value={montoInicial}
             onChange={setMontoInicial}
             placeholder="0"
             className={`${inputClass} text-right font-mono-tabular`}
           />
+          <span className="text-micro text-fg-subtle">
+            Se registra como tu primer aporte, no como ganancia.
+          </span>
         </label>
 
         {moneda !== "CLP" && (
           <label className="flex flex-col gap-[7px]">
-            <span className={labelClass}>tasa de cambio</span>
+            <span className={labelClass}>Tasa de cambio</span>
             <input
               type="number"
               inputMode="decimal"
@@ -267,7 +270,7 @@ export function CuentaForm() {
               className={`${inputClass} text-right font-mono-tabular`}
             />
             {cargandoTasa && (
-              <span className="text-micro text-fg-muted">buscando tasa en mindicador.cl...</span>
+              <span className="text-micro text-fg-muted">Buscando tasa en mindicador.cl...</span>
             )}
             {!cargandoTasa && tasaFecha && (
               <span className="text-micro text-fg-muted">
@@ -297,7 +300,7 @@ export function CuentaForm() {
           disabled={guardando || cargandoTasa}
           className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-ink text-[14px] font-semibold disabled:opacity-50"
         >
-          {guardando ? "guardando..." : "crear cuenta"}
+          {guardando ? "Guardando..." : "Crear cuenta"}
         </button>
       </div>
     </div>

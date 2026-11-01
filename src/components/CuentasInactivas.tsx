@@ -43,7 +43,7 @@ export function CuentasInactivas({ cuentas }: CuentasInactivasProps) {
   if (cuentas.length === 0) {
     return (
       <div className="card p-6">
-        <p className="text-small text-fg-muted">no tienes cuentas dadas de baja.</p>
+        <p className="text-small text-fg-muted">No tienes cuentas dadas de baja.</p>
       </div>
     );
   }

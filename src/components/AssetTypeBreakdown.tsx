@@ -52,7 +52,7 @@ export function AssetTypeBreakdown({ tipos }: AssetTypeBreakdownProps) {
                   <div className="h-full rounded bg-[var(--accent)]" style={{ width: `${share}%` }} />
                 </div>
                 <div className="flex items-baseline justify-between">
-                  <span className="text-micro text-fg-muted font-mono-tabular inline-flex items-center gap-1">
+                  <span className="text-micro text-fg-muted tabular-nums inline-flex items-center gap-1">
                     {share.toFixed(1)}% del total
                     {altaConcentracion && (
                       <span aria-hidden="true" className="inline-block w-1.5 h-1.5 rounded-full bg-warn" />
