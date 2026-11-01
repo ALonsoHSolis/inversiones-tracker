@@ -39,15 +39,15 @@ export default async function MetasPage() {
   });
 
   return (
-    <div className="mx-auto max-w-[560px]">
+    <div className="mx-auto max-w-[640px]">
 
       <div className="flex items-center justify-between gap-4 mb-1">
-        <h1 className="text-[19px] font-semibold tracking-[-0.02em] text-fg">Tus metas de ahorro</h1>
+        <h1 className="text-[22px] font-semibold tracking-[-0.02em] text-fg">Tus metas de ahorro</h1>
         <Link
           href="/metas/nueva"
-          className="inline-flex items-center gap-1 text-micro font-semibold text-[var(--accent)] no-underline"
+          className="inline-flex h-10 items-center gap-1 rounded-full border border-accent/40 px-4 text-small font-semibold text-accent no-underline hover:bg-accent/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
-          + agregar meta
+          + Agregar meta
         </Link>
       </div>
       <p className="text-small text-fg-muted mb-6">

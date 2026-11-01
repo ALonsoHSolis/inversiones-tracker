@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { formatoPesos, formatoFecha } from "@/lib/formato";
@@ -56,8 +58,20 @@ export function MetasList({ metas }: MetasListProps) {
 
   if (metas.length === 0) {
     return (
-      <div className="card p-6">
-        <p className="text-small text-fg-muted">Todavía no tienes metas de ahorro.</p>
+      <div className="rounded-xl border border-dashed border-white/[0.16] px-5 py-8 text-center">
+        <span aria-hidden="true" className="mx-auto grid h-12 w-12 place-items-center rounded-xl border border-accent/30 bg-accent/15 text-accent">
+          <Target size={22} strokeWidth={1.8} />
+        </span>
+        <p className="mt-4 text-base font-semibold text-fg">Todavía no tienes metas</p>
+        <p className="mx-auto mt-1.5 max-w-[340px] text-small leading-relaxed text-fg-muted">
+          Una meta te muestra cuánto te falta para llegar a un monto, sumando el valor de las cuentas que le asocies.
+        </p>
+        <Link
+          href="/metas/nueva"
+          className="mt-5 inline-flex h-11 items-center rounded-full bg-[var(--accent)] px-5 text-small font-semibold text-ink no-underline transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          Crear primera meta
+        </Link>
       </div>
     );
   }
@@ -71,7 +85,7 @@ export function MetasList({ metas }: MetasListProps) {
         const cumplida = faltante <= 0;
 
         return (
-          <div key={meta.id} className="border border-white/[0.07] rounded-xl px-[15px] py-[13px]">
+          <div key={meta.id} className="border border-[var(--line)] rounded-xl px-4 py-3.5">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-small font-semibold text-fg">{meta.nombre}</p>
@@ -85,13 +99,21 @@ export function MetasList({ metas }: MetasListProps) {
                 type="button"
                 onClick={() => eliminarMeta(meta)}
                 disabled={eliminandoId === meta.id}
-                className="text-micro text-fg-subtle border-b border-white/[0.12] shrink-0 disabled:opacity-50"
+                aria-label={`Eliminar la meta ${meta.nombre}`}
+                className="min-h-10 rounded-lg px-2 text-small font-medium text-fg-muted hover:bg-white/[0.06] hover:text-fg shrink-0 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-accent"
               >
-                {eliminandoId === meta.id ? "eliminando..." : "eliminar"}
+                {eliminandoId === meta.id ? "Eliminando…" : "Eliminar"}
               </button>
             </div>
 
-            <div className="h-2 rounded bg-white/[0.08] my-2.5 overflow-hidden">
+            <div
+              role="progressbar"
+              aria-label={`Progreso de ${meta.nombre}`}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(pctVisual)}
+              className="h-2 rounded bg-white/[0.08] my-2.5 overflow-hidden"
+            >
               <div
                 className="h-full rounded"
                 style={{ width: `${pctVisual}%`, background: cumplida ? "var(--pos)" : "var(--accent)" }}
@@ -99,7 +121,7 @@ export function MetasList({ metas }: MetasListProps) {
             </div>
 
             <div className="flex items-baseline justify-between">
-              <span className="font-mono-tabular text-micro font-semibold text-fg">
+              <span className="money-value font-mono-tabular text-micro font-semibold text-fg">
                 {formatoPesos(meta.montoActualClp)}{" "}
                 <span className="text-fg-muted font-normal">de {formatoPesos(meta.montoObjetivo)}</span>
               </span>

@@ -80,6 +80,12 @@ function Acciones({ fila }: { fila: FilaCuenta }) {
   return (
     <div className="flex items-center justify-end gap-1">
       <Link
+        href={`/registrar?cuenta=${fila.id}`}
+        className={`rounded-lg px-2.5 py-2 text-small font-semibold text-accent no-underline hover:bg-white/[0.06] hover:text-accent-hi ${FOCO}`}
+      >
+        Registrar
+      </Link>
+      <Link
         href={`/cuentas/${fila.id}/historial`}
         className={`rounded-lg px-2.5 py-2 text-small font-medium text-fg-soft no-underline hover:bg-white/[0.06] hover:text-fg ${FOCO}`}
       >
@@ -371,7 +377,7 @@ export function CuentasTabla({ filas }: { filas: FilaCuenta[] }) {
         <>
           {/* escritorio: tabla */}
           <div className="card hidden overflow-x-auto md:block">
-            <table className="w-full min-w-[720px] border-collapse">
+            <table className="w-full min-w-[800px] border-collapse">
               <caption className="sr-only">
                 Cuentas con su valor en pesos y rendimiento en la moneda de cada cuenta
               </caption>

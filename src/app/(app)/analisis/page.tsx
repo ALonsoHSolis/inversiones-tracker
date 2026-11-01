@@ -148,6 +148,17 @@ export default async function AnalisisPage() {
 
   const alertasSalud: AlertaSalud[] = calcularAlertasSalud(cuentas ?? [], capitalPorCuentaMap, historialPorCuenta, hoyMs);
 
+  const secciones = [
+    { id: "composicion", etiqueta: "Composición" },
+    ...(cuentasActivas.length > 0
+      ? [
+          { id: "comparacion", etiqueta: "Comparación de cuentas" },
+          { id: "salud", etiqueta: "Salud de los datos" },
+        ]
+      : []),
+    { id: "metodologia", etiqueta: "Cómo leer las métricas" },
+  ];
+
   return (
     <div className="mx-auto w-full max-w-[1160px]">
       <h1 className="text-[22px] font-semibold tracking-[-0.02em] text-fg">Análisis</h1>
@@ -156,20 +167,68 @@ export default async function AnalisisPage() {
         distinta; la ayuda de cada bloque explica cuál.
       </p>
 
-      <div className="mt-6 flex flex-col gap-4">
-        <CompositionChart porPlataforma={composicionPorPlataforma} porTipo={composicionPorTipo} />
+      <nav
+        aria-label="Secciones del análisis"
+        className="no-print sticky top-14 lg:top-16 z-10 -mx-4 sm:-mx-6 lg:-mx-8 mt-5 border-b border-[var(--line)] bg-ink/90 px-4 sm:px-6 lg:px-8 backdrop-blur-md"
+      >
+        <ul className="flex gap-1 overflow-x-auto py-2 [scrollbar-width:none]">
+          {secciones.map((sec) => (
+            <li key={sec.id} className="shrink-0">
+              <a
+                href={`#${sec.id}`}
+                className="inline-flex h-10 items-center rounded-full px-3.5 text-small font-medium text-fg-muted no-underline transition-colors duration-150 hover:bg-white/[0.06] hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+              >
+                {sec.etiqueta}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div className="mt-6 flex flex-col gap-6">
+        <div id="composicion" className="scroll-mt-32">
+          <CompositionChart porPlataforma={composicionPorPlataforma} porTipo={composicionPorTipo} />
+        </div>
         {cuentasActivas.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-            <AccountComparison
-              cuentas={comparacionCuentas}
-              gananciaTotalClp={gananciaTotalClp}
-              twrPortafolio={twrPortafolio}
-              drawdownPortafolio={drawdownPortafolio}
-              xirrPortafolio={xirrPortafolio}
-            />
-            <DataHealthView alertas={alertasSalud} />
+            <div id="comparacion" className="scroll-mt-32">
+              <AccountComparison
+                cuentas={comparacionCuentas}
+                gananciaTotalClp={gananciaTotalClp}
+                twrPortafolio={twrPortafolio}
+                drawdownPortafolio={drawdownPortafolio}
+                xirrPortafolio={xirrPortafolio}
+              />
+            </div>
+            <div id="salud" className="scroll-mt-32">
+              <DataHealthView alertas={alertasSalud} />
+            </div>
           </div>
         )}
+
+        <section id="metodologia" aria-labelledby="metodologia-titulo" className="card scroll-mt-32 p-5">
+          <h2 id="metodologia-titulo" className="text-small font-semibold text-fg">
+            Cómo leer las métricas
+          </h2>
+          <p className="mt-1 text-micro text-fg-muted">
+            Ninguna reemplaza a otra: cada una responde una pregunta distinta.
+          </p>
+          <dl className="mt-4 grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2">
+            {[
+              ["Rendimiento real", "Cambio de valor de una cuenta menos los aportes y retiros del período. Un depósito nunca cuenta como ganancia. Se muestra en la moneda de cada cuenta."],
+              ["Ganancia real total", "Valor actual menos capital aportado, todo en pesos con la tasa de cada registro. Incluye el efecto del tipo de cambio en tus cuentas en USD o UF."],
+              ["TWR", "Encadena el rendimiento de cada período del portafolio, sin importar cuánto aportaste o retiraste. Mide qué tan bien rindió la inversión. Es un acumulado, no anual."],
+              ["XIRR", "Tasa anual que respeta la fecha exacta de cada aporte y retiro. Mide cuánto rindió tu dinero según cuándo lo pusiste. Con poca historia puede ser extrema."],
+              ["Anualizado", "Aproximación simple: lleva la ganancia acumulada a una tasa por año. No ajusta por el momento de cada aporte (eso lo hace el XIRR)."],
+              ["Peor caída", "La mayor baja desde un máximo hasta el mínimo posterior, medida sobre la serie del TWR. Solo ve lo que capturaron tus registros."],
+            ].map(([termino, definicion]) => (
+              <div key={termino}>
+                <dt className="text-small font-semibold text-fg-soft">{termino}</dt>
+                <dd className="mt-1 text-micro leading-relaxed text-fg-muted">{definicion}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
       </div>
     </div>
   );

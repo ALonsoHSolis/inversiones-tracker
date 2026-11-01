@@ -10,6 +10,10 @@ interface InputMontoProps {
   onChange: (valorCrudo: string) => void;
   placeholder?: string;
   className?: string;
+  // accesibilidad: permite asociar etiqueta y mensaje de error al campo
+  id?: string;
+  invalido?: boolean;
+  describedBy?: string;
 }
 
 // mientras el campo esta enfocado se ve y edita el numero crudo (igual que
@@ -18,11 +22,14 @@ interface InputMontoProps {
 // "25978403" sin separadores, que se lee como un numero roto -- pero sin
 // arriesgar romper el punto decimal de una cuenta en uf mientras se escribe,
 // que es lo que pasaba al intentar formatear en cada tecla.
-export function InputMonto({ value, onChange, placeholder, className }: InputMontoProps) {
+export function InputMonto({ value, onChange, placeholder, className, id, invalido, describedBy }: InputMontoProps) {
   const [enfocado, setEnfocado] = useState(false);
 
   return (
     <input
+      id={id}
+      aria-invalid={invalido || undefined}
+      aria-describedby={describedBy}
       type="text"
       inputMode="decimal"
       placeholder={placeholder}
