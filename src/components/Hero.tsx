@@ -1,4 +1,5 @@
 import { Ayuda } from "@/components/Ayuda";
+import { CountUp } from "@/components/CountUp";
 import { formatoPct, formatoPesos, formatoPesosSigned } from "@/lib/formato";
 import type { ReactNode } from "react";
 
@@ -49,7 +50,7 @@ export function Hero({
             Valor total del portafolio
           </p>
           <p className="money-value mt-3 font-mono-tabular font-medium text-[44px] sm:text-[52px] leading-none tracking-[-0.025em] text-fg">
-            {formatoPesos(valorTotal)}
+            <CountUp valor={valorTotal} formato={formatoPesos} claveSesion="valor-total" />
           </p>
 
           <div className="mt-7">
@@ -66,7 +67,7 @@ export function Hero({
               className="money-value mt-1.5 font-mono-tabular text-[28px] font-semibold leading-tight tracking-[-0.01em]"
               style={{ color: colorGanancia }}
             >
-              {formatoPesosSigned(gananciaTotal)}
+              <CountUp valor={gananciaTotal} formato={formatoPesosSigned} claveSesion="ganancia-total" />
               {gananciaPct !== null && <span className="ml-2 text-base font-medium">({formatoPct(gananciaPct)})</span>}
             </p>
 
