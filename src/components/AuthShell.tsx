@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Logo } from "@/components/Logo";
+import { Logo, LogoMark } from "@/components/Logo";
 
 const FEATURES = [
   "Todo consolidado en pesos (CLP · UF · USD)",
@@ -40,7 +40,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div className="relative bg-white/[0.05] border border-white/[0.1] rounded-2xl px-[18px] py-4">
           <div className="flex items-center justify-between">
             <span className="text-micro uppercase tracking-[0.09em] text-white/65 font-semibold">
-              Valor total
+              Valor total · ejemplo ilustrativo
             </span>
             <span className="font-mono-tabular text-micro font-semibold text-[var(--pos)]">▲ +10,0%</span>
           </div>
@@ -71,8 +71,18 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="flex flex-col px-5 py-6 md:px-7 bg-ink min-h-screen">
-        <div>
+      <div className="relative flex flex-col px-5 py-6 md:px-7 bg-ink min-h-screen overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="md:hidden pointer-events-none absolute -top-[180px] left-1/2 h-[360px] w-[520px] -translate-x-1/2 rounded-full"
+          style={{ background: "radial-gradient(closest-side, rgba(216,186,124,.20), transparent)" }}
+        />
+        <div className="md:hidden relative flex flex-col items-center gap-3 pt-4 pb-4">
+          <LogoMark size={44} />
+          <p className="text-[13px] font-semibold uppercase tracking-[0.32em] text-fg">Mi portafolio</p>
+          <p className="text-micro text-fg-muted">Rendimiento real, sin confundir aportes con ganancia</p>
+        </div>
+        <div className="relative">
           <Link
             href="/"
             className="inline-block px-1 py-2 text-small font-medium text-fg-subtle hover:text-fg-muted"
@@ -80,7 +90,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             ← Volver al inicio
           </Link>
         </div>
-        <div className="flex-1 flex items-center justify-center py-6">
+        <div className="relative flex-1 flex items-center justify-center py-6">
           <div className="w-full max-w-[384px] auth-fade-up">{children}</div>
         </div>
         <p className="text-center text-micro text-fg-subtle">Mi portafolio · seguimiento de rendimiento real</p>

@@ -46,7 +46,8 @@ Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
 | 3 | Dashboard (hero, gráfico, comparadores, métricas secundarias) | PR #13 |
 | 4 | Cuentas e instituciones (filas compactas, tabla ordenable/filtrable) | PR #14 |
 | 5 | Registro, formularios, metas, análisis | PR #15 |
-| 6 | QA responsive (320–1440), accesibilidad, hallazgos financieros previos | esta rama |
+| 6 | QA responsive (320–1440), accesibilidad, hallazgos financieros previos | PR #16 |
+| 7 | Inspiración de apps de billetera (navegación píldora, atajos, actividad, comprobante) | esta rama |
 
 ### Decisiones de la fase 2
 
@@ -97,3 +98,16 @@ Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
 - Impresión (`.no-print`) verificada.
 - Hallazgos financieros previos documentados (sin alterar) en `docs/hallazgos-rediseno.md`, con pruebas de caracterización de `calcularMetasConProgreso`.
 - Pruebas: 67 en `npm test`, `tsc` y `eslint` limpios.
+
+### Decisiones de la fase 7 (inspiración de referencias visuales)
+
+Referencias: capturas de un kit de UI de billetera digital (negro de alto contraste, tarjeta metálica, número de saldo grande, barra apilada de gastos, navegación en píldora, lista de actividad por día, comprobante). Se tomaron **principios**, no su diseño ni su marca; la paleta Midnight/champán se mantiene.
+
+- **Navegación móvil en píldora flotante:** el ítem activo lleva un círculo champán; todos conservan su etiqueta visible (probado a 320 px sin recortes).
+- **Atajos bajo el resumen** (`AccionesRapidas`): Registrar valor, Nueva cuenta, Nueva meta, Informe; solo enlaces a pantallas existentes.
+- **Actividad reciente** (`ActividadReciente` + `src/lib/actividad.ts` con tests): últimos aportes/retiros agrupados por Hoy / Ayer / Anteriores, desde la consulta de `movimientos` que el dashboard ya hacía. Decisión de producto: **un aporte nunca va en verde ni con "+"** (el verde es ganancia); aportes en champán, retiros en neutro con "−", y el texto aclara que no son ganancia. Montos en moneda nativa de la cuenta, sin convertir.
+- **Hero con brillo champán sutil** (`.card-hero`), sin cambiar cifras ni estructura.
+- **Comprobante al guardar** en `CargaRapida`: muestra cuenta, fecha, valor y aporte/retiro guardados (mismos valores enviados al RPC, que no cambió).
+- **Login/signup móvil:** marca con wordmark espaciado. El panel de escritorio traía cifras de ejemplo fijas ($17.491.080 / +10,0%): ahora dice "ejemplo ilustrativo".
+- No se adoptó "deslizar para enviar" ni teclado numérico propio (accesibilidad y riesgo de errores al registrar valores).
+- Verificación: tsc, eslint, 72 tests, axe WCAG 2.2 AA sin violaciones (8 rutas × 4 anchos + login/signup), sin desbordamiento, build.

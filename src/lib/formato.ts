@@ -57,3 +57,12 @@ export function formatoPesosCompacto(valor: number): string {
   }
   return `${signo}$${Math.round(abs).toLocaleString("es-CL")}`;
 }
+
+// monto en la moneda nativa de la cuenta, sin signo de ganancia.
+export function formatoMontoNativo(monto: number, moneda: string): string {
+  if (moneda === "USD") {
+    return monto.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });
+  }
+  if (moneda === "UF") return `${monto.toLocaleString("es-CL", { maximumFractionDigits: 2 })} UF`;
+  return monto.toLocaleString("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 });
+}

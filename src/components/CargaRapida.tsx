@@ -8,7 +8,7 @@ import { obtenerTasaCambio } from "@/lib/mindicador";
 import { Ayuda } from "@/components/Ayuda";
 import { InputMonto } from "@/components/InputMonto";
 import { SelectorCuenta } from "@/components/SelectorCuenta";
-import { formatoFecha } from "@/lib/formato";
+import { formatoFecha, formatoMontoNativo } from "@/lib/formato";
 import { advertenciaRegistro, calcularValorSugerido, validarRegistro, type ErroresRegistro } from "@/lib/registro";
 import type { Cuenta, Moneda, TipoMovimiento } from "@/types/database";
 import { fechaHoyChile } from "@/lib/fecha";
@@ -98,6 +98,13 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
   const [guardando, setGuardando] = useState(false);
   // "ok" tras guardar; un mensaje si el servidor rechazo el guardado
   const [resultado, setResultado] = useState<"ok" | string | null>(null);
+  // lo que se acaba de guardar, para mostrarlo como comprobante (solo
+  // presentacion: son los mismos valores que se enviaron al rpc)
+  const [comprobante, setComprobante] = useState<{
+    fecha: string;
+    valor: number;
+    movimiento: { tipo: TipoMovimiento; monto: number } | null;
+  } | null>(null);
   // errores por campo (impiden guardar) y advertencia que pide confirmar
   const [errores, setErrores] = useState<ErroresRegistro>({});
   const [advertencia, setAdvertencia] = useState<string | null>(null);
@@ -199,6 +206,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
   // forzar=true: el usuario ya vio la advertencia y eligio guardar igual.
   async function guardar(forzar = false) {
     setResultado(null);
+    setComprobante(null);
 
     const erroresNuevos = validarRegistro({
       valor,
@@ -251,6 +259,11 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
       setResultado(error.message);
       return;
     }
+    setComprobante({
+      fecha: hoy,
+      valor: Number(valor),
+      movimiento: incluyeMovimiento ? { tipo: movimientoTipo, monto: Number(movimientoMonto) } : null,
+    });
     setValor("");
     setErrores({});
     setValorEditadoManualmente(false);
@@ -452,10 +465,45 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
 
       <div aria-live="polite">
         {resultado === "ok" && (
-          <p className="mt-3 flex items-center justify-center gap-1.5 text-small font-semibold text-[var(--pos)]">
-            <CheckCircle2 size={16} aria-hidden="true" />
-            Registro guardado: {cuenta.nombre}
-          </p>
+          <div className="animate-fade-up mt-4 rounded-2xl border border-dashed border-white/[0.18] bg-white/[0.03] px-4 py-4">
+            <p className="flex items-center gap-2 text-small font-semibold text-[var(--pos)]">
+              <CheckCircle2 size={18} aria-hidden="true" />
+              Registro guardado
+            </p>
+            {comprobante && (
+              <dl className="mt-3 flex flex-col gap-2 border-t border-dashed border-white/[0.14] pt-3 text-small">
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-fg-muted">Cuenta</dt>
+                  <dd className="min-w-0 truncate text-right font-medium text-fg">{cuenta.nombre}</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-fg-muted">Fecha</dt>
+                  <dd className="font-mono-tabular text-fg">{formatoFecha(comprobante.fecha)}</dd>
+                </div>
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-fg-muted">Valor registrado</dt>
+                  <dd className="money-value font-mono-tabular font-semibold text-fg">
+                    {formatoMontoNativo(comprobante.valor, cuenta.moneda)}
+                  </dd>
+                </div>
+                {comprobante.movimiento && (
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-fg-muted">
+                      {comprobante.movimiento.tipo === "aporte" ? "Aporte" : "Retiro"}
+                    </dt>
+                    <dd className="money-value font-mono-tabular text-fg">
+                      {formatoMontoNativo(comprobante.movimiento.monto, cuenta.moneda)}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            )}
+            {comprobante?.movimiento && (
+              <p className="mt-3 text-micro text-fg-muted">
+                El {comprobante.movimiento.tipo === "aporte" ? "aporte" : "retiro"} no cuenta como ganancia: se descuenta del rendimiento.
+              </p>
+            )}
+          </div>
         )}
         {resultado && resultado !== "ok" && (
           <p role="alert" className="mt-3 text-center text-small font-medium text-[var(--neg)]">
