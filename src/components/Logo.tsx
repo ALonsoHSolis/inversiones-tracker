@@ -23,8 +23,8 @@ export function LogoMark({ size = 48 }: { light?: boolean; size?: number }) {
       aria-hidden="true"
       className="shrink-0"
     >
-      <rect width="48" height="48" rx="11" fill="#12161e" />
-      <rect x=".5" y=".5" width="47" height="47" rx="10.5" stroke="#cdae76" strokeOpacity=".35" />
+      <rect width="48" height="48" rx="11" fill="#121a27" />
+      <rect x=".5" y=".5" width="47" height="47" rx="10.5" stroke="#d8ba7c" strokeOpacity=".35" />
       <path
         d="M10 36H19V32H27V28H37"
         stroke="#fff"
@@ -33,8 +33,8 @@ export function LogoMark({ size = 48 }: { light?: boolean; size?: number }) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path d="M10 31C16 31 19 28 23 24S31 17 36 13" stroke="#dcc28f" strokeWidth="2.8" strokeLinecap="round" />
-      <circle cx="37" cy="12.4" r="2.6" fill="#0b0d12" stroke="#dcc28f" strokeWidth="2.2" />
+      <path d="M10 31C16 31 19 28 23 24S31 17 36 13" stroke="#ead3a2" strokeWidth="2.8" strokeLinecap="round" />
+      <circle cx="37" cy="12.4" r="2.6" fill="#080d16" stroke="#ead3a2" strokeWidth="2.2" />
     </svg>
   );
 }

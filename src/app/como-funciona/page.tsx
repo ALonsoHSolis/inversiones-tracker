@@ -95,7 +95,7 @@ export default function ComoFuncionaPage() {
           </Link>
           <Link
             href="/login"
-            className="inline-flex items-center h-11 px-6 rounded-[11px] border border-white/[0.14] text-[14px] font-semibold text-fg no-underline"
+            className="inline-flex items-center h-11 px-6 rounded-[11px] border border-control text-[14px] font-semibold text-fg no-underline"
           >
             Iniciar sesión
           </Link>

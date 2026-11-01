@@ -3,7 +3,7 @@ import { SubmitButton } from "@/components/SubmitButton";
 import { AuthShell } from "@/components/AuthShell";
 
 const inputClass =
-  "h-11 px-[13px] border border-white/[0.14] rounded-[10px] text-sm text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(205,174,118,0.15)]";
+  "h-11 px-[13px] border border-white/[0.14] rounded-[10px] text-sm text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(216,186,124,0.15)]";
 
 export default async function ActualizarPasswordPage({
   searchParams,

@@ -25,7 +25,7 @@ export default async function RecuperarPasswordPage({
             name="email"
             placeholder="tucorreo@ejemplo.cl"
             required
-            className="h-11 px-[13px] border border-white/[0.14] rounded-[10px] text-sm text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(205,174,118,0.15)]"
+            className="h-11 px-[13px] border border-white/[0.14] rounded-[10px] text-sm text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(216,186,124,0.15)]"
           />
         </label>
         {mensaje && <p className="text-xs text-fg-muted">{mensaje}</p>}

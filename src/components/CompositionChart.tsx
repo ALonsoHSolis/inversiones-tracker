@@ -64,7 +64,7 @@ function TooltipPersonalizado({
   const punto = payload[0].payload;
 
   return (
-    <div className="rounded-[10px] bg-[rgba(10,13,19,0.94)] border border-white/[0.1] backdrop-blur-[10px] px-3 py-2.5 min-w-[160px] shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
+    <div className="rounded-[10px] bg-[rgba(8,13,22,0.94)] border border-white/[0.1] backdrop-blur-[10px] px-3 py-2.5 min-w-[160px] shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
       <p className="text-micro text-fg-muted mb-1.5">{formatoFechaCorta(punto.fecha)}</p>
       <div className="flex flex-col gap-1">
         {grupos.map((g) => (

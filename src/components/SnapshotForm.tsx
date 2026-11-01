@@ -383,14 +383,14 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                       onChange={(e) =>
                         actualizarMovimiento(cuenta, { movimientoTipo: e.target.value as TipoMovimiento })
                       }
-                      className="h-9 px-2 rounded-lg border border-white/[0.14] text-small bg-white/[0.04] text-fg shrink-0"
+                      className="h-9 px-2 rounded-lg border border-control text-small bg-white/[0.04] text-fg shrink-0"
                     >
                       <option value="aporte">Aporte</option>
                       <option value="retiro">Retiro</option>
                     </select>
                     <InputMonto
                       placeholder="monto"
-                      className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-white/[0.14] text-right text-small font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+                      className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-control text-right text-small font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
                       value={fila.movimientoMonto}
                       onChange={(movimientoMonto) => actualizarMovimiento(cuenta, { movimientoMonto })}
                     />

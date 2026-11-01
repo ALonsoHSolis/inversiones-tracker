@@ -34,7 +34,7 @@ interface AccountRowProps {
 }
 
 const CHIP_COLORES: Record<string, { bg: string; fg: string }> = {
-  fondo_mutuo: { bg: "rgba(205,174,118,.16)", fg: "var(--color-accent-hi)" },
+  fondo_mutuo: { bg: "rgba(216,186,124,.16)", fg: "var(--color-accent-hi)" },
   acciones: { bg: "rgba(159,176,200,.16)", fg: "var(--color-slate)" },
   cripto: { bg: "rgba(211,154,106,.16)", fg: "var(--color-copper)" },
   deposito_plazo: { bg: "rgba(169,155,192,.16)", fg: "var(--color-mauve)" },
@@ -180,7 +180,7 @@ export function AccountRow({
       </div>
       {tieneAporte && rendimiento && (
         <div className="mt-2.5 pt-2.5 border-t border-white/[0.06] flex items-center gap-2 flex-wrap">
-          <span className="money-value text-micro font-semibold bg-[rgba(205,174,118,0.16)] text-accent px-2 py-[3px] rounded-md">
+          <span className="money-value text-micro font-semibold bg-[rgba(216,186,124,0.16)] text-accent px-2 py-[3px] rounded-md">
             {/* aportes_netos siempre cae a 0 via coalesce en la vista sql, nunca null */}
             {rendimiento.aportes_netos! > 0 ? "+ aporte " : "− retiro "}
             {formatoValor(Math.abs(rendimiento.aportes_netos!), cuenta.moneda as Moneda)}

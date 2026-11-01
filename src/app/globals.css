@@ -10,21 +10,26 @@
    contraste verificado (WCAG) contra --color-ink y --color-surface:
    fg 16:1 - fg-soft 12.7:1 - fg-muted 7.6:1 - fg-subtle 5.1:1 - accent 8.5:1. */
 @theme static {
-  --color-ink: #0b0d12;
-  --color-surface: #12161e;
-  --color-surface-raised: #181d27;
+  /* "Midnight Portfolio": superficies azul-noche con acento champan.
+     contraste (WCAG 2.2) medido sobre ink / surface / raised:
+     fg 18,1 / 16,3 / 14,4 - fg-soft 13,8 / 12,4 / 11,0 - fg-muted 9,3 / 8,3 / 7,4
+     fg-subtle 6,3 / 5,7 / 5,0 - accent 10,4 / 9,3 / 8,3 - pos 10,7 / 9,6 / 8,5
+     neg 7,7 / 6,9 / 6,1. todos los colores de texto superan AA (4,5). */
+  --color-ink: #080d16;
+  --color-surface: #121a27;
+  --color-surface-raised: #1a2534;
 
-  --color-fg: #f3f1ec;
-  --color-fg-soft: #d5d8de;
-  --color-fg-muted: #a0a8b5;
-  --color-fg-subtle: #808998;
+  --color-fg: #f5f7fb;
+  --color-fg-soft: #d3dae6;
+  --color-fg-muted: #a8b4c5;
+  --color-fg-subtle: #8794a8;
 
-  --color-accent: #cdae76;
-  --color-accent-hi: #e3cc9c;
+  --color-accent: #d8ba7c;
+  --color-accent-hi: #ead3a2;
 
-  --color-pos: #3ed9a3;
+  --color-pos: #41d7aa;
   --color-pos-soft: #7ee8c4;
-  --color-neg: #ff6b6b;
+  --color-neg: #ff7885;
   --color-neg-soft: #f2a6a6;
 
   --color-warn: #e8a857;
@@ -36,8 +41,12 @@
   --color-clay: #b98b73;
   --color-stone: #8e8a80;
 
-  /* escala tipografica: antes habia ~12 tamanos sueltos entre 10px y 15px,
-     la mayoria bajo 12px. ahora el minimo legible es 12px. */
+  /* borde de controles interactivos (inputs, selects): 3:1 contra la
+     superficie, exigido por WCAG 1.4.11. el borde decorativo de las
+     tarjetas es mas suave a proposito (--line). */
+  --color-control: #66758c;
+
+  /* escala tipografica */
   --text-micro: 0.75rem;
   --text-small: 0.8125rem;
 }
@@ -47,13 +56,13 @@
   --accent: var(--color-accent);
   --pos: var(--color-pos);
   --neg: var(--color-neg);
-  --line: rgba(255, 255, 255, 0.08);
+  --line: #273344;
 }
 
 body {
   background-color: var(--color-ink);
   color: var(--color-fg);
-  font-family: var(--font-ibm-plex-sans), system-ui, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -69,7 +78,7 @@ body {
 }
 
 .font-mono-tabular {
-  font-family: var(--font-ibm-plex-mono), monospace;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
 }
 
