@@ -1,5 +1,6 @@
 "use client";
 
+import { Eye, EyeOff } from "lucide-react";
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 interface PrivacyContextValue {
@@ -29,26 +30,27 @@ export function usePrivacy() {
   return ctx;
 }
 
-export function PrivacyToggleButton() {
+export function PrivacyToggleButton({ compact = false }: { compact?: boolean }) {
   const { oculto, toggle } = usePrivacy();
+  const Icono = oculto ? EyeOff : Eye;
+  const titulo = oculto ? "Mostrar los montos" : "Ocultar los montos (modo privado)";
   return (
     <button
       type="button"
       onClick={toggle}
       aria-pressed={oculto}
-      title={oculto ? "Mostrar los montos" : "Ocultar los montos (modo privado)"}
-      className={`inline-flex items-center gap-2 h-[34px] px-3.5 rounded-full border text-small font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+      aria-label={compact ? (oculto ? "Mostrar montos" : "Ocultar montos") : undefined}
+      title={titulo}
+      className={`inline-flex items-center justify-center gap-2 h-10 rounded-full border text-small font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+        compact ? "w-10" : "px-3.5"
+      } ${
         oculto
           ? "border-accent/60 bg-accent/15 text-accent-hi"
           : "border-white/[0.1] bg-white/[0.03] text-fg-soft hover:border-white/[0.2]"
       }`}
     >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
-        <circle cx="12" cy="12" r="3" />
-        {oculto && <path d="M3 3l18 18" />}
-      </svg>
-      {oculto ? "Montos ocultos" : "Ocultar montos"}
+      <Icono size={16} strokeWidth={1.8} aria-hidden="true" />
+      {!compact && (oculto ? "Montos ocultos" : "Ocultar montos")}
     </button>
   );
 }

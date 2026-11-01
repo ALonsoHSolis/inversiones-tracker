@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/Logo";
 import { PrintButton } from "@/components/PrintButton";
-import { PrivacyShell, PrivacyToggleButton } from "@/components/PrivacyShell";
 import { TIPOS } from "@/lib/tipos-cuenta";
 import { fechaHoyChile } from "@/lib/fecha";
 import { formatoPct, formatoPesos, formatoPesosSigned } from "@/lib/formato";
@@ -86,17 +85,12 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
   );
 
   return (
-    <PrivacyShell>
-      <main className="max-w-[860px] mx-auto px-6 pt-[26px] pb-16">
-        <div className="no-print flex items-center justify-between gap-3 flex-wrap mb-6">
-          <Link href="/dashboard" className="text-small font-medium text-fg-muted hover:text-fg">
-            ← Volver al dashboard
-          </Link>
-          <div className="flex items-center gap-2">
-            <PrivacyToggleButton />
-            <PrintButton className="h-[34px] px-3.5 rounded-full bg-[var(--accent)] text-ink text-small font-semibold transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98]" />
-          </div>
+    <div className="mx-auto max-w-[860px]">
+      {informe && mes && (
+        <div className="no-print flex justify-end mb-4">
+          <PrintButton className="inline-flex items-center h-10 px-4 rounded-full bg-[var(--accent)] text-ink text-small font-semibold transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" />
         </div>
+      )}
 
         {!informe || !mes ? (
           <section className="card p-8 text-center">
@@ -305,7 +299,6 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
             </footer>
           </article>
         )}
-      </main>
-    </PrivacyShell>
+    </div>
   );
 }

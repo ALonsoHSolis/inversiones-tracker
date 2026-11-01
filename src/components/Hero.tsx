@@ -43,14 +43,14 @@ export function Hero({
   const deltaPctBarra = baseBarra > 0 ? (Math.abs(gananciaTotal) / baseBarra) * 100 : 0;
 
   return (
-    <section className="card px-7 py-7 animate-fade-up">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(300px,1fr)_minmax(380px,1.3fr)] gap-10">
+    <section className="card px-5 py-6 sm:px-7 sm:py-7 animate-fade-up">
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(300px,1fr)_minmax(380px,1.3fr)] gap-10">
         <div>
           <p className="text-micro font-semibold uppercase tracking-[0.12em] text-fg-subtle">
             Valor total del portafolio
           </p>
-          <p className="money-value mt-3 font-mono-tabular font-medium text-[44px] sm:text-[52px] leading-none tracking-[-0.025em] text-fg">
-            <CountUp valor={valorTotal} formato={formatoPesos} claveSesion="valor-total" />
+          <p className="money-value mt-3 font-mono-tabular font-medium text-[clamp(28px,10.5vw,48px)] leading-none tracking-[-0.025em] text-fg">
+            <CountUp valor={valorTotal} formato="pesos" claveSesion="valor-total" />
           </p>
 
           <div className="mt-7">
@@ -67,7 +67,7 @@ export function Hero({
               className="money-value mt-1.5 font-mono-tabular text-[28px] font-semibold leading-tight tracking-[-0.01em]"
               style={{ color: colorGanancia }}
             >
-              <CountUp valor={gananciaTotal} formato={formatoPesosSigned} claveSesion="ganancia-total" />
+              <CountUp valor={gananciaTotal} formato="pesosSigned" claveSesion="ganancia-total" />
               {gananciaPct !== null && <span className="ml-2 text-base font-medium">({formatoPct(gananciaPct)})</span>}
             </p>
 

@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Logo } from "@/components/Logo";
 import { actualizarPreferenciaRecordatorios, actualizarPreferenciaReporteMensual } from "./actions";
 
 export default async function PerfilPage() {
@@ -16,13 +14,7 @@ export default async function PerfilPage() {
   const reporteMensualActivo = user.user_metadata?.reporte_mensual_activo !== false;
 
   return (
-    <main className="max-w-[560px] mx-auto px-6 pt-[26px] pb-16">
-      <div className="flex items-center justify-between gap-4 mb-6">
-        <Logo />
-        <Link href="/dashboard" className="text-micro text-fg-muted border-b border-white/[0.14]">
-          ← volver al dashboard
-        </Link>
-      </div>
+    <div className="mx-auto max-w-[560px]">
 
       <section className="card p-6">
         <h1 className="text-[19px] font-semibold tracking-[-0.02em] text-fg">Perfil</h1>
@@ -73,6 +65,6 @@ export default async function PerfilPage() {
           </form>
         </div>
       </section>
-    </main>
+    </div>
   );
 }

@@ -34,3 +34,31 @@ Cada fase vive en su propia rama `claude/fase-N-*` y su PR. Las ramas están api
 ## Verificación antes de mergear
 
 `npx tsc --noEmit`, `npm run lint`, `npm test`. El `npm run build` completo lo valida el deployment de Vercel. Cualquier cambio a vistas, RLS o firmas de funciones SQL sigue las reglas de `CLAUDE.md` (dos usuarios de prueba, `drop function if exists` previo).
+
+## Rediseño "Midnight Portfolio"
+
+Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
+
+| # | Fase | Estado |
+|---|------|--------|
+| 1 | Tokens, tipografía Geist, íconos Lucide, contraste AA | PR #11 |
+| 2 | Layout, sidebar colapsable, barra superior, navegación móvil | esta rama |
+| 3 | Dashboard (hero, gráfico, comparadores, métricas secundarias) | pendiente |
+| 4 | Cuentas e instituciones (filas compactas, tabla ordenable/filtrable) | pendiente |
+| 5 | Registro, formularios, metas, análisis | pendiente |
+| 6 | QA responsive (320–1440), accesibilidad, hallazgos financieros previos | pendiente |
+
+### Decisiones de la fase 2
+
+- Rutas autenticadas en el grupo `src/app/(app)/` con un `layout.tsx` que exige sesión y envuelve todo en `PrivacyShell` + `AppShell`. Las URLs no cambian.
+- Rutas nuevas: `/cuentas` (listado), `/registrar` (carga diaria; en móvil es el botón central de la barra inferior) y `/analisis` (todo el análisis avanzado que antes colgaba del dashboard, con los mismos cálculos movidos tal cual).
+- "Informes" (`/informe`) se mantiene en el menú aunque el brief no lo listaba: no se quitan funciones.
+- La lógica de navegación (sección activa, título, "volver") está en `src/lib/navegacion.ts` con tests.
+- Estado del sidebar en `localStorage` (`sidebar:colapsado`) vía `useSyncExternalStore`; sin storage simplemente no persiste.
+- Hoja "Más" en móvil con `<dialog>` nativo (foco, Escape y aislamiento del navegador).
+
+### Hallazgos
+
+- **Corregido (regresión propia de la fase 5):** `Hero` (servidor) pasaba una función a `CountUp` (cliente); en la app real Next lo rechaza al serializar y el dashboard caía al error boundary. Los fixtures anteriores no lo detectaban porque renderizaban `Hero` desde un componente cliente. Ahora `CountUp` recibe el formato por nombre (`"pesos"` / `"pesosSigned"`).
+- **Previo, sin tocar:** `src/app/(app)/metas/page.tsx` calcula el progreso de metas inline, duplicando `calcularMetasConProgreso` de `src/lib/dashboard.ts`. No cambia números hoy, pero puede divergir.
+- Verificación visual con un Supabase simulado local (datos de prueba en CLP/USD/UF, sin tocar la base real); no cubre RLS ni las vistas SQL.
