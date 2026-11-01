@@ -8,7 +8,12 @@ import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Registrar valores" };
 
-export default async function RegistrarPage() {
+export default async function RegistrarPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ cuenta?: string }>;
+}) {
+  const { cuenta: cuentaInicialId } = await searchParams;
   const supabase = await createClient();
   const { cuentas, movimientosHoy, valorAnteriorPorCuenta } = await cargarDatosRegistro(supabase);
 
@@ -26,7 +31,12 @@ export default async function RegistrarPage() {
         <EmptyAccountsState />
       ) : (
         <>
-          <CargaRapida cuentas={cuentas} movimientosHoy={movimientosHoy} valorAnteriorPorCuenta={valorAnteriorPorCuenta} />
+          <CargaRapida
+            cuentas={cuentas}
+            movimientosHoy={movimientosHoy}
+            valorAnteriorPorCuenta={valorAnteriorPorCuenta}
+            cuentaInicialId={cuentaInicialId}
+          />
           <details className="group card p-5">
             <summary className="cursor-pointer list-none text-small font-semibold text-fg [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent rounded">
               Actualizar varias cuentas de una vez

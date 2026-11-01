@@ -44,8 +44,8 @@ Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
 | 1 | Tokens, tipografía Geist, íconos Lucide, contraste AA | PR #11 |
 | 2 | Layout, sidebar colapsable, barra superior, navegación móvil | PR #12 |
 | 3 | Dashboard (hero, gráfico, comparadores, métricas secundarias) | PR #13 |
-| 4 | Cuentas e instituciones (filas compactas, tabla ordenable/filtrable) | esta rama |
-| 5 | Registro, formularios, metas, análisis | pendiente |
+| 4 | Cuentas e instituciones (filas compactas, tabla ordenable/filtrable) | PR #14 |
+| 5 | Registro, formularios, metas, análisis | esta rama |
 | 6 | QA responsive (320–1440), accesibilidad, hallazgos financieros previos | pendiente |
 
 ### Decisiones de la fase 2
@@ -76,3 +76,15 @@ Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
 - `/cuentas`: tabla en escritorio (cabeceras ordenables con `aria-sort`, búsqueda sin tildes, filtros por tipo/plataforma/moneda, agrupar por plataforma con subtotales, total de lo mostrado) y filas compactas en móvil (nombre → historial, lápiz → editar, 44 px de objetivo táctil, selector de orden). Lógica pura en `src/lib/cuentas-tabla.ts` con tests; los valores faltantes siempre van al final.
 - Las cifras de cada fila son las mismas que usaba `AccountRow` (`rendimiento_actual` / `capital_por_cuenta`): valor en CLP, rendimiento en moneda nativa (con la moneda a la vista), anualizado simple. Un chip "+ aporte / − retiro" avisa que hubo un movimiento que no cuenta como rendimiento.
 - Distribuciones: `DistribucionCard` reemplaza a `PlatformBreakdown`, `AssetTypeBreakdown` y `CategoryBreakdown` (eran copias). Barra apilada con colores categóricos (sin verde ni rojo), fila por grupo con su color, % del total, ganancia % y detalle desplegable; aviso de concentración ≥ 40 % igual que antes.
+
+### Decisiones de la fase 5
+
+- **Carga rápida** (`CargaRapida`): selector de cuenta con búsqueda accesible (`SelectorCuenta`, patrón combobox + listbox con flechas/Enter/Escape; antes un `<select>` con opciones `display:none` que no filtraba en celulares), errores por campo con `aria-invalid`/`aria-describedby`, y las advertencias ("valor sin cambio con movimiento", "rendimiento ≥ 80 %") en un panel en pantalla con "Revisar el valor" / "Guardar igual" en lugar de `window.confirm`. Las reglas viven en `src/lib/registro.ts` (con tests); las condiciones y fórmulas son las de antes. El guardado sigue llamando a `guardar_snapshot_con_movimiento` con `p_permitir_quitar_movimiento: false` (verificado contra un RPC simulado).
+- La fecha de la carga rápida sigue siendo "hoy" (solo lectura): corregir fechas pasadas es el historial de cada cuenta, no se cambió ese comportamiento.
+- `/registrar?cuenta=<id>` preselecciona la cuenta; desde `/cuentas` cada fila tiene "Registrar". En móvil `/registrar` es la pantalla dedicada; el multi-cuenta (`SnapshotForm`) se mantiene.
+- **Metas:** estado vacío con "Crear primera meta", barra de progreso con `role="progressbar"`, botón eliminar con objetivo táctil de 40 px.
+- **Análisis:** navegación interna por secciones (sticky) y una tarjeta "Cómo leer las métricas" que explica rendimiento real, ganancia real total, TWR, XIRR, anualizado y peor caída.
+
+### Pendiente / hallazgos de esta fase
+
+- `SnapshotForm` (multi-cuenta) conserva su propia copia de `calcularValorSugerido`/`estimarRendimientoPct` y sus `window.confirm`; las fórmulas son idénticas a las movidas a `lib/registro.ts`, pero conviene unificarlas en una iteración aparte.

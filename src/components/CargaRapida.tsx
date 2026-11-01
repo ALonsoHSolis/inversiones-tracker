@@ -2,11 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { obtenerTasaCambio } from "@/lib/mindicador";
 import { Ayuda } from "@/components/Ayuda";
 import { InputMonto } from "@/components/InputMonto";
+import { SelectorCuenta } from "@/components/SelectorCuenta";
 import { formatoFecha } from "@/lib/formato";
+import { advertenciaRegistro, calcularValorSugerido, validarRegistro, type ErroresRegistro } from "@/lib/registro";
 import type { Cuenta, Moneda, TipoMovimiento } from "@/types/database";
 import { fechaHoyChile } from "@/lib/fecha";
 
@@ -16,96 +19,41 @@ interface CargaRapidaProps {
   // valor_actual (moneda nativa) de capital_por_cuenta -- mismo dato que ya
   // usa SnapshotForm para sugerir el valor y advertir si no cambio.
   valorAnteriorPorCuenta: Record<string, number | null>;
+  // cuenta preseleccionada (ej. al llegar desde /registrar?cuenta=...)
+  cuentaInicialId?: string;
 }
 
-// mismas formulas que SnapshotForm.tsx (espejo de rendimiento_semanal en
-// schema.sql) -- duplicadas a proposito, siguiendo la convencion ya
-// establecida en este proyecto de no compartir estos helpers chicos entre
-// formularios.
-function calcularValorSugerido(valorAnterior: number | null, monto: string, tipo: TipoMovimiento): string {
-  const base = valorAnterior ?? 0;
-  const montoNum = Number(monto) || 0;
-  return String(tipo === "aporte" ? base + montoNum : base - montoNum);
-}
-
-const UMBRAL_RENDIMIENTO_IMPLAUSIBLE = 80;
-
-function estimarRendimientoPct(
-  valorAnterior: number | null,
-  valorNuevo: number,
-  incluyeMovimiento: boolean,
-  tipo: TipoMovimiento,
-  monto: string
-): number | null {
-  if (valorAnterior == null) return null;
-  const aportesNetos = incluyeMovimiento ? (tipo === "aporte" ? Number(monto) || 0 : -(Number(monto) || 0)) : 0;
-  const base = valorAnterior + aportesNetos;
-  if (base <= 0) return null;
-  const gananciaReal = valorNuevo - valorAnterior - aportesNetos;
-  return (gananciaReal / base) * 100;
-}
+const CAMPO =
+  "h-11 px-3 rounded-[10px] border bg-surface-raised text-fg text-right text-small font-mono-tabular focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+const borde = (invalido: boolean) => (invalido ? "border-[var(--neg)]" : "border-control");
 
 // version de una sola cuenta de SnapshotForm: para cuando actualizar TODAS
 // las cuentas de una vez (el grid completo) es mas friccion de la que hace
 // falta ese dia -- el caso comun es actualizar una o dos cuentas, no todas.
 // misma logica de guardado, guardrails y rpc que SnapshotForm, solo que
 // aplicada a una cuenta elegida en un desplegable en vez de a todas a la vez.
-export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta }: CargaRapidaProps) {
-  const [cuentaId, setCuentaId] = useState(cuentas[0]?.id ?? "");
+export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta, cuentaInicialId }: CargaRapidaProps) {
+  const [cuentaId, setCuentaId] = useState(
+    cuentas.some((c) => c.id === cuentaInicialId) ? (cuentaInicialId as string) : (cuentas[0]?.id ?? "")
+  );
   const cuenta = cuentas.find((c) => c.id === cuentaId) ?? null;
-
-  // busqueda: filtra que opciones se ven dentro del <select> nativo (via
-  // display:none en cada <option>) en vez de armar un combobox propio -- asi
-  // se mantiene la navegacion por teclado y el picker nativo de mobile del
-  // select, solo se acota la lista cuando hay muchas cuentas.
-  const [busquedaCuenta, setBusquedaCuenta] = useState("");
-  function coincideBusqueda(c: Cuenta): boolean {
-    const texto = busquedaCuenta.trim().toLowerCase();
-    if (texto === "") return true;
-    return `${c.nombre} ${c.plataforma}`.toLowerCase().includes(texto);
-  }
-  const hayCoincidencias = cuentas.some(coincideBusqueda);
 
   if (cuentas.length === 0) return null;
 
   return (
-    <section
-      id="carga-rapida"
-      className="card p-5 scroll-mt-6"
-    >
+    <section id="carga-rapida" aria-labelledby="carga-rapida-titulo" className="card p-5 scroll-mt-6">
       <div className="flex items-center gap-1.5 mb-1">
-        <p className="text-small font-semibold text-fg">Carga rápida</p>
+        <h2 id="carga-rapida-titulo" className="text-small font-semibold text-fg">
+          Carga rápida
+        </h2>
         <Ayuda>
           Registra el valor de hoy de una sola cuenta. Para actualizar varias cuentas a la vez, usa
-          &quot;actualizar varias cuentas de una vez&quot; más abajo.
+          &quot;actualizar varias cuentas de una vez&quot;.
         </Ayuda>
       </div>
       <p className="text-micro text-fg-muted mb-4">Registra el valor de hoy de una cuenta</p>
 
-      <label className="flex flex-col gap-1">
-        <span className="text-micro font-semibold text-fg-muted">Cuenta</span>
-        {cuentas.length > 5 && (
-          <input
-            type="text"
-            placeholder="Buscar por nombre o plataforma…"
-            value={busquedaCuenta}
-            onChange={(e) => setBusquedaCuenta(e.target.value)}
-            className="h-9 px-3 mb-1.5 rounded-[10px] border border-control text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
-          />
-        )}
-        <select
-          value={cuentaId}
-          onChange={(e) => setCuentaId(e.target.value)}
-          className="h-10 px-3 rounded-[10px] border border-control text-small bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
-        >
-          {!hayCoincidencias && <option disabled>Ninguna cuenta coincide</option>}
-          {cuentas.map((c) => (
-            <option key={c.id} value={c.id} style={{ display: coincideBusqueda(c) ? undefined : "none" }}>
-              {c.nombre} · {c.plataforma}
-            </option>
-          ))}
-        </select>
-      </label>
+      <SelectorCuenta cuentas={cuentas} valor={cuentaId} onChange={setCuentaId} />
 
       {cuenta && (
         <FormularioCargaRapida
@@ -148,10 +96,21 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
     movimientoSemilla ? String(movimientoSemilla.monto) : ""
   );
   const [guardando, setGuardando] = useState(false);
+  // "ok" tras guardar; un mensaje si el servidor rechazo el guardado
   const [resultado, setResultado] = useState<"ok" | string | null>(null);
+  // errores por campo (impiden guardar) y advertencia que pide confirmar
+  const [errores, setErrores] = useState<ErroresRegistro>({});
+  const [advertencia, setAdvertencia] = useState<string | null>(null);
 
   const tieneMovimientoOriginal = !!movimientoSemilla;
   const tasaRequestId = useRef(0);
+  const panelAdvertencia = useRef<HTMLDivElement>(null);
+
+  // al aparecer la advertencia, se enfoca (y por lo tanto se hace visible) para
+  // que no quede escondida bajo el teclado o la barra inferior del celular.
+  useEffect(() => {
+    if (advertencia) panelAdvertencia.current?.focus();
+  }, [advertencia]);
 
   // usada por el boton reintentar (un event handler, sin restricciones de
   // pureza) -- el effect de mas abajo NO llama esta funcion: el lint marca
@@ -237,49 +196,38 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
     }
   }
 
-  async function guardar() {
+  // forzar=true: el usuario ya vio la advertencia y eligio guardar igual.
+  async function guardar(forzar = false) {
     setResultado(null);
 
-    if (valor.trim() === "") {
-      setResultado("escribe un valor");
+    const erroresNuevos = validarRegistro({
+      valor,
+      esClp: cuenta.moneda === "CLP",
+      tasaCambio,
+      incluyeMovimiento,
+      movimientoMonto,
+    });
+    setErrores(erroresNuevos);
+    if (Object.keys(erroresNuevos).length > 0) {
+      setAdvertencia(null);
       return;
     }
 
-    const valorSinCambio = incluyeMovimiento && valorAnterior != null && Number(valor) === valorAnterior;
-
-    if (valorSinCambio) {
-      const confirma = window.confirm(
-        `El valor de "${cuenta.nombre}" no cambió respecto al último registro, pero marcaste un aporte/retiro. ¿El valor ya incluye ese movimiento? Cancela para revisar el campo "valor actual".`
-      );
-      if (!confirma) {
-        setResultado("no guardado: revisa el valor");
+    if (!forzar) {
+      const aviso = advertenciaRegistro({
+        nombreCuenta: cuenta.nombre,
+        valorAnterior,
+        valorNuevo: Number(valor),
+        incluyeMovimiento,
+        tipo: movimientoTipo,
+        monto: movimientoMonto,
+      });
+      if (aviso) {
+        setAdvertencia(aviso);
         return;
       }
-    } else {
-      const pct = estimarRendimientoPct(valorAnterior, Number(valor), incluyeMovimiento, movimientoTipo, movimientoMonto);
-      if (pct != null && Math.abs(pct) >= UMBRAL_RENDIMIENTO_IMPLAUSIBLE) {
-        const confirma = window.confirm(
-          `Con este valor, el rendimiento de "${cuenta.nombre}" sería de ${pct.toFixed(1)}% respecto al registro anterior — ¿el valor es correcto? Cancela para revisarlo.`
-        );
-        if (!confirma) {
-          setResultado("no guardado: revisa el valor");
-          return;
-        }
-      }
     }
-
-    if (Number(valor) < 0) {
-      setResultado("el valor no puede ser negativo");
-      return;
-    }
-    if (cuenta.moneda !== "CLP" && !(Number(tasaCambio) > 0)) {
-      setResultado("falta la tasa de cambio");
-      return;
-    }
-    if (incluyeMovimiento && !(Number(movimientoMonto) > 0)) {
-      setResultado("el monto del aporte/retiro debe ser mayor a cero");
-      return;
-    }
+    setAdvertencia(null);
 
     setGuardando(true);
     const supabase = createClient();
@@ -304,6 +252,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
       return;
     }
     setValor("");
+    setErrores({});
     setValorEditadoManualmente(false);
     setIncluyeMovimiento(false);
     setMovimientoMonto("");
@@ -315,63 +264,94 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
     router.refresh();
   }
 
+  const idValor = "cr-valor";
+  const idTasa = "cr-tasa";
+  const idMonto = "cr-monto";
+
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 mt-3">
+      <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-3 mt-4">
         <div>
           <span className="text-micro font-semibold text-fg-muted">Fecha</span>
-          <p className="mt-1 h-10 px-3 rounded-[10px] bg-white/[0.03] flex items-center text-small text-fg-muted font-mono-tabular">
-            {formatoFecha(fechaHoyChile())}
+          <p className="mt-1 h-11 px-3 rounded-[10px] bg-white/[0.03] flex items-center text-small text-fg-muted font-mono-tabular">
+            Hoy · {formatoFecha(fechaHoyChile())}
           </p>
         </div>
-        <label className="flex flex-col gap-1">
+        <div>
           <span className="flex items-center gap-1">
-            <span className="text-micro font-semibold text-fg-muted">Valor actual</span>
+            <label htmlFor={idValor} className="text-micro font-semibold text-fg-muted">
+              Valor actual
+            </label>
             <Ayuda>
               Mientras más seguido registres el valor, más preciso es tu rendimiento semanal — los
               saltos largos entre registros diluyen la comparación semana a semana.
             </Ayuda>
           </span>
           <InputMonto
+            id={idValor}
             placeholder="0"
-            className="h-10 px-3 rounded-[10px] border border-white/[0.14] bg-white/[0.04] text-fg text-right text-small font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+            invalido={!!errores.valor}
+            describedBy={errores.valor ? `${idValor}-error` : undefined}
+            className={`mt-1 w-full ${CAMPO} ${borde(!!errores.valor)}`}
             value={valor}
             onChange={(v) => {
               setValor(v);
               setValorEditadoManualmente(true);
+              setAdvertencia(null);
+              if (errores.valor) setErrores((e) => ({ ...e, valor: undefined }));
             }}
           />
-        </label>
+          {errores.valor && (
+            <p id={`${idValor}-error`} role="alert" className="mt-1 text-micro font-medium text-[var(--neg)]">
+              {errores.valor}
+            </p>
+          )}
+        </div>
       </div>
 
       {cuenta.moneda !== "CLP" && (
         <div className="mt-3 flex flex-col gap-1">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-micro font-semibold text-fg-muted">Tasa de cambio</span>
+            <label htmlFor={idTasa} className="text-micro font-semibold text-fg-muted">
+              Tasa de cambio ({cuenta.moneda})
+            </label>
             <input
+              id={idTasa}
               type="number"
               inputMode="decimal"
               step="0.01"
-              className="w-28 h-8 px-2 rounded-lg border border-white/[0.14] bg-white/[0.04] text-fg text-right text-small font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+              aria-invalid={errores.tasa ? true : undefined}
+              aria-describedby={errores.tasa ? `${idTasa}-error` : undefined}
+              className={`w-32 ${CAMPO} ${borde(!!errores.tasa)}`}
               value={tasaCambio ?? ""}
-              onChange={(e) => editarTasaManualmente(e.target.value ? Number(e.target.value) : null)}
+              onChange={(e) => {
+                editarTasaManualmente(e.target.value ? Number(e.target.value) : null);
+                if (errores.tasa) setErrores((er) => ({ ...er, tasa: undefined }));
+              }}
             />
           </div>
           {cargandoTasa && (
-            <span className="text-micro text-fg-muted text-right block">buscando tasa en mindicador.cl…</span>
+            <span role="status" className="text-micro text-fg-muted text-right block">
+              Buscando la tasa en mindicador.cl…
+            </span>
           )}
           {!cargandoTasa && tasaFecha && (
             <span className="text-micro text-fg-muted text-right block">
-              según Banco Central, {formatoFecha(tasaFecha)}
+              Según el Banco Central, {formatoFecha(tasaFecha)}. Puedes corregirla si hace falta.
             </span>
           )}
           {errorTasa && (
-            <span className="text-micro text-[var(--neg)] flex items-center justify-end gap-2">
-              {errorTasa}
-              <button type="button" onClick={() => cargarTasa(cuenta)} className="underline shrink-0">
-                reintentar
+            <span role="alert" className="text-micro text-[var(--neg)] flex items-center justify-end gap-2">
+              No se pudo obtener la tasa de cambio. Revisa tu conexión o escríbela a mano.
+              <button type="button" onClick={() => cargarTasa(cuenta)} className="min-h-8 underline shrink-0">
+                Reintentar
               </button>
             </span>
+          )}
+          {errores.tasa && (
+            <p id={`${idTasa}-error`} role="alert" className="text-right text-micro font-medium text-[var(--neg)]">
+              {errores.tasa}
+            </p>
           )}
         </div>
       )}
@@ -380,20 +360,21 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
         <button
           type="button"
           onClick={() => cambiarMovimiento({ incluyeMovimiento: true })}
-          className="mt-3 text-micro font-semibold text-[var(--accent)]"
+          className="mt-3 min-h-10 text-small font-semibold text-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded"
         >
-          + añadir aporte o retiro
+          + Añadir aporte o retiro
         </button>
       ) : (
-        <div className="mt-3 rounded-[10px] bg-white/[0.03] p-2.5 flex flex-col gap-2">
+        <fieldset className="mt-3 rounded-[10px] bg-white/[0.03] p-3 flex flex-col gap-2">
+          <legend className="sr-only">Aporte o retiro</legend>
           <div className="flex items-center justify-between gap-2">
             <span className="text-micro font-medium text-fg-muted">Esto incluye un aporte o retiro</span>
             <button
               type="button"
               onClick={() => cambiarMovimiento({ incluyeMovimiento: false })}
-              className="text-micro text-fg-subtle border-b border-white/[0.12] shrink-0"
+              className="min-h-8 text-micro text-fg-muted underline shrink-0"
             >
-              quitar
+              Quitar
             </button>
           </div>
           {tieneMovimientoOriginal && (
@@ -403,36 +384,85 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
           )}
           <div className="flex items-center gap-2">
             <select
+              aria-label="Tipo de movimiento"
               value={movimientoTipo}
               onChange={(e) => cambiarMovimiento({ movimientoTipo: e.target.value as TipoMovimiento })}
-              className="h-9 px-2 rounded-lg border border-control text-small bg-white/[0.04] text-fg shrink-0"
+              className="h-11 px-2 rounded-lg border border-control text-small bg-surface-raised text-fg shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <option value="aporte">Aporte</option>
               <option value="retiro">Retiro</option>
             </select>
             <InputMonto
-              placeholder="monto"
-              className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-control text-right text-small font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+              id={idMonto}
+              placeholder="Monto"
+              invalido={!!errores.monto}
+              describedBy={errores.monto ? `${idMonto}-error` : undefined}
+              className={`flex-1 min-w-0 ${CAMPO} ${borde(!!errores.monto)}`}
               value={movimientoMonto}
-              onChange={(m) => cambiarMovimiento({ movimientoMonto: m })}
+              onChange={(m) => {
+                cambiarMovimiento({ movimientoMonto: m });
+                setAdvertencia(null);
+                if (errores.monto) setErrores((e) => ({ ...e, monto: undefined }));
+              }}
             />
           </div>
-        </div>
+          {errores.monto && (
+            <p id={`${idMonto}-error`} role="alert" className="text-micro font-medium text-[var(--neg)]">
+              {errores.monto}
+            </p>
+          )}
+          <p className="text-micro text-fg-muted">Este movimiento no se cuenta como rendimiento.</p>
+        </fieldset>
       )}
 
-      <button
-        onClick={guardar}
-        disabled={guardando || cargandoTasa}
-        className="w-full h-[42px] mt-4 rounded-[11px] bg-[var(--accent)] text-ink text-small font-semibold disabled:opacity-50 hover:brightness-[1.08]"
-      >
-        {guardando ? "Guardando…" : "Guardar registro"}
-      </button>
-      {resultado === "ok" && (
-        <p className="mt-2.5 text-micro font-semibold text-center text-[var(--pos)]">✓ guardado</p>
+      {advertencia ? (
+        <div ref={panelAdvertencia} tabIndex={-1} role="alertdialog" aria-label="Confirma el registro" className="mt-4 scroll-mb-24 outline-none rounded-[12px] border border-warn/50 bg-warn/10 p-3.5">
+          <p className="flex gap-2 text-small leading-snug text-fg">
+            <AlertTriangle size={18} aria-hidden="true" className="mt-px shrink-0 text-warn" />
+            <span>{advertencia}</span>
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setAdvertencia(null)}
+              className="h-11 flex-1 min-w-[140px] rounded-[10px] border border-control text-small font-semibold text-fg hover:bg-white/[0.05] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              Revisar el valor
+            </button>
+            <button
+              type="button"
+              onClick={() => guardar(true)}
+              disabled={guardando}
+              className="h-11 flex-1 min-w-[140px] rounded-[10px] bg-[var(--accent)] text-small font-semibold text-ink disabled:opacity-50 hover:brightness-[1.08] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              {guardando ? "Guardando…" : "Guardar igual"}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => guardar()}
+          disabled={guardando || cargandoTasa}
+          className="w-full h-12 mt-4 rounded-[11px] bg-[var(--accent)] text-ink text-small font-semibold transition-[transform,filter] duration-150 active:scale-[0.99] disabled:opacity-50 hover:brightness-[1.08] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          {guardando ? "Guardando…" : cargandoTasa ? "Buscando la tasa…" : "Guardar registro"}
+        </button>
       )}
-      {resultado && resultado !== "ok" && (
-        <p className="mt-2.5 text-micro font-semibold text-center text-[var(--neg)]">{resultado}</p>
-      )}
+
+      <div aria-live="polite">
+        {resultado === "ok" && (
+          <p className="mt-3 flex items-center justify-center gap-1.5 text-small font-semibold text-[var(--pos)]">
+            <CheckCircle2 size={16} aria-hidden="true" />
+            Registro guardado: {cuenta.nombre}
+          </p>
+        )}
+        {resultado && resultado !== "ok" && (
+          <p role="alert" className="mt-3 text-center text-small font-medium text-[var(--neg)]">
+            No se pudo guardar: {resultado}
+          </p>
+        )}
+      </div>
     </>
   );
 }
