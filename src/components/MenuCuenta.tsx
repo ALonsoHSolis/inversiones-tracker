@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 
-// menu desplegable del header del dashboard. reemplaza la fila de 6 enlaces y
+// menu desplegable de la barra superior (patron "disclosure": un boton que
+// muestra/oculta una lista de enlaces y acciones, sin role="menu"). reemplaza la fila de 6 enlaces y
 // botones sueltos: lo que se usa a diario (ocultar montos) queda afuera y
 // visible; lo ocasional (exportar, perfil, soporte, cerrar sesion) vive aca.
 // los hijos llegan ya renderizados desde el server component (asi el form de
@@ -10,6 +12,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 export function MenuCuenta({ email, children }: { email: string; children: ReactNode }) {
   const [abierto, setAbierto] = useState(false);
   const raiz = useRef<HTMLDivElement>(null);
+  const idMenu = useId();
 
   useEffect(() => {
     if (!abierto) return;
@@ -34,10 +37,9 @@ export function MenuCuenta({ email, children }: { email: string; children: React
       <button
         type="button"
         onClick={() => setAbierto((v) => !v)}
-        aria-haspopup="menu"
         aria-expanded={abierto}
-        aria-label="Menú de la cuenta"
-        className="inline-flex items-center gap-2 h-[34px] pl-1.5 pr-3 rounded-full border border-white/[0.1] bg-white/[0.03] text-small font-medium text-fg-soft hover:border-white/[0.2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        aria-controls={idMenu}
+        className="inline-flex items-center gap-2 h-10 pl-1.5 pr-3 rounded-full border border-white/[0.1] bg-white/[0.03] text-small font-medium text-fg-soft hover:border-white/[0.2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <span
           aria-hidden="true"
@@ -46,14 +48,16 @@ export function MenuCuenta({ email, children }: { email: string; children: React
           {inicial}
         </span>
         Cuenta
-        <span aria-hidden="true" className={`text-micro transition-transform ${abierto ? "rotate-180" : ""}`}>
-          ▾
-        </span>
+        <ChevronDown
+          size={14}
+          aria-hidden="true"
+          className={`transition-transform duration-150 motion-reduce:transition-none ${abierto ? "rotate-180" : ""}`}
+        />
       </button>
 
       {abierto && (
         <div
-          role="menu"
+          id={idMenu}
           className="absolute right-0 top-[calc(100%+8px)] z-30 w-[240px] card p-1.5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.8)]"
           onClick={(e) => {
             // cierra al elegir un enlace; los botones de accion manejan su propio estado

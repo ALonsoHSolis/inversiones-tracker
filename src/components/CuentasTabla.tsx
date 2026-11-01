@@ -183,7 +183,6 @@ function FilaMovil({ fila }: { fila: FilaCuenta }) {
     <li className="flex items-stretch gap-1 border-t border-[var(--line)] first:border-t-0">
       <Link
         href={`/cuentas/${fila.id}/historial`}
-        aria-label={`${fila.nombre}: ver historial`}
         className={`min-w-0 flex-1 rounded-lg px-1 py-3 no-underline ${FOCO}`}
       >
         <span className="flex items-baseline justify-between gap-3">
@@ -206,6 +205,7 @@ function FilaMovil({ fila }: { fila: FilaCuenta }) {
             <Antiguo fila={fila} />
           </span>
         )}
+        <span className="sr-only">, ver historial</span>
       </Link>
       <Link
         href={`/cuentas/${fila.id}/editar`}

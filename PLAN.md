@@ -45,8 +45,8 @@ Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
 | 2 | Layout, sidebar colapsable, barra superior, navegación móvil | PR #12 |
 | 3 | Dashboard (hero, gráfico, comparadores, métricas secundarias) | PR #13 |
 | 4 | Cuentas e instituciones (filas compactas, tabla ordenable/filtrable) | PR #14 |
-| 5 | Registro, formularios, metas, análisis | esta rama |
-| 6 | QA responsive (320–1440), accesibilidad, hallazgos financieros previos | pendiente |
+| 5 | Registro, formularios, metas, análisis | PR #15 |
+| 6 | QA responsive (320–1440), accesibilidad, hallazgos financieros previos | esta rama |
 
 ### Decisiones de la fase 2
 
@@ -88,3 +88,12 @@ Ramas apiladas `claude/midnight-N-*` (cada PR apunta a la anterior).
 ### Pendiente / hallazgos de esta fase
 
 - `SnapshotForm` (multi-cuenta) conserva su propia copia de `calcularValorSugerido`/`estimarRendimientoPct` y sus `window.confirm`; las fórmulas son idénticas a las movidas a `lib/registro.ts`, pero conviene unificarlas en una iteración aparte.
+
+### Decisiones de la fase 6
+
+- QA con axe-core (WCAG 2.2 AA) en todas las rutas a 1440/768/390/320 px y en estados dinámicos (hoja "Más", menú de cuenta): sin violaciones tras los arreglos. 144 combinaciones ruta × ancho sin desbordamiento horizontal; sin `overflow-x: hidden` global.
+- Arreglos: `MenuCuenta` pasa a patrón disclosure (sin roles `menu` mal usados, nombre accesible = texto visible), filas móviles sin `aria-label` que contradiga el texto, botón de salir sin `role="menuitem"`.
+- Movimiento: `useReducedMotion` en el gráfico y una red de seguridad en `globals.css` que anula animaciones/transiciones con `prefers-reduced-motion`.
+- Impresión (`.no-print`) verificada.
+- Hallazgos financieros previos documentados (sin alterar) en `docs/hallazgos-rediseno.md`, con pruebas de caracterización de `calcularMetasConProgreso`.
+- Pruebas: 67 en `npm test`, `tsc` y `eslint` limpios.

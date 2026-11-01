@@ -129,3 +129,31 @@ test("el progreso de una meta suma el valor actual de sus cuentas asociadas", ()
   // la cuenta dada de baja no figura en el mapa de nombres, asi que no aparece
   assert.deepEqual(meta.cuentasAsociadas, ["Fondo A"]);
 });
+
+// pruebas de caracterizacion de calcularMetasConProgreso: fijan el
+// comportamiento actual (que /metas replica en linea, ver docs/hallazgos-rediseno.md)
+// para que una divergencia futura entre las dos implementaciones sea visible.
+test("calcularMetasConProgreso suma valor_actual_clp de las cuentas asociadas", async () => {
+  const { calcularMetasConProgreso } = await import("./dashboard.ts");
+  const capital = new Map([
+    ["a", { capital_aportado_clp: 100, valor_actual_clp: 150 }],
+    ["b", { capital_aportado_clp: 50, valor_actual_clp: null }],
+  ]);
+  const nombres = new Map([["a", "Cuenta A"], ["b", "Cuenta B"]]);
+  const r = calcularMetasConProgreso(
+    [{ id: "m1", nombre: "Auto", monto_objetivo: 1000, fecha_objetivo: null }],
+    [{ meta_id: "m1", cuenta_id: "a" }, { meta_id: "m1", cuenta_id: "b" }, { meta_id: "m1", cuenta_id: "inactiva" }],
+    capital,
+    nombres
+  );
+  // una cuenta sin valor, o dada de baja (fuera de capital_por_cuenta), cuenta 0
+  assert.equal(r[0].montoActualClp, 150);
+  assert.deepEqual(r[0].cuentasAsociadas, ["Cuenta A", "Cuenta B"]);
+});
+
+test("calcularMetasConProgreso: meta sin cuentas asociadas queda en 0", async () => {
+  const { calcularMetasConProgreso } = await import("./dashboard.ts");
+  const r = calcularMetasConProgreso([{ id: "m1", nombre: "X", monto_objetivo: 10, fecha_objetivo: null }], [], new Map(), new Map());
+  assert.equal(r[0].montoActualClp, 0);
+  assert.deepEqual(r[0].cuentasAsociadas, []);
+});

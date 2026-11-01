@@ -4,6 +4,7 @@ import { useId, useMemo, useState } from "react";
 import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Ayuda } from "@/components/Ayuda";
 import { calcularEjeX } from "@/lib/graficos";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 import { formatoFecha, formatoPesos, formatoPesosCompacto, formatoPesosSigned } from "@/lib/formato";
 import type { EvolucionPortafolio } from "@/types/database";
 
@@ -79,6 +80,7 @@ function TooltipPersonalizado({ active, payload }: { active?: boolean; payload?:
 export function PortfolioChart({ datos }: PortfolioChartProps) {
   const [periodo, setPeriodo] = useState<Periodo>("6M");
   const gradientId = useId();
+  const sinMovimiento = useReducedMotion();
 
   const todosLosPuntos: Punto[] = useMemo(
     () =>
@@ -240,7 +242,7 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
               strokeWidth={2.2}
               dot={false}
               activeDot={{ r: 4.5, fill: "var(--color-surface-raised)", stroke: "var(--accent)", strokeWidth: 2.4 }}
-              isAnimationActive
+              isAnimationActive={!sinMovimiento}
               animationDuration={900}
             />
           </ComposedChart>
