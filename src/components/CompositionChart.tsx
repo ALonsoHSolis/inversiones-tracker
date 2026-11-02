@@ -64,7 +64,7 @@ function TooltipPersonalizado({
   const punto = payload[0].payload;
 
   return (
-    <div className="rounded-[10px] bg-[rgba(8,13,22,0.94)] border border-white/[0.1] backdrop-blur-[10px] px-3 py-2.5 min-w-[160px] shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
+    <div className="min-w-[180px] rounded-xl bg-surface-raised px-3.5 py-3 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.85),0_0_0_1px_rgba(148,170,200,0.16)]">
       <p className="text-micro text-fg-muted mb-1.5">{formatoFechaCorta(punto.fecha)}</p>
       <div className="flex flex-col gap-1">
         {grupos.map((g) => (
@@ -106,8 +106,8 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
   return (
     <section className="card p-5">
       <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-        <div className="flex items-center gap-1.5">
-          <p className="text-small font-semibold text-fg">Composición histórica</p>
+        <div className="flex items-center gap-1">
+          <h2 className="titulo-bloque">Composición histórica</h2>
           <Ayuda>
             Cómo ha evolucionado en el tiempo la distribución de tu portafolio, en pesos, por
             plataforma o por tipo de activo. Cada punto usa el último valor conocido de cada
@@ -115,27 +115,11 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
             evolución del portafolio.
           </Ayuda>
         </div>
-        <div className="flex gap-0.5 bg-white/[0.04] p-[3px] rounded-[9px]">
-          <button
-            type="button"
-            onClick={() => setDimension("plataforma")}
-            className="h-6 px-2.5 rounded-md text-xs font-semibold"
-            style={{
-              background: dimension === "plataforma" ? "rgba(255,255,255,.1)" : "transparent",
-              color: dimension === "plataforma" ? "var(--color-fg)" : "var(--color-fg-muted)",
-            }}
-          >
+        <div role="group" aria-label="Agrupar por" className="segmentado">
+          <button type="button" aria-pressed={dimension === "plataforma"} onClick={() => setDimension("plataforma")}>
             Plataforma
           </button>
-          <button
-            type="button"
-            onClick={() => setDimension("tipo")}
-            className="h-6 px-2.5 rounded-md text-xs font-semibold"
-            style={{
-              background: dimension === "tipo" ? "rgba(255,255,255,.1)" : "transparent",
-              color: dimension === "tipo" ? "var(--color-fg)" : "var(--color-fg-muted)",
-            }}
-          >
+          <button type="button" aria-pressed={dimension === "tipo"} onClick={() => setDimension("tipo")}>
             Tipo
           </button>
         </div>
@@ -143,34 +127,21 @@ export function CompositionChart({ porPlataforma, porTipo }: CompositionChartPro
 
       {todosLosPuntos.length < 2 ? (
         <p className="text-micro text-fg-muted py-8 text-center">
-          todavía no hay suficiente historial para graficar — vuelve cuando tengas al menos dos
+          Todavía no hay suficiente historial para graficar — vuelve cuando tengas al menos dos
           fechas con valores guardados.
         </p>
       ) : (
         <>
           <div className="flex justify-end mb-2">
-            <div className="flex gap-0.5 bg-white/[0.04] p-[3px] rounded-[9px]">
-              {PERIODOS.map((p) => {
-                const activo = p === periodo;
-                return (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setPeriodo(p)}
-                    className="h-6 px-2.5 rounded-md text-xs font-semibold"
-                    style={{
-                      background: activo ? "rgba(255,255,255,.1)" : "transparent",
-                      color: activo ? "var(--color-fg)" : "var(--color-fg-muted)",
-                      boxShadow: activo ? "0 1px 2px rgba(0,0,0,.3)" : "none",
-                    }}
-                  >
-                    {p}
-                  </button>
-                );
-              })}
+            <div role="group" aria-label="Período del gráfico" className="segmentado">
+              {PERIODOS.map((p) => (
+                <button key={p} type="button" aria-pressed={p === periodo} onClick={() => setPeriodo(p)}>
+                  {p}
+                </button>
+              ))}
             </div>
           </div>
-          <div className="h-[210px]">
+          <div className="h-[240px] sm:h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={puntos} margin={{ top: 14, right: 4, bottom: 0, left: 4 }}>
                 <defs>

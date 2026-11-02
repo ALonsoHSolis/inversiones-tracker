@@ -28,7 +28,8 @@ test("validarRegistro: campos obligatorios y reglas por moneda", () => {
 test("advertencias: valor sin cambio con movimiento, y rendimiento implausible", () => {
   const base = { nombreCuenta: "Fondo", valorAnterior: 1000, valorNuevo: 1000, incluyeMovimiento: true, tipo: "aporte" as const, monto: "100" };
   assert.match(advertenciaRegistro(base) ?? "", /no cambió/);
-  assert.match(advertenciaRegistro({ ...base, valorNuevo: 2000, incluyeMovimiento: false }) ?? "", /100\.0%/);
+  assert.match(advertenciaRegistro({ ...base, valorNuevo: 2000, incluyeMovimiento: false }) ?? "", /100,0%/);
+  assert.match(advertenciaRegistro({ ...base, valorNuevo: 100, incluyeMovimiento: false }) ?? "", /−90,0%/);
   assert.equal(advertenciaRegistro({ ...base, valorNuevo: 1010, incluyeMovimiento: false }), null);
   assert.equal(advertenciaRegistro({ ...base, valorAnterior: null, valorNuevo: 5000 }), null);
 });

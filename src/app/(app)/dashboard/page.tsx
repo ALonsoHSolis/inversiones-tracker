@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { Hero } from "@/components/Hero";
-import { DistribucionCard } from "@/components/DistribucionCard";
+import { DistribucionDetalle } from "@/components/DistribucionCard";
+import { PestanasDistribucion, type PanelDistribucion } from "@/components/PestanasDistribucion";
+import { ArrowRight, ChevronDown, Plus } from "lucide-react";
 import { PortfolioChart } from "@/components/PortfolioChart";
 import { MarketBenchmark } from "@/components/MarketBenchmark";
 import { MetricasSecundarias } from "@/components/MetricasSecundarias";
@@ -174,168 +176,201 @@ export default async function DashboardPage() {
 
 
 
+  const hayCuentas = cuentasActivas.length > 0;
+  const paneles: PanelDistribucion[] = [
+    {
+      id: "plataforma",
+      etiqueta: "Plataforma",
+      ayuda:
+        "Agrupa tus cuentas por banco o corredora para ver cuánto tienes en cada una, sumando el capital aportado y el valor actual de las cuentas de esa plataforma.",
+      contenido: <DistribucionDetalle grupos={plataformas} vacio="Todavía no hay cuentas con valor." />,
+    },
+    {
+      id: "tipo",
+      etiqueta: "Tipo de activo",
+      ayuda:
+        "Agrupa tus cuentas por tipo (fondo mutuo, acciones, depósito a plazo, etc.) para ver cómo está repartido tu portafolio, sumando el capital aportado y el valor actual de las cuentas de ese tipo.",
+      contenido: <DistribucionDetalle grupos={tipos} vacio="Todavía no hay cuentas con valor." />,
+    },
+    {
+      id: "categoria",
+      etiqueta: "Categoría",
+      ayuda:
+        'Agrupa tus cuentas por la categoría personalizada que les asignaste (ej. "jubilación", "fondo de emergencia"). Las cuentas sin categoría no aparecen aquí.',
+      contenido: (
+        <DistribucionDetalle
+          grupos={categorias}
+          vacio="Ninguna cuenta tiene categoría todavía. Puedes asignarla al editar una cuenta."
+        />
+      ),
+    },
+  ];
+
   return (
-    <div className="flex flex-col gap-4">
-    <h1 className="sr-only">Resumen del portafolio</h1>
-    <Hero
-      valorTotal={valorTotal}
-      valorTotalAnterior={valorTotalAnterior}
-      capitalAportadoClp={capitalAportadoClp}
-      valorActualClp={valorActualClp}
-      ultimaActualizacion={ultimaActualizacion}
-      hayMonedaExtranjera={cuentasActivas.some((c) => c.moneda !== "CLP")}
-      chart={<PortfolioChart datos={evolucionPortafolio ?? []} />}
-      benchmark={
-        <MarketBenchmark
-          sp500={benchmarkSp500}
-          uf={benchmarkUf}
-          rendimientoRealPct={
-            capitalAportadoClp > 0 ? ((valorActualClp - capitalAportadoClp) / capitalAportadoClp) * 100 : null
-          }
-        />
-      }
-    />
-
-    <AccionesRapidas />
-
-    {cuentasActivas.length > 0 && (
-      <MetricasSecundarias
-        twr={metricasPortafolio.twr}
-        xirr={metricasPortafolio.xirr}
-        drawdown={metricasPortafolio.drawdown}
+    <div className="flex flex-col gap-5 lg:gap-6">
+      <h1 className="sr-only">Resumen del portafolio</h1>
+      <Hero
+        valorTotal={valorTotal}
+        valorTotalAnterior={valorTotalAnterior}
+        capitalAportadoClp={capitalAportadoClp}
+        valorActualClp={valorActualClp}
+        ultimaActualizacion={ultimaActualizacion}
+        hayMonedaExtranjera={cuentasActivas.some((c) => c.moneda !== "CLP")}
+        chart={<PortfolioChart datos={evolucionPortafolio ?? []} />}
+        benchmark={
+          <MarketBenchmark
+            sp500={benchmarkSp500}
+            uf={benchmarkUf}
+            rendimientoRealPct={
+              capitalAportadoClp > 0 ? ((valorActualClp - capitalAportadoClp) / capitalAportadoClp) * 100 : null
+            }
+          />
+        }
       />
-    )}
 
-    <div className="animate-fade-up grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4  items-start" style={{ "--i": 1 } as React.CSSProperties}>
-      <section className="card p-5">
-        <div className="flex items-center justify-between mb-1">
-          <p className="text-small font-semibold text-fg">Estado de tus cuentas</p>
+      <AccionesRapidas />
+
+      <div className="grid grid-cols-1 items-start gap-5 lg:gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        {/* columna principal: lo que se lee */}
+        <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
+          {hayCuentas && (
+            <MetricasSecundarias
+              twr={metricasPortafolio.twr}
+              xirr={metricasPortafolio.xirr}
+              drawdown={metricasPortafolio.drawdown}
+            />
+          )}
+
+          <section className="card px-5 pt-5 pb-2" aria-labelledby="cuentas-titulo">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+              <div className="flex items-center gap-1">
+                <h2 id="cuentas-titulo" className="titulo-bloque">
+                  Tus cuentas
+                </h2>
+                <Ayuda etiqueta="Cómo leer el rendimiento de cada cuenta">
+                  El % &quot;real&quot; compara los dos últimos registros de la cuenta, en su propia moneda, ya
+                  descontando cualquier aporte o retiro. Aparece cuando hay al menos dos registros. El anualizado
+                  (en el detalle) proyecta la ganancia acumulada a una tasa por año: es una aproximación simple.
+                </Ayuda>
+              </div>
+              <div className="no-print flex items-center gap-1">
+                <Link
+                  href="/cuentas"
+                  className="inline-flex min-h-11 items-center rounded-lg px-2 text-small font-semibold text-fg-soft no-underline hover:text-fg focus-visible:outline-2 focus-visible:outline-accent"
+                >
+                  Ver tabla
+                </Link>
+                <Link
+                  href="/cuentas/nueva"
+                  className="inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent"
+                >
+                  <Plus size={15} strokeWidth={2.2} aria-hidden="true" />
+                  Agregar
+                </Link>
+              </div>
+            </div>
+            <p className="text-micro text-fg-muted">Valor en pesos · rendimiento en la moneda de cada cuenta</p>
+            {cuentasConDatos.length > 0 ? (
+              <ul className="mt-2 lista-filas">
+                {cuentasConDatos.map(({ cuenta, rendimiento }) => (
+                  <AccountRow
+                    key={cuenta.id}
+                    cuenta={cuenta}
+                    rendimiento={rendimiento}
+                    valorActualFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null}
+                    valorClpFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual_clp ?? null}
+                    capitalAportadoFallback={capitalPorCuentaMap.get(cuenta.id)?.capital_aportado ?? null}
+                    ultimaFechaFallback={capitalPorCuentaMap.get(cuenta.id)?.ultima_fecha ?? null}
+                    ahoraMs={hoyMs}
+                  />
+                ))}
+              </ul>
+            ) : (
+              <div className="pb-3">
+                <EmptyAccountsState />
+              </div>
+            )}
+            {(cuentasInactivasCount ?? 0) > 0 && (
+              <Link
+                href="/cuentas/inactivas"
+                className="mb-2 inline-flex min-h-11 items-center text-micro text-fg-muted underline decoration-white/20 underline-offset-4 hover:text-fg-soft"
+              >
+                Ver cuentas dadas de baja
+              </Link>
+            )}
+          </section>
+
+          {hayCuentas && <PestanasDistribucion paneles={paneles} />}
+
           <Link
-            href="/cuentas/nueva"
-            className="no-print inline-flex items-center gap-1 text-micro font-semibold text-[var(--accent)] no-underline"
+            href="/analisis"
+            className="card group flex items-center justify-between gap-3 px-5 py-4 no-underline transition-colors duration-150 hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-accent"
           >
-            + agregar cuenta
+            <span className="min-w-0">
+              <span className="block titulo-bloque">Análisis avanzado</span>
+              <span className="mt-0.5 block text-micro text-fg-muted">
+                Composición histórica, comparación de cuentas (TWR, XIRR, peor caída) y salud de los datos
+              </span>
+            </span>
+            <ArrowRight
+              size={18}
+              aria-hidden="true"
+              className="shrink-0 text-fg-muted transition-transform duration-150 group-hover:translate-x-0.5"
+            />
           </Link>
         </div>
-        <div className="flex items-center gap-1.5 mb-3.5">
-          <p className="text-micro text-fg-muted">
-            Rendimiento en moneda nativa · ya descuenta aportes y retiros
-          </p>
-          <Ayuda>
-            El % &quot;real&quot; aparece una vez que haya al menos dos registros para comparar, y ya
-            viene descontando cualquier aporte o retiro — no es ganancia hasta que no se compare
-            registro contra registro. El % &quot;anualizado&quot; proyecta la ganancia acumulada desde
-            que se creó la cuenta a una tasa equivalente por año (aparece desde el mes de
-            antigüedad) — es una aproximación simple, no ajusta por el momento exacto de cada
-            aporte dentro del período.
-          </Ayuda>
-        </div>
-        <div className="flex flex-col gap-[9px]">
-          {cuentasConDatos.map(({ cuenta, rendimiento }) => (
-            <AccountRow
-              key={cuenta.id}
-              cuenta={cuenta}
-              rendimiento={rendimiento}
-              valorActualFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null}
-              valorClpFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual_clp ?? null}
-              capitalAportadoFallback={capitalPorCuentaMap.get(cuenta.id)?.capital_aportado ?? null}
-              ultimaFechaFallback={capitalPorCuentaMap.get(cuenta.id)?.ultima_fecha ?? null}
-              ahoraMs={hoyMs}
-            />
-          ))}
-          {cuentasConDatos.length === 0 && <EmptyAccountsState />}
-        </div>
-        {(cuentasInactivasCount ?? 0) > 0 && (
-          <Link
-            href="/cuentas/inactivas"
-            className="inline-block mt-3 text-micro text-fg-muted border-b border-white/[0.14]"
-          >
-            ver cuentas dadas de baja
-          </Link>
-        )}
-      </section>
 
-      <div className="no-print hidden lg:flex lg:sticky lg:top-24 flex-col gap-4">
-        <CargaRapida
-          cuentas={cuentas ?? []}
-          movimientosHoy={movimientosHoy}
-          valorAnteriorPorCuenta={valorAnteriorPorCuenta}
-        />
-        <details className="group">
-          <summary className="text-micro font-semibold text-[var(--accent)] cursor-pointer list-none [&::-webkit-details-marker]:hidden">
-            actualizar varias cuentas de una vez
-          </summary>
-          <div className="mt-3">
-            <SnapshotForm
-              cuentas={cuentas ?? []}
-              movimientosHoy={movimientosHoy}
-              valorAnteriorPorCuenta={valorAnteriorPorCuenta}
-            />
-          </div>
-        </details>
+        {/* riel lateral: lo que se hace (registrar) y lo que se sigue (metas, actividad) */}
+        <aside className="flex min-w-0 flex-col gap-5 lg:gap-6" aria-label="Registro, metas y actividad">
+          {hayCuentas && (
+            <div className="no-print hidden xl:flex flex-col gap-3">
+              <CargaRapida
+                cuentas={cuentas ?? []}
+                movimientosHoy={movimientosHoy}
+                valorAnteriorPorCuenta={valorAnteriorPorCuenta}
+              />
+              <details className="group">
+                <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-lg px-1 text-small font-semibold text-accent hover:text-accent-hi [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-accent">
+                  <ChevronDown size={15} aria-hidden="true" className="transition-transform duration-200 group-open:rotate-180" />
+                  Actualizar varias cuentas a la vez
+                </summary>
+                <div className="mt-2">
+                  <SnapshotForm
+                    cuentas={cuentas ?? []}
+                    movimientosHoy={movimientosHoy}
+                    valorAnteriorPorCuenta={valorAnteriorPorCuenta}
+                  />
+                </div>
+              </details>
+            </div>
+          )}
+
+          <section className="card px-5 pt-5 pb-3" aria-labelledby="metas-titulo">
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="metas-titulo" className="titulo-bloque">
+                Metas
+              </h2>
+              <Link
+                href={metasConProgreso.length > 0 ? "/metas" : "/metas/nueva"}
+                className="no-print inline-flex min-h-11 items-center text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent"
+              >
+                {metasConProgreso.length > 0 ? "Gestionar" : "Crear"}
+              </Link>
+            </div>
+            <div className="mt-1">
+              <MetasList metas={metasConProgreso} compacta />
+            </div>
+          </section>
+
+          <ActividadReciente
+            grupos={construirActividad({
+              movimientos: movimientosTodos ?? [],
+              cuentas: cuentasActivas.map((c) => ({ id: c.id, nombre: c.nombre, moneda: c.moneda })),
+              hoy,
+            })}
+          />
+        </aside>
       </div>
-    </div>
-
-    <ActividadReciente
-      grupos={construirActividad({
-        movimientos: movimientosTodos ?? [],
-        cuentas: cuentasActivas.map((c) => ({ id: c.id, nombre: c.nombre, moneda: c.moneda })),
-        hoy,
-      })}
-    />
-
-    <section className="animate-fade-up card p-5" style={{ "--i": 2 } as React.CSSProperties}>
-      <div className="flex items-center justify-between mb-1">
-        <p className="text-small font-semibold text-fg">Tus metas</p>
-        <Link
-          href="/metas/nueva"
-          className="no-print inline-flex items-center gap-1 text-micro font-semibold text-[var(--accent)] no-underline"
-        >
-          + agregar meta
-        </Link>
-      </div>
-      <p className="text-micro text-fg-muted mb-3.5">
-        El progreso suma el valor actual (en CLP) de las cuentas que asociaste a cada meta
-      </p>
-      <MetasList metas={metasConProgreso} />
-    </section>
-
-    <div className="animate-fade-up grid grid-cols-1 md:grid-cols-2 gap-4" style={{ "--i": 3 } as React.CSSProperties}>
-      <DistribucionCard
-        titulo="Por plataforma"
-        subtitulo="Cuánto tienes en cada banco o corredora"
-        ayuda="Agrupa tus cuentas por banco o corredora para ver cuánto tienes en cada una, sumando el capital aportado y el valor actual de las cuentas de esa plataforma."
-        grupos={plataformas}
-      />
-      <DistribucionCard
-        titulo="Por tipo de activo"
-        subtitulo="Cómo está repartido tu portafolio"
-        ayuda="Agrupa tus cuentas por tipo (fondo mutuo, acciones, depósito a plazo, etc.) para ver cómo está repartido tu portafolio, sumando el capital aportado y el valor actual de las cuentas de ese tipo."
-        grupos={tipos}
-      />
-      <DistribucionCard
-        titulo="Por categoría"
-        subtitulo="Cómo está repartido tu portafolio según tus propias metas"
-        ayuda='Agrupa tus cuentas por la categoría personalizada que les asignaste (ej. "jubilación", "fondo de emergencia"), sumando el capital aportado y el valor actual de las cuentas de esa categoría. Cuentas sin categoría no aparecen aquí.'
-        grupos={categorias}
-      />
-    </div>
-
-
-
-      <Link
-        href="/analisis"
-        className="animate-fade-up card flex items-center justify-between gap-3 px-5 py-4 transition-colors duration-200 hover:border-white/[0.2] focus-visible:outline-2 focus-visible:outline-accent"
-        style={{ "--i": 4 } as React.CSSProperties}
-      >
-        <span>
-          <span className="block text-small font-semibold text-fg">Análisis avanzado</span>
-          <span className="block mt-0.5 text-micro text-fg-muted">
-            Composición histórica, comparación de cuentas (TWR, XIRR, drawdown) y salud de los datos
-          </span>
-        </span>
-        <span aria-hidden="true" className="text-fg-muted">→</span>
-      </Link>
     </div>
   );
 }

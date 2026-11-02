@@ -9,6 +9,10 @@ import { InputMonto } from "@/components/InputMonto";
 import { formatoFecha } from "@/lib/formato";
 import type { Cuenta, Moneda, TipoMovimiento } from "@/types/database";
 import { fechaHoyChile } from "@/lib/fecha";
+import { AlertTriangle, Check, Plus } from "lucide-react";
+// mismas formulas y condiciones que la carga rapida (con tests en
+// src/lib/registro.test.ts); antes habia una copia identica en este archivo.
+import { advertenciaRegistro, calcularValorSugerido } from "@/lib/registro";
 
 interface SnapshotFormProps {
   cuentas: Cuenta[];
@@ -55,34 +59,6 @@ function filaInicial(seed?: { tipo: TipoMovimiento; monto: number }): FilaState 
   };
 }
 
-function calcularValorSugerido(valorAnterior: number | null, monto: string, tipo: TipoMovimiento): string {
-  const base = valorAnterior ?? 0;
-  const montoNum = Number(monto) || 0;
-  const sugerido = tipo === "aporte" ? base + montoNum : base - montoNum;
-  return String(sugerido);
-}
-
-const UMBRAL_RENDIMIENTO_IMPLAUSIBLE = 80;
-
-// misma formula que la vista rendimiento_semanal (schema.sql): ganancia_real =
-// valor - valor_anterior - aportes_netos, dividido por (valor_anterior +
-// aportes_netos) cuando esa base es positiva. se estima aca ANTES de guardar
-// para poder advertir si el numero que resultaria es implausible.
-function estimarRendimientoPct(
-  valorAnterior: number | null,
-  valorNuevo: number,
-  incluyeMovimiento: boolean,
-  tipo: TipoMovimiento,
-  monto: string
-): number | null {
-  if (valorAnterior == null) return null;
-  const aportesNetos = incluyeMovimiento ? (tipo === "aporte" ? Number(monto) || 0 : -(Number(monto) || 0)) : 0;
-  const base = valorAnterior + aportesNetos;
-  if (base <= 0) return null;
-  const gananciaReal = valorNuevo - valorAnterior - aportesNetos;
-  return (gananciaReal / base) * 100;
-}
-
 export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }: SnapshotFormProps) {
   const router = useRouter();
   const [filas, setFilas] = useState<Record<string, FilaState>>(() =>
@@ -90,6 +66,9 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
   );
   const [guardando, setGuardando] = useState(false);
   const [resumen, setResumen] = useState<string | null>(null);
+  // advertencias pendientes de confirmar (antes: un window.confirm por cuenta)
+  const [advertencias, setAdvertencias] = useState<{ cuentaId: string; mensaje: string }[] | null>(null);
+  const panelAdvertencias = useRef<HTMLDivElement>(null);
 
   function actualizarFila(cuentaId: string, patch: Partial<FilaState>) {
     setFilas((prev) => ({
@@ -154,50 +133,49 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function guardarSnapshots() {
+  // confirmado: undefined = primer intento; "todo" = guardar igual las cuentas
+  // con advertencia; "sin-avisos" = guardar solo las demas (como "Cancelar" en
+  // el window.confirm de antes, que omitia esa cuenta y guardaba el resto).
+  async function guardarSnapshots(confirmado?: "todo" | "sin-avisos") {
     setResumen(null);
 
     const pendientes = cuentas.filter((c) => (filas[c.id]?.valor ?? "").trim() !== "");
 
     if (pendientes.length === 0) return;
 
-    // dos chequeos antes de guardar, del mas especifico al mas general -- si
-    // el primero aplica, no se muestra tambien el segundo por el mismo
-    // problema de fondo:
-    // 1) valor sin cambio pero con aporte/retiro marcado -- probablemente el
-    //    aporte nunca quedo sumado al valor.
-    // 2) el % de rendimiento que resultaria es implausible (ej. -95%) --
-    //    probablemente un typo en el valor o en el monto del aporte.
-    const aGuardar = pendientes.filter((cuenta) => {
-      const fila = filas[cuenta.id];
-      const anterior = valorAnteriorPorCuenta[cuenta.id];
-      const valorSinCambio = fila.incluyeMovimiento && anterior != null && Number(fila.valor) === anterior;
+    // advertencias (no bloquean): valor sin cambio pese a un aporte/retiro
+    // marcado, o un rendimiento implausible. mismas condiciones de antes, via
+    // advertenciaRegistro; ahora se confirman en pantalla, no con window.confirm.
+    const avisos = pendientes
+      .map((cuenta) => {
+        const fila = filas[cuenta.id];
+        const mensaje = advertenciaRegistro({
+          nombreCuenta: cuenta.nombre,
+          valorAnterior: valorAnteriorPorCuenta[cuenta.id] ?? null,
+          valorNuevo: Number(fila.valor),
+          incluyeMovimiento: fila.incluyeMovimiento,
+          tipo: fila.movimientoTipo,
+          monto: fila.movimientoMonto,
+        });
+        return mensaje ? { cuentaId: cuenta.id, mensaje } : null;
+      })
+      .filter((a): a is { cuentaId: string; mensaje: string } => a !== null);
 
-      if (valorSinCambio) {
-        const confirma = window.confirm(
-          `El valor de "${cuenta.nombre}" no cambió respecto al último registro, pero marcaste un aporte/retiro. ¿El valor ya incluye ese movimiento? Cancela para revisar el campo "valor".`
-        );
-        if (!confirma) actualizarFila(cuenta.id, { resultado: "no guardado: revisa el valor" });
-        return confirma;
-      }
+    if (avisos.length > 0 && !confirmado) {
+      setAdvertencias(avisos);
+      requestAnimationFrame(() => {
+        panelAdvertencias.current?.focus({ preventScroll: true });
+        panelAdvertencias.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      });
+      return;
+    }
+    setAdvertencias(null);
 
-      const pct = estimarRendimientoPct(
-        anterior,
-        Number(fila.valor),
-        fila.incluyeMovimiento,
-        fila.movimientoTipo,
-        fila.movimientoMonto
-      );
-      if (pct != null && Math.abs(pct) >= UMBRAL_RENDIMIENTO_IMPLAUSIBLE) {
-        const confirma = window.confirm(
-          `Con este valor, el rendimiento de "${cuenta.nombre}" sería de ${pct.toFixed(1)}% respecto al registro anterior — ¿el valor es correcto? Cancela para revisarlo.`
-        );
-        if (!confirma) actualizarFila(cuenta.id, { resultado: "no guardado: revisa el valor" });
-        return confirma;
-      }
-
-      return true;
-    });
+    const conAviso = new Set(avisos.map((a) => a.cuentaId));
+    const aGuardar = confirmado === "sin-avisos" ? pendientes.filter((c) => !conAviso.has(c.id)) : pendientes;
+    if (confirmado === "sin-avisos") {
+      conAviso.forEach((id) => actualizarFila(id, { resultado: "No guardado: revisa el valor" }));
+    }
 
     if (aGuardar.length === 0) return;
 
@@ -269,60 +247,75 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
 
   const algunaCargandoTasa = Object.values(filas).some((f) => f.cargandoTasa);
 
+  const CAMPO =
+    "h-10 rounded-[10px] border border-control bg-white/[0.04] px-3 text-right text-small font-mono-tabular text-fg focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent/30";
+  const nombrePorId = new Map(cuentas.map((c) => [c.id, c.nombre]));
+  const hayCuentasSinAviso =
+    advertencias != null &&
+    cuentas.some((c) => (filas[c.id]?.valor ?? "").trim() !== "" && !advertencias.some((a) => a.cuentaId === c.id));
+
   return (
-    <section className="card p-5">
-      <div className="flex items-center gap-1.5 mb-1">
-        <p className="text-small font-semibold text-fg">Actualizar valores de hoy</p>
-        <Ayuda>
-          Escribe el valor de hoy de cada cuenta (lo que ves en el banco o corredora), o usa &quot;sin
-          cambios&quot; si sigue igual que el último registro. Si además depositaste o retiraste plata
-          — no una variación de mercado — usa &quot;+ añadir aporte o retiro&quot; para que ese monto no
-          se cuente como ganancia.
+    <section className="card p-5" aria-labelledby="varias-cuentas-titulo">
+      <div className="flex items-center gap-1 mb-0.5">
+        <h2 id="varias-cuentas-titulo" className="titulo-bloque">Actualizar valores de hoy</h2>
+        <Ayuda etiqueta="Cómo actualizar varias cuentas">
+          Escribe el valor de hoy de cada cuenta (lo que ves en el banco o corredora), o usa &quot;Sin
+          cambios&quot; si sigue igual que el último registro. Si además depositaste o retiraste plata (no una
+          variación de mercado), usa &quot;Añadir aporte o retiro&quot; para que ese monto no se cuente como
+          ganancia. Solo se guardan las cuentas con un valor escrito.
         </Ayuda>
       </div>
-      <p className="text-micro text-fg-muted mb-4">Fecha de hoy: {formatoFecha(fechaHoyChile())}</p>
-      {/* una sola columna a proposito, sin breakpoint de viewport: este
-          formulario vive dentro de un sidebar angosto (ver page.tsx), y
-          sm:grid-cols-2 se activaba por el ancho de la ventana, no del
-          contenedor -- con dos columnas ahi el select+monto de cada card no
-          alcanzaban a caber y se desbordaban sobre la tarjeta vecina. */}
-      <div className="flex flex-col gap-3">
+      <p className="text-micro text-fg-muted mb-3">
+        Fecha de hoy: <span className="font-mono-tabular">{formatoFecha(fechaHoyChile())}</span>
+      </p>
+      {/* una sola columna a proposito: este formulario tambien vive dentro
+          del riel angosto del inicio, y un breakpoint de viewport no sabe el
+          ancho del contenedor. */}
+      <ul className="lista-filas">
         {cuentas.map((cuenta) => {
           const fila = filas[cuenta.id] ?? filaInicial();
           const anterior = valorAnteriorPorCuenta[cuenta.id];
+          const idBase = `varias-${cuenta.id}`;
           return (
-            <div key={cuenta.id} className="rounded-xl border border-white/[0.08] p-3.5 flex flex-col">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-small font-medium text-fg-soft truncate">{cuenta.nombre}</span>
+            <li key={cuenta.id} className="flex flex-col py-3.5">
+              <div className="flex items-start justify-between gap-2">
+                <label htmlFor={`${idBase}-valor`} className="min-w-0 break-words text-small font-semibold text-fg">
+                  {cuenta.nombre}
+                  <span className="ml-1.5 text-micro font-medium text-fg-subtle">{cuenta.moneda}</span>
+                </label>
                 {anterior != null && (
                   <button
                     type="button"
                     onClick={() =>
                       actualizarFila(cuenta.id, { valor: String(anterior), valorEditadoManualmente: true })
                     }
-                    className="text-micro text-fg-subtle border-b border-white/[0.12] shrink-0"
+                    className="-my-1 min-h-8 shrink-0 rounded-md px-1.5 text-micro font-medium text-fg-muted underline decoration-white/20 underline-offset-4 hover:text-fg focus-visible:outline-2 focus-visible:outline-accent"
                   >
-                    sin cambios
+                    Sin cambios
                   </button>
                 )}
               </div>
 
               <InputMonto
+                id={`${idBase}-valor`}
                 placeholder="0"
-                className="mt-2.5 w-full h-10 px-3 rounded-[10px] border border-white/[0.14] bg-white/[0.04] text-fg text-right text-small font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+                className={`mt-2 w-full ${CAMPO}`}
                 value={fila.valor}
                 onChange={(valor) => actualizarFila(cuenta.id, { valor, valorEditadoManualmente: true })}
               />
 
               {cuenta.moneda !== "CLP" && (
-                <div className="mt-2.5 flex flex-col gap-1">
+                <div className="mt-2 flex flex-col gap-1">
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-micro font-semibold text-fg-muted">Tasa de cambio</span>
+                    <label htmlFor={`${idBase}-tasa`} className="text-micro font-medium text-fg-muted">
+                      Tasa {cuenta.moneda} en pesos
+                    </label>
                     <input
+                      id={`${idBase}-tasa`}
                       type="number"
                       inputMode="decimal"
                       step="0.01"
-                      className="w-28 h-8 px-2 rounded-lg border border-white/[0.14] bg-white/[0.04] text-fg text-right text-small font-mono-tabular focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+                      className={`w-32 ${CAMPO} h-9`}
                       value={fila.tasaCambio ?? ""}
                       onChange={(e) =>
                         editarTasaManualmente(cuenta.id, e.target.value ? Number(e.target.value) : null)
@@ -330,92 +323,137 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                     />
                   </div>
                   {fila.cargandoTasa && (
-                    <span className="text-micro text-fg-muted text-right">buscando tasa en mindicador.cl…</span>
+                    <span role="status" className="text-micro text-fg-muted text-right">Buscando tasa en mindicador.cl…</span>
                   )}
                   {!fila.cargandoTasa && fila.tasaFecha && (
                     <span className="text-micro text-fg-muted text-right">
-                      según Banco Central, {formatoFecha(fila.tasaFecha)}
+                      Según Banco Central, {formatoFecha(fila.tasaFecha)}
                     </span>
                   )}
                   {fila.errorTasa && (
-                    <span className="text-micro text-[var(--neg)] flex items-center justify-end gap-2">
-                      {fila.errorTasa}
-                      <button type="button" onClick={() => cargarTasa(cuenta)} className="underline shrink-0">
-                        reintentar
+                    <span role="alert" className="text-micro text-neg flex flex-wrap items-center justify-end gap-x-2">
+                      No se pudo obtener la tasa. Revisa tu conexión.
+                      <button type="button" onClick={() => cargarTasa(cuenta)} className="min-h-8 underline shrink-0">
+                        Reintentar
                       </button>
                     </span>
                   )}
                 </div>
               )}
 
-              {/* revelacion progresiva: el aporte/retiro empieza oculto detras
-                  de un boton secundario -- por defecto solo se ve el input de
-                  valor, para no saturar la pantalla cuando la mayoria de los
-                  dias no hay ningun movimiento que registrar. */}
+              {/* revelacion progresiva: el aporte/retiro empieza oculto, la
+                  mayoria de los dias no hay movimiento que registrar. */}
               {!fila.incluyeMovimiento ? (
                 <button
                   type="button"
                   onClick={() => actualizarMovimiento(cuenta, { incluyeMovimiento: true })}
-                  className="mt-2.5 self-start text-micro font-semibold text-[var(--accent)]"
+                  className="mt-1.5 inline-flex min-h-9 items-center gap-1 self-start rounded-md text-micro font-semibold text-accent hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent"
                 >
-                  + añadir aporte o retiro
+                  <Plus size={13} strokeWidth={2.4} aria-hidden="true" />
+                  Añadir aporte o retiro
                 </button>
               ) : (
-                <div className="mt-2.5 rounded-[10px] bg-white/[0.03] p-2.5 flex flex-col gap-2">
+                <fieldset className="mt-2 flex flex-col gap-2 rounded-[10px] bg-white/[0.03] p-2.5">
+                  <legend className="sr-only">Aporte o retiro de {cuenta.nombre}</legend>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-micro font-medium text-fg-muted">Esto incluye un aporte o retiro</span>
+                    <span className="text-micro font-medium text-fg-muted">
+                      Incluye un aporte o retiro
+                      {fila.tieneMovimientoOriginal && <span className="ml-1.5 text-fg-subtle">· ya registrado hoy</span>}
+                    </span>
                     <button
                       type="button"
                       onClick={() => actualizarMovimiento(cuenta, { incluyeMovimiento: false })}
-                      className="text-micro text-fg-subtle border-b border-white/[0.12] shrink-0"
+                      className="min-h-8 shrink-0 rounded-md px-1 text-micro text-fg-muted underline decoration-white/20 underline-offset-4 hover:text-fg"
                     >
-                      quitar
+                      Quitar
                     </button>
                   </div>
-                  {fila.tieneMovimientoOriginal && (
-                    <span className="self-start text-micro font-medium text-fg-muted bg-white/[0.04] border border-white/[0.12] rounded px-1.5 py-px">
-                      ya registrado hoy
-                    </span>
-                  )}
                   <div className="flex items-center gap-2">
                     <select
+                      aria-label={`Tipo de movimiento de ${cuenta.nombre}`}
                       value={fila.movimientoTipo}
                       onChange={(e) =>
                         actualizarMovimiento(cuenta, { movimientoTipo: e.target.value as TipoMovimiento })
                       }
-                      className="h-9 px-2 rounded-lg border border-control text-small bg-white/[0.04] text-fg shrink-0"
+                      className="h-9 shrink-0 rounded-lg border border-control bg-surface-raised px-2 text-small text-fg focus-visible:outline-2 focus-visible:outline-accent"
                     >
                       <option value="aporte">Aporte</option>
                       <option value="retiro">Retiro</option>
                     </select>
                     <InputMonto
-                      placeholder="monto"
-                      className="flex-1 min-w-0 h-9 px-2.5 rounded-lg border border-control text-right text-small font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30"
+                      ariaLabel={`Monto del ${fila.movimientoTipo} en ${cuenta.moneda}`}
+                      placeholder="Monto"
+                      className={`min-w-0 flex-1 ${CAMPO} h-9`}
                       value={fila.movimientoMonto}
                       onChange={(movimientoMonto) => actualizarMovimiento(cuenta, { movimientoMonto })}
                     />
                   </div>
-                </div>
+                  <p className="text-micro text-fg-subtle">No se cuenta como rendimiento.</p>
+                </fieldset>
               )}
 
               {fila.resultado === "ok" && (
-                <p className="mt-2 text-micro font-semibold text-[var(--pos)]">✓ guardado</p>
+                <p className="mt-2 inline-flex items-center gap-1 text-micro font-semibold text-pos">
+                  <Check size={14} strokeWidth={2.4} aria-hidden="true" />
+                  Guardado
+                </p>
               )}
               {fila.resultado && fila.resultado !== "ok" && (
-                <p className="mt-2 text-micro text-[var(--neg)]">{fila.resultado}</p>
+                <p role="alert" className="mt-2 text-micro text-neg">{fila.resultado}</p>
               )}
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
+
+      {advertencias && (
+        <div
+          ref={panelAdvertencias}
+          tabIndex={-1}
+          role="alertdialog"
+          aria-label="Revisa antes de guardar"
+          className="mt-3 scroll-mb-28 rounded-xl border border-warn/40 bg-warn/10 p-3.5 outline-none"
+        >
+          <p className="flex items-center gap-2 text-small font-semibold text-fg">
+            <AlertTriangle size={16} aria-hidden="true" className="shrink-0 text-warn" />
+            Revisa antes de guardar
+          </p>
+          <ul className="mt-2 flex flex-col gap-1.5 text-micro leading-relaxed text-fg-soft">
+            {advertencias.map((a) => (
+              <li key={a.cuentaId}>
+                <span className="font-semibold text-fg">{nombrePorId.get(a.cuentaId)}:</span> {a.mensaje}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-3 flex flex-col gap-2 min-[480px]:flex-row min-[480px]:flex-wrap">
+            <button type="button" onClick={() => setAdvertencias(null)} className="boton-secundario flex-1">
+              Revisar los valores
+            </button>
+            {hayCuentasSinAviso && (
+              <button type="button" onClick={() => guardarSnapshots("sin-avisos")} className="boton-secundario flex-1">
+                Guardar solo las demás
+              </button>
+            )}
+            <button type="button" onClick={() => guardarSnapshots("todo")} className="boton-primario flex-1">
+              Guardar igual
+            </button>
+          </div>
+        </div>
+      )}
+
       <button
-        onClick={guardarSnapshots}
+        type="button"
+        onClick={() => guardarSnapshots()}
         disabled={guardando || algunaCargandoTasa}
-        className="w-full h-[42px] mt-4 rounded-[11px] bg-[var(--accent)] text-ink text-small font-semibold disabled:opacity-50 hover:brightness-[1.08]"
+        className="boton-primario mt-3 h-11 w-full disabled:opacity-50"
       >
         {guardando ? "Guardando…" : "Guardar registros"}
       </button>
-      {resumen && <p className="text-micro font-semibold text-center text-fg-muted mt-2.5">{resumen}</p>}
+      {resumen && (
+        <p role="status" className="mt-2.5 text-center text-micro font-semibold text-fg-muted">
+          {resumen}
+        </p>
+      )}
     </section>
   );
 }
