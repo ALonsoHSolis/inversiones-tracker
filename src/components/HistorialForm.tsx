@@ -214,20 +214,21 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
   }
 
   return (
-    <div className="flex flex-col gap-2.5">
+    <ul className="card lista-filas px-4 sm:px-5">
       {filas.map((fila) => {
         const estado = estados[fila.snapshotId];
+        const id = `hist-${fila.snapshotId}`;
+        const fecha = formatoFecha(fila.fecha);
         return (
-          <div
-            key={fila.snapshotId}
-            className="card p-4 shadow-[0_16px_40px_-28px_rgba(0,0,0,0.5)]"
-          >
-            <p className="text-micro text-fg-subtle font-mono-tabular mb-2">{formatoFecha(fila.fecha)}</p>
-
+          <li key={fila.snapshotId} className="py-4">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-micro font-semibold text-fg-muted">Valor</span>
+              <label htmlFor={`${id}-valor`} className="text-small font-semibold text-fg">
+                <span className="font-mono-tabular">{fecha}</span>
+                <span className="sr-only">, valor en {cuenta.moneda}</span>
+              </label>
               <InputMonto
-                className={`w-32 ${inputClass}`}
+                id={`${id}-valor`}
+                className={`w-36 ${inputClass}`}
                 value={estado.valor}
                 onChange={(valor) => actualizarFila(fila.snapshotId, { valor, valorEditadoManualmente: true })}
               />
@@ -235,8 +236,11 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
 
             {cuenta.moneda !== "CLP" && (
               <div className="mt-2 flex items-center justify-between gap-3">
-                <span className="text-micro text-fg-muted">Tasa de cambio</span>
+                <label htmlFor={`${id}-tasa`} className="text-micro text-fg-muted">
+                  Tasa {cuenta.moneda} en pesos<span className="sr-only"> del {fecha}</span>
+                </label>
                 <input
+                  id={`${id}-tasa`}
                   type="number"
                   inputMode="decimal"
                   step="0.01"
@@ -254,12 +258,13 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                 onChange={(e) => actualizarMovimiento(fila, { incluyeMovimiento: e.target.checked })}
                 className="w-[15px] h-[15px] accent-[var(--accent)]"
               />
-              esto incluye un aporte o retiro
+              Esto incluye un aporte o retiro<span className="sr-only"> el {fecha}</span>
             </label>
 
             {estado.incluyeMovimiento && (
               <div className="mt-2 flex items-center gap-2">
                 <select
+                  aria-label={`Tipo de movimiento del ${fecha}`}
                   value={estado.movimientoTipo}
                   onChange={(e) =>
                     actualizarMovimiento(fila, { movimientoTipo: e.target.value as TipoMovimiento })
@@ -270,7 +275,8 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
                   <option value="retiro">Retiro</option>
                 </select>
                 <InputMonto
-                  placeholder="monto"
+                  ariaLabel={`Monto del ${estado.movimientoTipo} del ${fecha}`}
+                  placeholder="Monto"
                   className={`flex-1 min-w-[100px] ${inputClass}`}
                   value={estado.movimientoMonto}
                   onChange={(movimientoMonto) => actualizarMovimiento(fila, { movimientoMonto })}
@@ -279,7 +285,9 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
             )}
 
             <label className="mt-2.5 flex flex-col gap-1">
-              <span className="text-micro text-fg-muted">Nota (opcional)</span>
+              <span className="text-micro text-fg-muted">
+                Nota (opcional)<span className="sr-only"> del {fecha}</span>
+              </span>
               <input
                 type="text"
                 placeholder="ej. caída del mercado"
@@ -292,22 +300,22 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
             <button
               onClick={() => guardarFila(fila)}
               disabled={estado.guardando}
-              className="mt-3 h-9 w-full rounded-[8px] bg-[var(--accent)] text-ink text-small font-semibold disabled:opacity-50"
+              className="boton-secundario mt-3 h-9 w-full disabled:opacity-50"
             >
-              {estado.guardando ? "guardando..." : "guardar"}
+              {estado.guardando ? "Guardando…" : <>Guardar<span className="sr-only"> el registro del {fecha}</span></>}
             </button>
 
             {estado.resultado === "ok" && (
-              <p className="mt-2 text-micro font-medium" style={{ color: "var(--pos)" }}>
-                guardado
+              <p role="status" className="mt-2 text-micro font-medium text-pos">
+                Guardado
               </p>
             )}
             {estado.resultado && estado.resultado !== "ok" && (
-              <p className="mt-2 text-micro text-[var(--neg)]">{estado.resultado}</p>
+              <p role="alert" className="mt-2 text-micro text-neg">{estado.resultado}</p>
             )}
-          </div>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }

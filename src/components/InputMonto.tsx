@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatoMiles } from "@/lib/formato";
+import { formatoMiles, normalizarMontoIngresado } from "@/lib/formato";
 
 interface InputMontoProps {
   // valor crudo tal como lo espera Number(...) (punto decimal, sin
@@ -14,6 +14,8 @@ interface InputMontoProps {
   id?: string;
   invalido?: boolean;
   describedBy?: string;
+  // nombre accesible cuando no hay un <label for> visible (ej. filas de SnapshotForm)
+  ariaLabel?: string;
 }
 
 // mientras el campo esta enfocado se ve y edita el numero crudo (igual que
@@ -22,7 +24,7 @@ interface InputMontoProps {
 // "25978403" sin separadores, que se lee como un numero roto -- pero sin
 // arriesgar romper el punto decimal de una cuenta en uf mientras se escribe,
 // que es lo que pasaba al intentar formatear en cada tecla.
-export function InputMonto({ value, onChange, placeholder, className, id, invalido, describedBy }: InputMontoProps) {
+export function InputMonto({ value, onChange, placeholder, className, id, invalido, describedBy, ariaLabel }: InputMontoProps) {
   const [enfocado, setEnfocado] = useState(false);
 
   return (
@@ -30,6 +32,7 @@ export function InputMonto({ value, onChange, placeholder, className, id, invali
       id={id}
       aria-invalid={invalido || undefined}
       aria-describedby={describedBy}
+      aria-label={ariaLabel}
       type="text"
       inputMode="decimal"
       placeholder={placeholder}
@@ -37,7 +40,7 @@ export function InputMonto({ value, onChange, placeholder, className, id, invali
       value={enfocado ? value : formatoMiles(value)}
       onFocus={() => setEnfocado(true)}
       onBlur={() => setEnfocado(false)}
-      onChange={(e) => onChange(e.target.value.replace(/[^\d.]/g, ""))}
+      onChange={(e) => onChange(normalizarMontoIngresado(e.target.value))}
     />
   );
 }

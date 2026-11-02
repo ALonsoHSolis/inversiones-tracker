@@ -2,6 +2,7 @@ import { Ayuda } from "@/components/Ayuda";
 import { CountUp } from "@/components/CountUp";
 import { formatoFecha, formatoPct, formatoPesos, formatoPesosSigned } from "@/lib/formato";
 import type { ReactNode } from "react";
+import { ArrowDownRight, ArrowUpRight, CalendarClock, Coins, TrendingDown, TrendingUp } from "lucide-react";
 
 interface HeroProps {
   valorTotal: number;
@@ -15,6 +16,9 @@ interface HeroProps {
   hayMonedaExtranjera: boolean;
   chart: ReactNode;
   benchmark: ReactNode;
+  // sin cuentas activas: no se muestran cambios ni ganancia (serian +$0 en
+  // verde, que se lee como una ganancia que no existe)
+  sinCuentas?: boolean;
 }
 
 // tarjeta protagonista del dashboard. jerarquia:
@@ -33,6 +37,7 @@ export function Hero({
   hayMonedaExtranjera,
   chart,
   benchmark,
+  sinCuentas = false,
 }: HeroProps) {
   const cambioNominal = valorTotal - valorTotalAnterior;
   const cambioNominalPct = valorTotalAnterior > 0 ? (cambioNominal / valorTotalAnterior) * 100 : 0;
@@ -49,104 +54,119 @@ export function Hero({
   const capitalPctBarra = baseBarra > 0 ? (Math.min(capitalAportadoClp, valorActualClp) / baseBarra) * 100 : 0;
   const deltaPctBarra = baseBarra > 0 ? (Math.abs(gananciaTotal) / baseBarra) * 100 : 0;
 
+  const IconoCambio = cambioEsPositivo ? ArrowUpRight : ArrowDownRight;
+  const IconoGanancia = gananciaEsPositiva ? TrendingUp : TrendingDown;
+
   return (
-    <section className="card card-hero px-5 py-6 sm:px-7 sm:py-7 animate-fade-up" aria-label="Resumen del portafolio">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-8 lg:gap-12">
-        <div>
-          <p className="text-micro font-semibold uppercase tracking-[0.12em] text-fg-subtle">
-            Valor total del portafolio
-          </p>
-          <p className="money-value mt-3 font-mono-tabular font-medium text-[clamp(28px,10.5vw,48px)] leading-none tracking-[-0.025em] text-fg">
+    <section className="card card-hero px-5 pt-6 pb-5 sm:px-7 sm:pt-7 animate-fade-up" aria-label="Resumen del portafolio">
+      <div
+        className={`grid grid-cols-1 gap-6 lg:gap-10 lg:items-center ${
+          sinCuentas ? "" : "lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]"
+        }`}
+      >
+        <div className="min-w-0">
+          <h2 className="etiqueta">Patrimonio total</h2>
+          <p className="money-value cifra-xl font-mono-tabular mt-2.5 text-fg">
             <CountUp valor={valorTotal} formato="pesos" claveSesion="valor-total" />
           </p>
 
-          <div className="mt-4 flex items-center gap-2.5 flex-wrap">
+          {sinCuentas ? (
+            <p className="mt-4 max-w-[420px] text-small leading-relaxed text-fg-muted">
+              Agrega tu primera cuenta para empezar a medir tu ganancia real, siempre separada de lo que depositas.
+            </p>
+          ) : (
+          <div className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
             <span
-              className="inline-flex items-center gap-1.5 font-mono-tabular text-small font-medium"
-              style={{ color: cambioEsPositivo ? "var(--color-pos)" : "var(--color-neg)" }}
+              className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono-tabular text-small font-semibold"
+              style={{
+                color: cambioEsPositivo ? "var(--color-pos)" : "var(--color-neg)",
+                background: cambioEsPositivo ? "rgba(65,215,170,0.1)" : "rgba(255,120,133,0.1)",
+              }}
             >
-              <span aria-hidden="true" className="text-micro">
-                {cambioEsPositivo ? "▲" : "▼"}
-              </span>
+              <IconoCambio size={14} strokeWidth={2.2} aria-hidden="true" />
               <span className="money-value">{formatoPesosSigned(cambioNominal)}</span>
-              <span>({formatoPct(cambioNominalPct)})</span>
+              <span className="font-medium opacity-85">· {formatoPct(cambioNominalPct)}</span>
             </span>
-            <span className="text-small text-fg-muted">cambio nominal esta semana</span>
-            <Ayuda>
-              &quot;Nominal&quot; incluye cualquier aporte o retiro que hayas hecho esta semana — no es tu ganancia
-              real, que se muestra al lado.
+            <span className="text-small text-fg-muted">vs. registro anterior · incluye aportes</span>
+            <Ayuda etiqueta="Qué es el cambio desde el registro anterior">
+              Es el cambio nominal del valor total desde el registro anterior de cada cuenta. Incluye
+              cualquier aporte o retiro, así que no es tu ganancia: la ganancia real se muestra aparte.
             </Ayuda>
           </div>
-
-          <p className="mt-4 text-micro leading-relaxed text-fg-muted">
-            Valores en pesos chilenos (CLP)
-            {hayMonedaExtranjera && ". Las cuentas en USD o UF se convierten con la tasa de cada registro, no la de hoy"}
-            {ultimaActualizacion && (
-              <>
-                {" · "}Último registro: <span className="text-fg-soft">{formatoFecha(ultimaActualizacion)}</span>
-              </>
-            )}
-          </p>
+          )}
         </div>
 
-        <div className="lg:border-l lg:border-[var(--line)] lg:pl-12">
-          <div className="flex items-center gap-1.5">
-            <p className="text-micro font-semibold uppercase tracking-[0.12em] text-fg-muted">Ganancia real</p>
-            <Ayuda>
+        {!sinCuentas && (
+        <div className="rounded-2xl bg-white/[0.03] p-4 sm:p-5 shadow-[inset_0_0_0_1px_var(--color-edge)]">
+          <div className="flex items-center gap-1">
+            <h2 className="etiqueta">Ganancia real</h2>
+            <Ayuda etiqueta="Cómo se calcula la ganancia real">
               &quot;Capital aportado&quot; es todo lo que depositaste menos lo que retiraste, sumando todas tus
-              cuentas desde que las creaste. &quot;Valor actual&quot; es cuánto valen hoy. &quot;Ganancia
-              real&quot; es la diferencia entre ambos: lo que tu dinero realmente produjo, sin contar lo que
-              tú pusiste.
+              cuentas desde que las creaste. &quot;Valor actual&quot; es cuánto valen hoy. La ganancia real es la
+              diferencia: lo que tu dinero produjo, sin contar lo que tú pusiste.
             </Ayuda>
           </div>
-          <p
-            className="money-value mt-1.5 font-mono-tabular text-[28px] font-semibold leading-tight tracking-[-0.01em]"
-            style={{ color: colorGanancia }}
-          >
-            <CountUp valor={gananciaTotal} formato="pesosSigned" claveSesion="ganancia-total" />
-            {gananciaPct !== null && <span className="ml-2 text-base font-medium">({formatoPct(gananciaPct)})</span>}
+          <p className="mt-1.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1" style={{ color: colorGanancia }}>
+            <span className="inline-flex items-center gap-1.5 money-value font-mono-tabular text-[clamp(1.5rem,6vw,1.875rem)] font-semibold leading-tight tracking-[-0.02em]">
+              <IconoGanancia size={20} strokeWidth={2.2} aria-hidden="true" className="shrink-0" />
+              <CountUp valor={gananciaTotal} formato="pesosSigned" claveSesion="ganancia-total" />
+            </span>
+            {gananciaPct !== null && (
+              <span className="font-mono-tabular text-base font-semibold">{formatoPct(gananciaPct)}</span>
+            )}
           </p>
 
           <div
-            className="mt-4 h-2 rounded-full bg-white/[0.06] overflow-hidden flex"
+            className="mt-4 flex h-1.5 gap-0.5 overflow-hidden rounded-full bg-white/[0.06]"
             role="img"
             aria-label={`Del valor actual, el capital aportado es ${capitalPctBarra.toFixed(0)}% y la ${
               gananciaEsPositiva ? "ganancia" : "pérdida"
             } ${deltaPctBarra.toFixed(0)}%`}
           >
-            <div className="h-full bg-accent/70" style={{ width: `${capitalPctBarra}%` }} />
-            <div className="h-full" style={{ width: `${deltaPctBarra}%`, background: colorGanancia }} />
+            <div className="h-full rounded-l-full bg-accent/75" style={{ width: `${capitalPctBarra}%` }} />
+            <div className="h-full rounded-r-full" style={{ width: `${deltaPctBarra}%`, background: colorGanancia }} />
           </div>
 
-          <dl className="mt-3.5 grid grid-cols-2 gap-4">
-            <div>
+          <dl className="mt-3.5 flex flex-wrap gap-x-8 gap-y-3">
+            <div className="min-w-0">
               <dt className="flex items-center gap-1.5 text-micro text-fg-muted">
-                <span aria-hidden="true" className="inline-block w-2 h-2 rounded-sm bg-accent/70" />
+                <span aria-hidden="true" className="inline-block h-2 w-2 rounded-sm bg-accent/75" />
                 Capital aportado
               </dt>
-              <dd className="money-value mt-1 font-mono-tabular text-sm font-semibold text-fg">
+              <dd className="money-value mt-1 font-mono-tabular text-[15px] font-semibold text-fg">
                 {formatoPesos(capitalAportadoClp)}
               </dd>
             </div>
-            <div>
+            <div className="min-w-0">
               <dt className="flex items-center gap-1.5 text-micro text-fg-muted">
-                <span
-                  aria-hidden="true"
-                  className="inline-block w-2 h-2 rounded-sm"
-                  style={{ background: colorGanancia }}
-                />
+                <span aria-hidden="true" className="inline-block h-2 w-2 rounded-sm" style={{ background: colorGanancia }} />
                 Valor actual
               </dt>
-              <dd className="money-value mt-1 font-mono-tabular text-sm font-semibold text-fg">
+              <dd className="money-value mt-1 font-mono-tabular text-[15px] font-semibold text-fg">
                 {formatoPesos(valorActualClp)}
               </dd>
             </div>
           </dl>
         </div>
+        )}
       </div>
 
-      <div className="mt-7 pt-6 border-t border-[var(--line)]">{chart}</div>
-      {benchmark && <div className="mt-6">{benchmark}</div>}
+      <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-micro text-fg-muted">
+        <span className="inline-flex items-center gap-1.5">
+          <Coins size={14} strokeWidth={1.8} aria-hidden="true" className="text-fg-subtle" />
+          Consolidado en pesos (CLP)
+          {hayMonedaExtranjera && " · USD y UF a la tasa de cada registro, no la de hoy"}
+        </span>
+        {ultimaActualizacion && (
+          <span className="inline-flex items-center gap-1.5">
+            <CalendarClock size={14} strokeWidth={1.8} aria-hidden="true" className="text-fg-subtle" />
+            Último registro <span className="font-mono-tabular text-fg-soft">{formatoFecha(ultimaActualizacion)}</span>
+          </span>
+        )}
+      </p>
+
+      <div className="mt-6 border-t border-[var(--color-edge)] pt-5">{chart}</div>
+      {benchmark && <div className="mt-5 border-t border-[var(--color-edge)] pt-5">{benchmark}</div>}
     </section>
   );
 }

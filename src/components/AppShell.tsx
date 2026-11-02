@@ -109,7 +109,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
       {/* sidebar de escritorio */}
       <aside
         aria-label="Navegación principal"
-        className={`no-print hidden lg:flex fixed inset-y-0 left-0 z-30 flex-col border-r border-[var(--line)] bg-ink transition-[width] duration-200 ease-out motion-reduce:transition-none ${
+        className={`no-print hidden lg:flex fixed inset-y-0 left-0 z-30 flex-col border-r border-[var(--color-edge)] bg-[#0a101b] transition-[width] duration-200 ease-out motion-reduce:transition-none ${
           colapsado ? "w-[72px]" : "w-[248px]"
         }`}
       >
@@ -135,11 +135,11 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
                       colapsado ? "justify-center" : "gap-3 px-3"
                     } ${
                       esActiva
-                        ? "bg-accent/12 text-accent-hi"
-                        : "text-fg-muted hover:bg-white/[0.05] hover:text-fg"
+                        ? "bg-white/[0.06] text-fg"
+                        : "text-fg-muted hover:bg-white/[0.04] hover:text-fg"
                     }`}
                   >
-                    <Icono size={18} strokeWidth={esActiva ? 2.1 : 1.8} aria-hidden="true" className="shrink-0" />
+                    <Icono size={18} strokeWidth={esActiva ? 2.1 : 1.8} aria-hidden="true" className={`shrink-0 ${esActiva ? "text-accent" : ""}`} />
                     {colapsado ? <span className="sr-only">{s.etiqueta}</span> : s.etiqueta}
                   </Link>
                 </li>
@@ -148,7 +148,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
           </ul>
         </nav>
 
-        <div className="shrink-0 border-t border-[var(--line)] p-3">
+        <div className="shrink-0 border-t border-[var(--color-edge)] p-3">
           <button
             type="button"
             onClick={() => guardarSidebar(!colapsado)}
@@ -173,7 +173,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
 
       <div className={`transition-[padding] duration-200 ease-out motion-reduce:transition-none print:pl-0 ${colapsado ? "lg:pl-[72px]" : "lg:pl-[248px]"}`}>
         {/* barra superior */}
-        <header className="no-print sticky top-0 z-20 border-b border-[var(--line)] bg-ink/90 backdrop-blur-md pt-[env(safe-area-inset-top)]">
+        <header className="no-print sticky top-0 z-20 border-b border-[var(--color-edge)] bg-ink/85 backdrop-blur-md pt-[env(safe-area-inset-top)]">
           <div className="mx-auto flex h-14 lg:h-16 max-w-[1240px] items-center gap-3 px-4 sm:px-6 lg:px-8">
             {padre ? (
               <Link
@@ -202,6 +202,12 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
               <p className="truncate text-base lg:text-[17px] font-semibold tracking-[-0.01em] text-fg">{titulo}</p>
             </div>
 
+            {activa !== "registrar" && (
+              <Link href="/registrar" className="boton-primario hidden lg:inline-flex no-underline">
+                <SquarePen size={16} strokeWidth={2} aria-hidden="true" />
+                Registrar valor
+              </Link>
+            )}
             <PrivacyToggleButton compact />
             <div className="hidden lg:block">
               <MenuCuenta email={email}>{acciones}</MenuCuenta>
