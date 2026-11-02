@@ -592,3 +592,210 @@ html {
     animation: none;
   }
 }
+
+/* ================= landing publica ================= */
+/* un solo par de margenes para toda la pagina (nav incluida) */
+.landing-marco {
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 48px);
+}
+.landing-seccion {
+  padding-block: clamp(80px, 11vw, 168px) 0;
+}
+
+.landing-titular {
+  font-size: clamp(2.625rem, 6.1vw, 6.75rem);
+  font-weight: 600;
+}
+/* cada linea del titular sube desde detras de su propia linea base */
+.landing-linea {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+.landing-linea > span {
+  display: inline-block;
+  animation: lineaSube 900ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.landing-linea + .landing-linea > span {
+  animation-delay: 110ms;
+}
+@keyframes lineaSube {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: none;
+  }
+}
+.landing-sube {
+  animation: fadeUp 600ms 380ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* la ventana dentro de la frase: el grafico real del producto, alto de una
+   linea, en la linea base */
+.landing-ventana {
+  display: inline-block;
+  width: 2.3em;
+  height: 0.72em;
+  margin-left: 0.18em;
+  vertical-align: baseline;
+  border-radius: 0.16em;
+  background: var(--color-surface-raised);
+  padding: 0.08em 0.1em;
+}
+.landing-ventana svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.landing-producto {
+  border-radius: 28px;
+  background: var(--color-surface);
+  padding: clamp(20px, 3.5vw, 48px);
+}
+
+/* las tres etapas como una sola barra: segmentos de color plano */
+.landing-etapas {
+  display: flex;
+  gap: 6px;
+  min-height: 22vh;
+}
+.landing-etapa {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px;
+  border-radius: 14px;
+  min-height: 200px;
+}
+.landing-etapa:nth-child(1) {
+  flex: 1.2;
+  background: var(--color-accent);
+}
+.landing-etapa:nth-child(2) {
+  flex: 1;
+  background: #c3cfdf;
+}
+.landing-etapa:nth-child(3) {
+  flex: 1.6;
+  background: #e2b48e;
+}
+@media (max-width: 767px) {
+  .landing-etapas {
+    flex-direction: column;
+  }
+  .landing-etapa {
+    min-height: 150px;
+  }
+}
+
+/* filas: texto sobre un eje, el fragmento de la interfaz a la derecha */
+.landing-fila {
+  display: grid;
+  gap: 28px;
+}
+@media (min-width: 1024px) {
+  .landing-fila {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 48px;
+    align-items: start;
+  }
+  .landing-fila:nth-child(even) .landing-fragmento {
+    max-width: 560px;
+  }
+}
+
+/* preguntas: tabla abierta, pregunta grande a la izquierda */
+.landing-pregunta {
+  display: grid;
+  gap: 12px;
+  padding-block: 0 56px;
+}
+.landing-pregunta dt,
+.landing-pregunta dt h2 {
+  font-size: clamp(1.5rem, 2.6vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+@media (min-width: 900px) {
+  .landing-pregunta {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    column-gap: 8%;
+    padding-block: 0 80px;
+  }
+  .landing-pregunta dd {
+    max-width: 42ch;
+    padding-top: 0.35em;
+  }
+}
+
+/* cierre: la pregunta en los dos bordes de un campo alto */
+.landing-cierre {
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  justify-items: center;
+  padding-block: 64px 48px;
+  margin-top: clamp(80px, 11vw, 168px);
+}
+.landing-cierre-linea {
+  font-size: clamp(3rem, 10vw, 9rem);
+  text-align: center;
+}
+.landing-cierre-centro {
+  padding-block: 48px;
+}
+
+/* entrada de secciones (Revelar): solo con js; sin js todo queda visible */
+.revelar-pendiente [data-revelar] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.revelar-visto [data-revelar] {
+  opacity: 1;
+  transform: none;
+  transition: opacity 600ms cubic-bezier(0.23, 1, 0.32, 1), transform 600ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.revelar-visto [data-revelar]:nth-child(2) {
+  transition-delay: 70ms;
+}
+.revelar-visto [data-revelar]:nth-child(3) {
+  transition-delay: 140ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-linea > span,
+  .landing-sube {
+    animation: none;
+  }
+  .revelar-pendiente [data-revelar] {
+    transform: none;
+  }
+}
+
+/* campos del calculo vivo: superficie propia y anillo de foco, para que se
+   lean como editables (antes parecian texto plano) */
+.calculo-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--color-surface-raised);
+  box-shadow: inset 0 0 0 1px var(--color-control);
+  cursor: text;
+  transition: box-shadow 150ms ease-out;
+}
+.calculo-campo input {
+  font-size: 1.375rem;
+  font-weight: 600;
+}
+.calculo-campo:focus-within {
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}

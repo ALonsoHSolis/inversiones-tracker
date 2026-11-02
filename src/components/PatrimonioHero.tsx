@@ -26,6 +26,11 @@ interface PatrimonioHeroProps {
   sinCuentas: boolean;
   // fila de datos de contexto bajo el grafico (capital, cambio nominal, etc.)
   pie: ReactNode;
+  // clave de sessionStorage del conteo inicial (la landing usa otra para no
+  // consumir la animacion del inicio real)
+  claveSesion?: string;
+  // texto de la etiqueta cuando no se recorre el grafico
+  etiqueta?: string;
 }
 
 const fechaLarga = (iso: string) =>
@@ -46,6 +51,8 @@ export function PatrimonioHero({
   valorActualClp,
   sinCuentas,
   pie,
+  claveSesion = "valor-total",
+  etiqueta = "Patrimonio total",
 }: PatrimonioHeroProps) {
   const [periodo, setPeriodo] = useState<Periodo>("6M");
   const [indice, setIndice] = useState<number | null>(null);
@@ -104,13 +111,13 @@ export function PatrimonioHero({
   return (
     <section aria-label="Patrimonio" className="hero-patrimonio relative -mx-4 px-4 pt-2 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0">
       <p className="text-small font-medium text-fg-muted" aria-live="off">
-        {activo ? fechaLarga(activo.fecha) : "Patrimonio total"}
+        {activo ? fechaLarga(activo.fecha) : etiqueta}
       </p>
 
       <p className="money-value mt-1.5 flex items-start font-mono-tabular text-fg">
         <span className="mt-[0.18em] mr-1 text-[0.5em] font-medium text-fg-muted cifra-hero-simbolo">$</span>
         <span className={`cifra-hero ${Math.round(total).toLocaleString("es-CL").length > 11 ? "cifra-hero-larga" : ""}`}>
-          {activo ? Math.round(total).toLocaleString("es-CL") : <CountUp valor={total} formato="numero" claveSesion="valor-total" />}
+          {activo ? Math.round(total).toLocaleString("es-CL") : <CountUp valor={total} formato="numero" claveSesion={claveSesion} />}
         </span>
       </p>
 

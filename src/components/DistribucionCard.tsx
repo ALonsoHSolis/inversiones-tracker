@@ -34,9 +34,9 @@ export function DistribucionDetalle({ grupos, vacio }: { grupos: GrupoEntrada[];
               <details className="group">
                 <summary className="list-none [&::-webkit-details-marker]:hidden grid min-h-12 cursor-pointer grid-cols-[minmax(0,1fr)_auto_20px] items-center gap-x-3 rounded-lg py-2.5 transition-colors duration-150 hover:bg-white/[0.02] focus-visible:outline-2 focus-visible:outline-accent">
                   <span className="min-w-0">
-                    <span className="flex items-center gap-2">
+                    <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-[2px]" style={{ background: p.color }} />
-                      <span className="min-w-0 break-words text-small font-medium text-fg">{p.nombre}</span>
+                      <span className="min-w-0 text-small font-medium text-fg">{p.nombre}</span>
                       <span className="font-mono-tabular text-micro text-fg-muted">{formatoPorcentaje(p.porcentaje)}</span>
                       {altaConcentracion && (
                         <span className="rounded-full bg-warn/12 px-1.5 py-px text-[11px] font-semibold text-warn">

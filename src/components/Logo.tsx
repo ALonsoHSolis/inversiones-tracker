@@ -52,13 +52,13 @@ export function Logo({
         <p className={`text-[15px] font-semibold tracking-[-0.01em] ${light ? "text-white" : "text-fg"}`}>
           Mi portafolio
         </p>
-        <p
+        {subtitle && <p
           className={`mt-0.5 text-xs ${hideSubtitleOnMobile ? "hidden sm:block" : ""} ${
             light ? "text-white/70" : "text-fg-muted"
           }`}
         >
           {subtitle}
-        </p>
+        </p>}
       </div>
     </div>
   );

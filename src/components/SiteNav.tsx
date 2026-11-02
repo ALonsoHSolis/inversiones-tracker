@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 
-const LINK_CLASS = "h-9 px-3 inline-flex items-center text-small font-medium text-fg-muted no-underline";
+const LINK_CLASS = "h-10 px-3 inline-flex items-center text-[15px] font-medium text-fg-muted no-underline hover:text-fg";
 
 // nav publico compartido por /, /como-funciona, /calculadora y /blog -- antes
 // cada pagina tenia su propia copia (o una version simplificada), lo que
@@ -13,13 +13,9 @@ const LINK_CLASS = "h-9 px-3 inline-flex items-center text-small font-medium tex
 // navegar a otra pagina el componente se vuelve a montar limpio (cerrado).
 export function SiteNav() {
   return (
-    <nav className="sticky top-0 z-20 bg-ink/[0.78] backdrop-blur-[14px] border-b border-white/[0.07]">
-      <div className="max-w-[1160px] mx-auto px-6 py-[13px] flex items-center justify-between gap-4">
-        <Logo
-          href="/"
-          subtitle="Rendimiento real, no aportes disfrazados de ganancia"
-          hideSubtitleOnMobile
-        />
+    <nav className="sticky top-0 z-20 bg-ink">
+      <div className="landing-marco py-[13px] flex items-center justify-between gap-4">
+        <Logo href="/" subtitle="" />
 
         <div className="hidden md:flex items-center gap-1.5">
           <Link href="/como-funciona" className={LINK_CLASS}>
@@ -28,12 +24,12 @@ export function SiteNav() {
           <Link href="/calculadora" className={LINK_CLASS}>
             Calculadora
           </Link>
-          <Link href="/login" className="h-9 px-3.5 inline-flex items-center text-small font-medium text-fg-muted no-underline">
+          <Link href="/login" className={LINK_CLASS}>
             Iniciar sesión
           </Link>
           <Link
             href="/signup"
-            className="h-9 px-[15px] inline-flex items-center rounded-[9px] bg-[var(--accent)] text-ink text-small font-semibold no-underline"
+            className="boton-primario ml-2 no-underline"
           >
             Crear cuenta gratis
           </Link>

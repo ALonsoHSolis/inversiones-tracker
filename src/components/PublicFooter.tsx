@@ -6,51 +6,41 @@ import { FeedbackLink } from "@/components/FeedbackLink";
 // esto en true en cuanto se publique el primer post.
 const BLOG_HABILITADO = false;
 
+// cierre de las paginas publicas: el nombre vuelve a tamano grande y los
+// enlaces van en una fila legible (15 px). sin etiquetas en mayusculas
+// espaciadas ni linea divisoria: separa el espacio.
 export function PublicFooter() {
+  const enlace = "text-[15px] text-fg-muted no-underline hover:text-fg";
   return (
-    <footer className="mt-10 pt-8 border-t border-white/[0.07]">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div>
-          <p className="text-micro font-semibold uppercase tracking-[0.07em] text-fg-subtle">Producto</p>
-          <div className="mt-2.5 flex flex-col gap-2">
-            <Link href="/como-funciona" className="text-micro text-fg-muted no-underline">
-              Cómo funciona
-            </Link>
-            <Link href="/calculadora" className="text-micro text-fg-muted no-underline">
-              Calculadora
-            </Link>
-            {BLOG_HABILITADO && (
-              <Link href="/blog" className="text-micro text-fg-muted no-underline">
-                Blog
-              </Link>
-            )}
-          </div>
-        </div>
-
-        <div>
-          <p className="text-micro font-semibold uppercase tracking-[0.07em] text-fg-subtle">Legal</p>
-          <div className="mt-2.5 flex flex-col gap-2">
-            <Link href="/terminos" className="text-micro text-fg-muted no-underline">
-              Términos
-            </Link>
-            <Link href="/privacidad" className="text-micro text-fg-muted no-underline">
-              Privacidad
-            </Link>
-            <Link href="/disclaimer" className="text-micro text-fg-muted no-underline">
-              Disclaimer
-            </Link>
-          </div>
-        </div>
-
-        <div>
-          <p className="text-micro font-semibold uppercase tracking-[0.07em] text-fg-subtle">Contacto</p>
-          <div className="mt-2.5">
-            <FeedbackLink className="text-micro text-fg-muted border-b border-white/[0.14]" />
-          </div>
-        </div>
-      </div>
-
-      <p className="mt-8 text-micro text-fg-subtle">Mi portafolio</p>
+    <footer className="mt-24 pb-10">
+      <p className="text-[clamp(2.75rem,9vw,8rem)] font-semibold leading-none tracking-[-0.045em] text-fg/90">Mi portafolio</p>
+      <nav aria-label="Pie de página" className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3">
+        <Link href="/como-funciona" className={enlace}>
+          Cómo funciona
+        </Link>
+        <Link href="/calculadora" className={enlace}>
+          Calculadora
+        </Link>
+        {BLOG_HABILITADO && (
+          <Link href="/blog" className={enlace}>
+            Blog
+          </Link>
+        )}
+        <Link href="/terminos" className={enlace}>
+          Términos
+        </Link>
+        <Link href="/privacidad" className={enlace}>
+          Privacidad
+        </Link>
+        <Link href="/disclaimer" className={enlace}>
+          Disclaimer
+        </Link>
+        <FeedbackLink className={`${enlace} underline decoration-white/25 underline-offset-4`} />
+      </nav>
+      <p className="mt-6 max-w-[70ch] text-small text-fg-subtle">
+        Mi portafolio no es un banco, una corredora ni un asesor financiero: no mueve ni administra tu dinero y no
+        recomienda inversiones.
+      </p>
     </footer>
   );
 }
