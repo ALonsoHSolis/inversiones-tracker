@@ -26,7 +26,10 @@ export function DistribucionDetalle({ grupos, vacio }: { grupos: GrupoEntrada[];
         ))}
       </div>
 
-      <ul className="mt-3 lista-filas">
+      <p className="mt-3 flex justify-end gap-1 text-micro text-fg-subtle" aria-hidden="true">
+        Valor actual · ganancia real acumulada
+      </p>
+      <ul className="mt-1 lista-filas">
         {partes.map((p) => {
           const altaConcentracion = p.porcentaje >= UMBRAL_CONCENTRACION;
           return (
@@ -34,12 +37,12 @@ export function DistribucionDetalle({ grupos, vacio }: { grupos: GrupoEntrada[];
               <details className="group">
                 <summary className="list-none [&::-webkit-details-marker]:hidden grid min-h-12 cursor-pointer grid-cols-[minmax(0,1fr)_auto_20px] items-center gap-x-3 rounded-lg py-2.5 transition-colors duration-150 hover:bg-white/[0.02] focus-visible:outline-2 focus-visible:outline-accent">
                   <span className="min-w-0">
-                    <span className="flex items-center gap-2">
+                    <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-[2px]" style={{ background: p.color }} />
-                      <span className="min-w-0 break-words text-small font-medium text-fg">{p.nombre}</span>
+                      <span className="min-w-0 text-small font-medium text-fg">{p.nombre}</span>
                       <span className="font-mono-tabular text-micro text-fg-muted">{formatoPorcentaje(p.porcentaje)}</span>
                       {altaConcentracion && (
-                        <span className="rounded-full bg-warn/12 px-1.5 py-px text-[11px] font-semibold text-warn">
+                        <span className="rounded-full bg-warn/12 px-1.5 py-px text-micro font-semibold text-warn">
                           Concentrado
                         </span>
                       )}
@@ -58,7 +61,7 @@ export function DistribucionDetalle({ grupos, vacio }: { grupos: GrupoEntrada[];
                         style={{ color: p.gananciaClp >= 0 ? "var(--color-pos)" : "var(--color-neg)" }}
                       >
                         {formatoPct(p.gananciaPct)}
-                        <span className="sr-only"> de ganancia real</span>
+                        <span className="sr-only"> de ganancia real acumulada</span>
                       </span>
                     )}
                   </span>

@@ -16,7 +16,7 @@ export default async function RegistrarPage({
 }) {
   const { cuenta: cuentaInicialId } = await searchParams;
   const supabase = await createClient();
-  const { cuentas, movimientosHoy, valorAnteriorPorCuenta } = await cargarDatosRegistro(supabase);
+  const { cuentas, movimientosHoy, valorAnteriorPorCuenta, ultimaFechaPorCuenta } = await cargarDatosRegistro(supabase);
 
   return (
     <div className="mx-auto max-w-[640px] flex flex-col gap-6">
@@ -36,6 +36,7 @@ export default async function RegistrarPage({
             cuentas={cuentas}
             movimientosHoy={movimientosHoy}
             valorAnteriorPorCuenta={valorAnteriorPorCuenta}
+            ultimaFechaPorCuenta={ultimaFechaPorCuenta}
             cuentaInicialId={cuentaInicialId}
           />
           <details className="group">

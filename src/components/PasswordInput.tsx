@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 interface PasswordInputProps {
   name: string;
@@ -24,23 +24,33 @@ function calcularFortaleza(password: string) {
 }
 
 export function PasswordInput({ name, placeholder, minLength, mostrarFortaleza }: PasswordInputProps) {
+  const idCampo = useId();
   const [mostrar, setMostrar] = useState(false);
   const [valor, setValor] = useState("");
   const fortaleza = mostrarFortaleza ? calcularFortaleza(valor) : null;
 
+  // la etiqueta apunta al campo con htmlFor: antes el <label> envolvia
+  // primero el boton "Mostrar", y por regla de html un label se asocia al
+  // PRIMER control que contiene -- "Contraseña" etiquetaba al boton, no al
+  // campo (audit: WCAG 1.3.1 / 4.1.2).
   return (
-    <label className="flex flex-col gap-[7px]">
+    <div className="flex flex-col gap-[7px]">
       <span className="flex items-center justify-between">
-        <span className="text-micro font-semibold text-fg-muted">Contraseña</span>
+        <label htmlFor={idCampo} className="text-micro font-semibold text-fg-muted">
+          Contraseña
+        </label>
         <button
           type="button"
           onClick={() => setMostrar((v) => !v)}
-          className="text-xs font-medium text-[var(--accent)]"
+          aria-controls={idCampo}
+          aria-pressed={mostrar}
+          className="min-h-8 rounded px-1 text-micro font-medium text-[var(--accent)] focus-visible:outline-2 focus-visible:outline-accent"
         >
           {mostrar ? "Ocultar" : "Mostrar"}
         </button>
       </span>
       <input
+        id={idCampo}
         type={mostrar ? "text" : "password"}
         name={name}
         placeholder={placeholder}
@@ -48,7 +58,7 @@ export function PasswordInput({ name, placeholder, minLength, mostrarFortaleza }
         minLength={minLength}
         value={valor}
         onChange={(e) => setValor(e.target.value)}
-        className="h-11 px-[13px] border border-white/[0.14] rounded-[10px] text-sm text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(216,186,124,0.15)]"
+        className="h-11 px-[13px] border border-control rounded-[10px] text-base text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(224,188,120,0.15)]"
       />
       {fortaleza && (
         <div className="flex items-center gap-2">
@@ -60,6 +70,6 @@ export function PasswordInput({ name, placeholder, minLength, mostrarFortaleza }
           </span>
         </div>
       )}
-    </label>
+    </div>
   );
 }

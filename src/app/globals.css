@@ -15,21 +15,21 @@
      fg 18,1 / 16,3 / 14,4 - fg-soft 13,8 / 12,4 / 11,0 - fg-muted 9,3 / 8,3 / 7,4
      fg-subtle 6,3 / 5,7 / 5,0 - accent 10,4 / 9,3 / 8,3 - pos 10,7 / 9,6 / 8,5
      neg 7,7 / 6,9 / 6,1. todos los colores de texto superan AA (4,5). */
-  --color-ink: #080d16;
-  --color-surface: #121a27;
-  --color-surface-raised: #1a2534;
+  --color-ink: #090d15;
+  --color-surface: #17202d;
+  --color-surface-raised: #1f2a3a;
 
   --color-fg: #f5f7fb;
   --color-fg-soft: #d3dae6;
   --color-fg-muted: #a8b4c5;
   --color-fg-subtle: #8794a8;
 
-  --color-accent: #d8ba7c;
+  --color-accent: #e0bc78;
   --color-accent-hi: #ead3a2;
 
-  --color-pos: #41d7aa;
+  --color-pos: #42d7b0;
   --color-pos-soft: #7ee8c4;
-  --color-neg: #ff7885;
+  --color-neg: #f07b85;
   --color-neg-soft: #f2a6a6;
 
   --color-warn: #e8a857;
@@ -82,6 +82,23 @@ body {
     border: 1px solid var(--color-edge);
     border-radius: 16px;
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.035) inset, 0 12px 32px -20px rgba(0, 0, 0, 0.7);
+  }
+
+  /* panel: superficie suave SIN borde ni sombra. el titulo de la seccion vive
+     afuera (.titulo-seccion), asi la pagina se lee como secciones con
+     contenido y no como una pila de cajas iguales. */
+  .panel {
+    background-color: rgba(23, 32, 45, 0.88);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+    border-radius: 20px;
+  }
+
+  .titulo-seccion {
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--color-fg);
   }
 
   /* lista con divisores: reemplaza a las "tarjetas dentro de tarjetas". cada
@@ -195,7 +212,7 @@ body {
    texto siempre queda sobre --color-surface o mas oscuro: contraste intacto. */
 .card-hero {
   background-image:
-    radial-gradient(120% 80% at 85% -20%, rgba(216, 186, 124, 0.14), transparent 60%),
+    radial-gradient(120% 80% at 85% -20%, rgba(224, 188, 120, 0.14), transparent 60%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 40%);
   border-color: rgba(234, 211, 162, 0.2);
 }
@@ -220,7 +237,7 @@ body {
 
 /* superficies del navegador: tambien llevan la marca */
 ::selection {
-  background-color: rgba(216, 186, 124, 0.32);
+  background-color: rgba(224, 188, 120, 0.32);
   color: var(--color-fg);
 }
 
@@ -473,4 +490,319 @@ html {
     opacity: 0;
     transform: translateY(-4px);
   }
+}
+
+/* ---------- hero del patrimonio (inicio) ---------- */
+
+/* sin tarjeta: un brillo champan muy tenue detras de la cifra da profundidad
+   sin encerrar el contenido en una caja. */
+.hero-patrimonio {
+  isolation: isolate;
+}
+.hero-patrimonio::before {
+  content: "";
+  position: absolute;
+  inset: -56px 0 auto 0;
+  height: 460px;
+  pointer-events: none;
+  z-index: -1;
+  /* se desvanece hacia todos los bordes: sin cantos de rectangulo */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 18%, #000 60%, transparent),
+    linear-gradient(to bottom, #000 30%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 18%, #000 60%, transparent),
+    linear-gradient(to bottom, #000 30%, transparent);
+  mask-composite: intersect;
+  background: radial-gradient(60% 70% at 18% 0%, rgba(224, 188, 120, 0.11), transparent 70%),
+    radial-gradient(50% 60% at 90% 30%, rgba(127, 147, 174, 0.08), transparent 70%);
+}
+
+.cifra-hero {
+  font-size: clamp(2.75rem, 11vw, 4.5rem);
+  line-height: 0.95;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+/* cifras de 12+ caracteres (decenas de miles de millones): escala menor para
+   que nunca desborden en 320 px */
+.cifra-hero-larga {
+  font-size: clamp(2.125rem, 9vw, 4rem);
+}
+.cifra-hero-simbolo {
+  font-size: clamp(1.375rem, 5.5vw, 2.25rem);
+  line-height: 1;
+}
+
+/* periodos como texto (estilo apps de inversion), el activo con fondo champan suave */
+.periodos > button {
+  min-height: 36px;
+  min-width: 44px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  transition: color 150ms ease-out, background-color 150ms ease-out;
+}
+.periodos > button:hover {
+  color: var(--color-fg);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+.periodos > button[aria-pressed="true"] {
+  color: var(--color-accent-hi);
+  background-color: rgba(224, 188, 120, 0.14);
+}
+.periodos > button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* al cambiar de periodo la linea entra con un fundido corto (estado, no adorno) */
+.linea-patrimonio {
+  filter: drop-shadow(0 0 6px rgba(224, 188, 120, 0.35));
+  animation: lineaEntra 260ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+@keyframes lineaEntra {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* el ultimo registro "respira": senala que es el dato vigente */
+.punto-vivo {
+  box-shadow: 0 0 0 0 rgba(224, 188, 120, 0.45);
+  animation: puntoVivo 2.4s ease-out infinite;
+}
+@keyframes puntoVivo {
+  0% {
+    box-shadow: 0 0 0 0 rgba(224, 188, 120, 0.45);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 10px rgba(224, 188, 120, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .linea-patrimonio,
+  .punto-vivo {
+    animation: none;
+  }
+}
+
+/* ================= landing publica ================= */
+/* un solo par de margenes para toda la pagina (nav incluida) */
+.landing-marco {
+  width: 100%;
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 4vw, 48px);
+}
+.landing-seccion {
+  padding-block: clamp(80px, 11vw, 168px) 0;
+}
+
+.landing-titular {
+  font-size: clamp(2.625rem, 8.2vw, 8.25rem);
+  font-weight: 600;
+}
+/* cada linea del titular sube desde detras de su propia linea base */
+.landing-linea {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+.landing-linea > span {
+  display: inline-block;
+  animation: lineaSube 900ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+.landing-linea + .landing-linea > span {
+  animation-delay: 110ms;
+}
+@keyframes lineaSube {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: none;
+  }
+}
+.landing-sube {
+  animation: fadeUp 600ms 380ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+/* la ventana dentro de la frase: el grafico real del producto, alto de una
+   linea, en la linea base */
+.landing-ventana {
+  display: inline-block;
+  width: 2.3em;
+  height: 0.72em;
+  margin-left: 0.18em;
+  vertical-align: baseline;
+  border-radius: 0.16em;
+  background: var(--color-surface-raised);
+  padding: 0.08em 0.1em;
+}
+.landing-ventana svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.landing-producto {
+  border-radius: 28px;
+  background: var(--color-surface);
+  padding: clamp(20px, 3.5vw, 48px);
+}
+
+/* las tres etapas como una sola barra: segmentos de color plano */
+.landing-etapas {
+  display: flex;
+  gap: 6px;
+  min-height: 22vh;
+}
+.landing-etapa {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px;
+  border-radius: 14px;
+  min-height: 200px;
+}
+/* superficies oscuras del sistema (antes pastel, con champan como categoria);
+   la escala de tono sube con cada etapa: de registrar a ver el resultado */
+.landing-etapa:nth-child(1) {
+  flex: 1.2;
+  background: var(--color-surface);
+}
+.landing-etapa:nth-child(2) {
+  flex: 1;
+  background: var(--color-surface-raised);
+}
+.landing-etapa:nth-child(3) {
+  flex: 1.6;
+  background: #26334a;
+}
+@media (max-width: 767px) {
+  .landing-etapas {
+    flex-direction: column;
+  }
+  .landing-etapa {
+    min-height: 150px;
+  }
+}
+
+/* filas: texto sobre un eje, el fragmento de la interfaz a la derecha */
+.landing-fila {
+  display: grid;
+  gap: 28px;
+}
+@media (min-width: 1024px) {
+  .landing-fila {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 48px;
+    align-items: start;
+  }
+  .landing-fila:nth-child(even) .landing-fragmento {
+    max-width: 560px;
+  }
+}
+
+/* preguntas: tabla abierta, pregunta grande a la izquierda */
+.landing-pregunta {
+  display: grid;
+  gap: 12px;
+  padding-block: 0 56px;
+}
+.landing-pregunta dt,
+.landing-pregunta dt h2 {
+  font-size: clamp(1.5rem, 2.6vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+@media (min-width: 900px) {
+  .landing-pregunta {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    column-gap: 8%;
+    padding-block: 0 80px;
+  }
+  .landing-pregunta dd {
+    max-width: 42ch;
+    padding-top: 0.35em;
+  }
+}
+
+/* cierre: la pregunta en los dos bordes de un campo alto */
+.landing-cierre {
+  display: grid;
+  justify-items: center;
+  gap: 40px;
+  padding-block: clamp(80px, 12vw, 160px);
+  margin-top: clamp(80px, 11vw, 168px);
+  border-radius: 28px;
+  background: var(--color-surface);
+}
+.landing-cierre-titular {
+  font-size: clamp(2.5rem, 7vw, 6.5rem);
+  text-align: center;
+  max-width: 14ch;
+}
+
+/* entrada de secciones (Revelar): solo con js; sin js todo queda visible */
+.revelar-pendiente [data-revelar] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.revelar-visto [data-revelar] {
+  opacity: 1;
+  transform: none;
+  transition: opacity 600ms cubic-bezier(0.23, 1, 0.32, 1), transform 600ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.revelar-visto [data-revelar]:nth-child(2) {
+  transition-delay: 70ms;
+}
+.revelar-visto [data-revelar]:nth-child(3) {
+  transition-delay: 140ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-linea > span,
+  .landing-sube {
+    animation: none;
+  }
+  .revelar-pendiente [data-revelar] {
+    transform: none;
+  }
+}
+
+/* campos del calculo vivo: superficie propia y anillo de foco, para que se
+   lean como editables (antes parecian texto plano) */
+.calculo-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--color-surface-raised);
+  box-shadow: inset 0 0 0 1px var(--color-control);
+  cursor: text;
+  transition: box-shadow 150ms ease-out;
+}
+.calculo-campo input {
+  font-size: 1.375rem;
+  font-weight: 600;
+}
+.calculo-campo:focus-within {
+  box-shadow: inset 0 0 0 2px var(--color-accent);
+}
+
+/* menu publico movil (popover nativo): anclado arriba a la derecha */
+.menu-publico {
+  position: fixed;
+  inset: 64px 16px auto auto;
+  border: 0;
 }

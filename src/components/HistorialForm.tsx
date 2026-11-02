@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { InputMonto } from "@/components/InputMonto";
-import { formatoFecha } from "@/lib/formato";
+import { formatoFecha, formatoMontoNativo } from "@/lib/formato";
+import { AlertTriangle } from "lucide-react";
+// mismas formulas y advertencias que la carga rapida (con tests en
+// src/lib/registro.test.ts); antes habia copias locales en este archivo.
+import { advertenciaRegistro, calcularValorSugerido } from "@/lib/registro";
 import type { Cuenta, TipoMovimiento } from "@/types/database";
 
 interface FilaHistorial {
@@ -29,6 +33,8 @@ interface FilaState {
   movimientoMonto: string;
   guardando: boolean;
   resultado: "ok" | string | null;
+  // advertencia pendiente de confirmar en pantalla (antes window.confirm)
+  aviso: string | null;
   // true si el usuario escribio directo en "valor" -- una vez en true, la
   // sugerencia automatica deja de tocar el campo (nunca pisa una edicion manual).
   valorEditadoManualmente: boolean;
@@ -49,37 +55,10 @@ function filaInicial(fila: FilaHistorial): FilaState {
     movimientoMonto: fila.movimiento ? String(fila.movimiento.monto) : "",
     guardando: false,
     resultado: null,
+    aviso: null,
     valorEditadoManualmente: false,
     tieneMovimientoOriginal: !!fila.movimiento,
   };
-}
-
-function calcularValorSugerido(valorAnterior: number | null, monto: string, tipo: TipoMovimiento): string {
-  const base = valorAnterior ?? 0;
-  const montoNum = Number(monto) || 0;
-  const sugerido = tipo === "aporte" ? base + montoNum : base - montoNum;
-  return String(sugerido);
-}
-
-const UMBRAL_RENDIMIENTO_IMPLAUSIBLE = 80;
-
-// misma formula que la vista rendimiento_semanal (schema.sql): ganancia_real =
-// valor - valor_anterior - aportes_netos, dividido por (valor_anterior +
-// aportes_netos) cuando esa base es positiva. se estima aca ANTES de guardar
-// para poder advertir si el numero que resultaria es implausible.
-function estimarRendimientoPct(
-  valorAnterior: number | null,
-  valorNuevo: number,
-  incluyeMovimiento: boolean,
-  tipo: TipoMovimiento,
-  monto: string
-): number | null {
-  if (valorAnterior == null) return null;
-  const aportesNetos = incluyeMovimiento ? (tipo === "aporte" ? Number(monto) || 0 : -(Number(monto) || 0)) : 0;
-  const base = valorAnterior + aportesNetos;
-  if (base <= 0) return null;
-  const gananciaReal = valorNuevo - valorAnterior - aportesNetos;
-  return (gananciaReal / base) * 100;
 }
 
 // nunca mostrar error.message crudo de postgres/supabase -- mismo criterio
@@ -131,7 +110,8 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
     actualizarFila(fila.snapshotId, patch);
   }
 
-  async function guardarFila(fila: FilaHistorial) {
+  // forzar=true: el usuario ya vio la advertencia y eligio guardar igual
+  async function guardarFila(fila: FilaHistorial, forzar = false) {
     const estado = estados[fila.snapshotId];
 
     if (Number(estado.valor) < 0) {
@@ -147,36 +127,29 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
       return;
     }
 
-    const anterior = valorAnteriorPorFila[fila.snapshotId];
-    const valorSinCambio = estado.incluyeMovimiento && anterior != null && Number(estado.valor) === anterior;
-    if (valorSinCambio) {
-      const confirma = window.confirm(
-        `El valor no cambió respecto al registro anterior, pero marcaste un aporte/retiro. ¿El valor ya incluye ese movimiento? Cancela para revisar el campo "valor".`
-      );
-      if (!confirma) {
-        actualizarFila(fila.snapshotId, { resultado: "no guardado: revisa el valor" });
+    const anterior = valorAnteriorPorFila[fila.snapshotId] ?? null;
+    if (!forzar) {
+      // en el historial, desmarcar un aporte/retiro existente lo BORRA
+      // (p_permitir_quitar_movimiento: true). se pide confirmacion explicita:
+      // borrar un aporte real fue el incidente de perdida de datos de CLAUDE.md.
+      const borraMovimiento = estado.tieneMovimientoOriginal && !estado.incluyeMovimiento && fila.movimiento;
+      const aviso = borraMovimiento
+        ? `Al guardar se eliminará el ${fila.movimiento!.tipo} de ${formatoMontoNativo(fila.movimiento!.monto, cuenta.moneda)} registrado este día. Hazlo solo si fue un error.`
+        : advertenciaRegistro({
+            nombreCuenta: cuenta.nombre,
+            valorAnterior: anterior,
+            valorNuevo: Number(estado.valor),
+            incluyeMovimiento: estado.incluyeMovimiento,
+            tipo: estado.movimientoTipo,
+            monto: estado.movimientoMonto,
+          });
+      if (aviso) {
+        actualizarFila(fila.snapshotId, { aviso, resultado: null });
         return;
-      }
-    } else {
-      const pct = estimarRendimientoPct(
-        anterior,
-        Number(estado.valor),
-        estado.incluyeMovimiento,
-        estado.movimientoTipo,
-        estado.movimientoMonto
-      );
-      if (pct != null && Math.abs(pct) >= UMBRAL_RENDIMIENTO_IMPLAUSIBLE) {
-        const confirma = window.confirm(
-          `Con este valor, el rendimiento sería de ${pct.toFixed(1)}% respecto al registro anterior — ¿el valor es correcto? Cancela para revisarlo.`
-        );
-        if (!confirma) {
-          actualizarFila(fila.snapshotId, { resultado: "no guardado: revisa el valor" });
-          return;
-        }
       }
     }
 
-    actualizarFila(fila.snapshotId, { guardando: true, resultado: null });
+    actualizarFila(fila.snapshotId, { guardando: true, resultado: null, aviso: null });
     const supabase = createClient();
 
     const { error } = await supabase.rpc("guardar_snapshot_con_movimiento", {
@@ -304,6 +277,23 @@ export function HistorialForm({ cuenta, filas }: HistorialFormProps) {
             >
               {estado.guardando ? "Guardando…" : <>Guardar<span className="sr-only"> el registro del {fecha}</span></>}
             </button>
+
+            {estado.aviso && (
+              <div role="alertdialog" aria-label="Revisa antes de guardar" className="mt-3 rounded-xl border border-warn/40 bg-warn/10 p-3">
+                <p className="flex gap-2 text-small leading-snug text-fg">
+                  <AlertTriangle size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-warn" />
+                  {estado.aviso}
+                </p>
+                <div className="mt-3 flex flex-col gap-2 min-[420px]:flex-row">
+                  <button type="button" onClick={() => actualizarFila(fila.snapshotId, { aviso: null })} className="boton-secundario flex-1">
+                    Revisar
+                  </button>
+                  <button type="button" onClick={() => guardarFila(fila, true)} className="boton-primario flex-1">
+                    Guardar igual
+                  </button>
+                </div>
+              </div>
+            )}
 
             {estado.resultado === "ok" && (
               <p role="status" className="mt-2 text-micro font-medium text-pos">

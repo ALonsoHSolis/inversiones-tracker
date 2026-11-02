@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatoMiles, normalizarMontoIngresado } from "@/lib/formato";
+import { formatoMiles, normalizarMontoIngresado, montoParaEditar } from "@/lib/formato";
 
 interface InputMontoProps {
   // valor crudo tal como lo espera Number(...) (punto decimal, sin
@@ -37,7 +37,7 @@ export function InputMonto({ value, onChange, placeholder, className, id, invali
       inputMode="decimal"
       placeholder={placeholder}
       className={className}
-      value={enfocado ? value : formatoMiles(value)}
+      value={enfocado ? montoParaEditar(value) : formatoMiles(value)}
       onFocus={() => setEnfocado(true)}
       onBlur={() => setEnfocado(false)}
       onChange={(e) => onChange(normalizarMontoIngresado(e.target.value))}

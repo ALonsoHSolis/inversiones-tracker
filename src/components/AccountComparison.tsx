@@ -127,7 +127,7 @@ export function AccountComparison({
       </div>
 
       {/* escritorio: tabla comparativa */}
-      <div className="hidden overflow-x-auto md:block">
+      <div className="relative hidden overflow-x-auto md:block">
         <table className="w-full min-w-[640px] border-collapse text-small">
           <caption className="sr-only">Comparación de rendimiento entre cuentas</caption>
           <thead>

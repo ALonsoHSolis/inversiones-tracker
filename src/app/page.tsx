@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicFooter } from "@/components/PublicFooter";
-import { TrustFaq, PREGUNTAS } from "@/components/TrustFaq";
+import { PREGUNTAS } from "@/components/TrustFaq";
+import { AccountRow } from "@/components/AccountRow";
+import { MetricasSecundarias } from "@/components/MetricasSecundarias";
+import { DistribucionDetalle } from "@/components/DistribucionCard";
+import { MetasList } from "@/components/MetasList";
+import { PatrimonioHero } from "@/components/PatrimonioHero";
+import { CalculoVivo } from "@/components/landing/CalculoVivo";
+import { Revelar } from "@/components/landing/Revelar";
+import { serieEjemplo } from "@/lib/demo-landing";
+import type { Cuenta, RendimientoActual } from "@/types/database";
 import { SiteNav } from "@/components/SiteNav";
 
 export const metadata: Metadata = {
-  title: "Mi portafolio — todas tus inversiones, con tu rendimiento real",
+  title: "Mi portafolio — ¿cuánto ganaste de verdad?",
   description:
     "Consolida tus inversiones de distintas plataformas en pesos chilenos y descubre tu rendimiento real, sin confundir un aporte con una ganancia.",
   alternates: { canonical: "/" },
@@ -39,354 +48,277 @@ function jsonLd() {
   };
 }
 
-const BENEFICIOS = [
+// preguntas extra de la landing (ademas de las de privacidad de TrustFaq):
+// lo que un visitante necesita saber antes de registrarse. sin promesas que
+// el producto no cumpla.
+const PREGUNTAS_LANDING = [
   {
-    titulo: "Todas tus plataformas, un solo lugar",
-    texto:
-      "Fondos mutuos, acciones, ahorro, cripto — sin importar en qué banco o corredora estén, todo se ve junto y consolidado en pesos.",
-    ancho: true,
-    icon: (
-      <>
-        <rect x="3" y="4" width="18" height="4" rx="1.5" />
-        <rect x="3" y="10" width="18" height="4" rx="1.5" />
-        <rect x="3" y="16" width="18" height="4" rx="1.5" />
-      </>
-    ),
+    pregunta: "¿Es un banco o una corredora?",
+    respuesta:
+      "No. Mi portafolio no mueve, custodia ni administra tu dinero, y no recomienda inversiones. Es una herramienta para que tú lleves el registro y veas tu rendimiento real.",
   },
   {
-    titulo: "Con la tasa de cada día",
-    texto: "Cuentas en USD o UF se convierten a CLP con la tasa real del día de cada aporte, no la de hoy.",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 7v10M9.3 9.2h3.4a1.9 1.9 0 010 3.8H9.8h3.2a1.9 1.9 0 010 3.8H9.3" />
-      </>
-    ),
+    pregunta: "¿Funciona con dólares y UF?",
+    respuesta:
+      "Sí. Cada cuenta lleva su moneda (CLP, USD o UF) y el total se consolida en pesos con la tasa del Banco Central del día de cada registro, que se completa sola.",
   },
+  ...PREGUNTAS,
   {
-    titulo: "Rendimiento que descuenta tus aportes",
-    texto: "Cada depósito o retiro se resta antes de calcular, y nunca se confunde con ganancia.",
-    icon: (
-      <>
-        <path d="M4 15l5-5 4 4 7-8" />
-        <path d="M4 20h16" />
-      </>
-    ),
-  },
-  {
-    titulo: "Benchmark contra S&P 500 y UF",
-    texto:
-      "Compara tu rendimiento contra el mercado y contra la inflación, para saber si de verdad le estás ganando o perdiendo.",
-    ancho: true,
-    icon: (
-      <>
-        <path d="M3 17l5-6 4 3 4-7 5 6" />
-        <path d="M3 21h18" />
-      </>
-    ),
+    pregunta: "¿Cuánto cuesta?",
+    respuesta: "Crear una cuenta y usar la app es gratis.",
   },
 ];
 
-const PASOS = [
-  { titulo: "Agrega tus cuentas", texto: "Con su valor actual. Es lo único que necesitamos para partir." },
-  { titulo: "Actualiza cuando quieras", texto: "Anota el valor que ves en tu plataforma, y si hiciste un aporte o retiro." },
-  { titulo: "Mira tu ganancia real", texto: "Contra tu capital aportado y contra el mercado, sin espejismos." },
+// ---- fragmentos de la interfaz real con datos de EJEMPLO (rotulados) ----
+const AHORA = Date.UTC(2026, 10, 2);
+function cuentaEjemplo(id: string, nombre: string, plataforma: string, tipo: string, moneda: string): Cuenta {
+  return { id, nombre, plataforma, tipo, moneda, activa: true, categoria: null, created_at: "2026-01-05T00:00:00Z", user_id: "ejemplo" };
+}
+function rendEjemplo(cuenta_id: string, valor: number, valor_clp: number, pct: number): RendimientoActual {
+  return {
+    cuenta_id, valor, valor_clp, rendimiento_pct: pct, aportes_netos: 0, nombre: null, moneda: null, fecha: "2026-10-30",
+    valor_anterior: null, valor_clp_anterior: null, ganancia_real: null, tasa_cambio: null, tasa_cambio_anterior: null,
+  };
+}
+const CUENTAS_EJEMPLO = [
+  { c: cuentaEjemplo("e1", "Fondo conservador", "Corredora A", "fondo_mutuo", "CLP"), r: rendEjemplo("e1", 4_820_000, 4_820_000, 0.4), serie: [4.5, 4.55, 4.6, 4.58, 4.66, 4.7, 4.75, 4.82] },
+  { c: cuentaEjemplo("e2", "Acciones EE.UU.", "Corredora B", "acciones", "USD"), r: rendEjemplo("e2", 3_910, 3_640_000, 1.7), serie: [3.1, 3.3, 3.2, 3.45, 3.4, 3.55, 3.5, 3.64] },
+  { c: cuentaEjemplo("e3", "Depósito en UF", "Banco C", "deposito_plazo", "UF"), r: rendEjemplo("e3", 72.4, 2_760_000, 0.1), serie: [2.7, 2.71, 2.72, 2.73, 2.74, 2.75, 2.755, 2.76] },
 ];
 
-const retraso = (ms: number) => ({ animationDelay: `${ms}ms` });
+const ENCABEZADO = "font-semibold tracking-[-0.035em] leading-[1.02] text-fg";
 
 export default function LandingPage() {
+  const serie = serieEjemplo();
+  const ultimo = serie[serie.length - 1];
+
   return (
-    <>
+    <div className="landing min-h-dvh bg-ink">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd()) }} />
       <SiteNav />
 
-      <main className="max-w-[1160px] mx-auto px-6 pt-9 pb-16">
-        {/* hero */}
-        <section className="relative grid grid-cols-1 md:grid-cols-[1fr_1.02fr] gap-10 md:gap-[56px] items-center py-10 md:py-14">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -top-24 right-0 w-[560px] h-[560px] rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(216,186,124,0.10), transparent 65%)" }}
-          />
-          <div className="relative animate-fade-up">
-            <span className="inline-flex items-center gap-[7px] px-3 py-1.5 rounded-full border border-accent/25 bg-accent/10 text-accent-hi text-micro font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent-hi" />
-              Hecho para inversionistas en Chile
+      <main id="contenido">
+        {/* HERO: la frase es la composicion; la palabra "patrimonio" lleva al
+            lado un fragmento vivo del producto (su linea real, en ejemplo). */}
+        <section className="landing-marco flex min-h-[88svh] flex-col justify-center pt-16 pb-20" aria-labelledby="titulo-landing">
+          <h1 id="titulo-landing" className={`landing-titular ${ENCABEZADO}`}>
+            <span className="landing-linea">
+              <span>¿Cuánto ganaste</span>
             </span>
-            <h1 className="mt-6 font-semibold text-[38px] md:text-[48px] leading-[1.06] tracking-[-0.03em] max-w-[560px] text-fg">
-              Todas tus inversiones en un solo lugar, con{" "}
-              <span className="text-[var(--accent)]">tu ganancia real</span> — no con espejismos.
-            </h1>
-            <p className="mt-4 text-[14px] font-semibold text-fg-soft max-w-[500px]">
-              Un aporte no es ganancia. Tu portafolio debería saber la diferencia.
+            <span className="landing-linea">
+              <span>
+                de verdad?
+                <span data-ui aria-hidden="true" className="landing-ventana">
+                  <svg viewBox="0 0 120 40" preserveAspectRatio="none">
+                    <path d="M0 33 L20 33 L20 26 L52 26 L52 17 L86 17 L86 11 L120 11" fill="none" stroke="rgba(211,218,230,.55)" strokeWidth="1.6" strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
+                    <path d="M0 31 L12 29 L20 24 L34 22 L46 20 L52 14 L66 12 L78 13 L86 8 L100 6 L120 3" fill="none" stroke="#e0bc78" strokeWidth="2.2" vectorEffect="non-scaling-stroke" />
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </h1>
+          <div className="landing-sube mt-10 grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+            <p className="max-w-[46ch] text-[clamp(1.0625rem,1.6vw,1.25rem)] leading-relaxed text-fg-soft">
+              Sigue tus inversiones, comprende tu rentabilidad y visualiza cómo evoluciona tu dinero desde un solo lugar.
+              Un aporte nunca se cuenta como ganancia.
             </p>
-            <p className="mt-3 text-[15px] md:text-base leading-[1.6] text-fg-muted max-w-[500px]">
-              Mi portafolio junta tus cuentas de distintas plataformas, las consolida en pesos chilenos y calcula tu
-              rendimiento real — descontando siempre lo que depositaste o retiraste, para que nunca confundas un
-              aporte con una ganancia.
-            </p>
-            <div className="flex flex-wrap items-center gap-3 mt-8">
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center whitespace-nowrap h-12 px-6 w-full sm:w-auto rounded-[11px] bg-[var(--accent)] text-ink text-[15px] font-semibold no-underline transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98]"
-              >
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Link href="/signup" className="boton-primario h-12 px-6 text-base no-underline">
                 Crear cuenta gratis
               </Link>
-              <Link
-                href="/login"
-                className="inline-flex items-center justify-center whitespace-nowrap h-12 px-5 w-full sm:w-auto rounded-[11px] border border-control text-[15px] font-semibold text-fg no-underline transition-[transform,border-color] duration-150 hover:border-white/[0.28] active:scale-[0.98]"
-              >
+              <Link href="/login" className="text-base font-medium text-fg-soft underline decoration-white/25 underline-offset-[6px] hover:text-fg">
                 Ya tengo cuenta
               </Link>
             </div>
-            <p className="mt-5 text-micro text-fg-subtle">
-              Gratis · sin conectar tu banco ·{" "}
-              <Link href="/como-funciona" className="text-fg-muted border-b border-white/[0.14]">
-                ver cómo se calcula
-              </Link>
+          </div>
+        </section>
+
+        {/* LA PRUEBA: el producto en vivo, con datos de ejemplo */}
+        <Revelar as="section" className="landing-marco landing-seccion" >
+          <div data-revelar className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <h2 className={`max-w-[18ch] text-[clamp(2.25rem,5vw,4.25rem)] ${ENCABEZADO}`}>Tu patrimonio, día por día.</h2>
+            <p className="max-w-[38ch] text-base text-fg-muted">
+              Así se ve tu inicio. Recorre el gráfico con el dedo o el mouse: la cifra cambia a la de ese día.
+              <span className="ml-1 rounded-full bg-white/[0.06] px-2 py-0.5 text-small font-medium text-fg-soft">Datos de ejemplo</span>
             </p>
           </div>
-
-          <div className="relative animate-fade-up" style={retraso(120)}>
-            <div className="card p-6 md:p-7 shadow-[0_60px_120px_-40px_rgba(216,186,124,0.16),0_30px_70px_-30px_rgba(0,0,0,0.75)]">
-              <p className="text-micro uppercase tracking-[0.12em] font-semibold text-fg-subtle">
-                Valor total del portafolio
-              </p>
-              <p className="font-mono-tabular mt-2.5 font-medium text-[38px] leading-none tracking-[-0.025em] text-fg">
-                $17.491.080
-              </p>
-
-              <div className="mt-5 pt-5 border-t border-white/[0.07]">
-                <p className="text-micro uppercase tracking-[0.12em] font-semibold text-fg-muted">Ganancia real</p>
-                <p className="font-mono-tabular mt-1.5 text-[24px] font-semibold leading-tight text-pos">
-                  +$1.591.080 <span className="text-small font-medium">(+10,0%)</span>
-                </p>
-                <div className="mt-3 h-2 rounded-full bg-white/[0.06] overflow-hidden flex">
-                  <div className="h-full bg-accent/70" style={{ width: "90.9%" }} />
-                  <div className="h-full bg-pos" style={{ width: "9.1%" }} />
-                </div>
-                <div className="mt-3 flex justify-between gap-3 text-micro text-fg-muted">
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-sm bg-accent/70" />
-                    Capital aportado <span className="font-mono-tabular text-fg-soft">$15.900.000</span>
-                  </span>
-                </div>
-              </div>
-
-              <svg
-                viewBox="0 0 300 100"
-                width="100%"
-                height="104"
-                preserveAspectRatio="none"
-                className="block mt-5 overflow-visible"
-                aria-hidden="true"
-              >
-                <line x1="0" y1="33" x2="300" y2="33" stroke="rgba(255,255,255,.05)" />
-                <line x1="0" y1="66" x2="300" y2="66" stroke="rgba(255,255,255,.05)" />
-                <path
-                  d="M0 78 L110 78 L110 68 L185 68 L185 56 L250 56 L250 46 L300 46 L300 100 L0 100 Z"
-                  fill="rgba(255,255,255,.04)"
-                />
-                <path
-                  d="M0 70 C40 67,70 62,100 60 C140 57,165 48,195 43 C235 36,270 31,300 24 L300 46 L250 46 L250 56 L185 56 L185 68 L110 68 L110 78 L0 78 Z"
-                  fill="rgba(65,215,170,.12)"
-                />
-                <path
-                  d="M0 78 L110 78 L110 68 L185 68 L185 56 L250 56 L250 46 L300 46"
-                  fill="none"
-                  stroke="rgba(255,255,255,.26)"
-                  strokeWidth="1.4"
-                />
-                <path
-                  d="M0 70 C40 67,70 62,100 60 C140 57,165 48,195 43 C235 36,270 31,300 24"
-                  fill="none"
-                  stroke="var(--accent)"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  pathLength="1"
-                  className="hero-line-draw"
-                />
-                <circle
-                  cx="300"
-                  cy="24"
-                  r="4"
-                  fill="var(--color-surface-raised)"
-                  stroke="var(--accent)"
-                  strokeWidth="2.2"
-                  className="hero-line-dot"
-                />
-              </svg>
-            </div>
-          </div>
-        </section>
-
-        {/* el problema: el mismo deposito, dos lecturas */}
-        <section className="mt-12 md:mt-16">
-          <div className="max-w-[640px]">
-            <p className="text-micro uppercase tracking-[0.14em] font-semibold text-accent">El problema</p>
-            <h2 className="mt-3 text-[28px] md:text-[34px] font-semibold leading-[1.12] tracking-[-0.025em] text-fg">
-              Depositaste $1.000.000.
-              <br />
-              ¿Ganaste $1.000.000?
-            </h2>
-            <p className="mt-3 text-[15px] leading-relaxed text-fg-muted">
-              Si solo miras cuánto valen tus inversiones, un depósito se ve igual que una ganancia. Así se ven las
-              dos lecturas de la misma semana:
-            </p>
-          </div>
-
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="card p-6 md:p-7 opacity-90">
-              <p className="text-micro uppercase tracking-[0.12em] font-semibold text-fg-subtle">
-                Mirando solo el valor
-              </p>
-              <dl className="mt-5 space-y-3 text-small">
-                <div className="flex justify-between gap-4">
-                  <dt className="text-fg-muted">Valor semana pasada</dt>
-                  <dd className="font-mono-tabular text-fg-soft">$10.000.000</dd>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <dt className="text-fg-muted">Valor hoy</dt>
-                  <dd className="font-mono-tabular text-fg-soft">$11.000.000</dd>
-                </div>
-              </dl>
-              <div className="mt-5 pt-5 border-t border-white/[0.07]">
-                <p className="text-micro text-fg-muted">“Ganancia” de la semana</p>
-                <p className="font-mono-tabular mt-1 text-[22px] sm:text-[28px] font-semibold text-warn">+$1.000.000 (+10%)</p>
-                <p className="mt-2 text-micro text-fg-muted">Parece ganancia, pero es tu propio depósito.</p>
-              </div>
-            </div>
-
-            <div className="card p-6 md:p-7 border-accent/40 shadow-[0_40px_90px_-40px_rgba(216,186,124,0.25)]">
-              <p className="text-micro uppercase tracking-[0.12em] font-semibold text-accent">
-                Con Mi portafolio
-              </p>
-              <dl className="mt-5 space-y-3 text-small">
-                <div className="flex justify-between gap-4">
-                  <dt className="text-fg-muted">Cambio de valor</dt>
-                  <dd className="font-mono-tabular text-fg-soft">+$1.000.000</dd>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <dt className="text-fg-muted">Menos tu aporte</dt>
-                  <dd className="font-mono-tabular text-accent-hi">−$1.000.000</dd>
-                </div>
-              </dl>
-              <div className="mt-5 pt-5 border-t border-white/[0.07]">
-                <p className="text-micro text-fg-muted">Ganancia real de la semana</p>
-                <p className="font-mono-tabular mt-1 text-[22px] sm:text-[28px] font-semibold text-fg">$0 (0,0%)</p>
-                <p className="mt-2 text-micro text-fg-muted">Lo que tu dinero produjo, sin contar lo que pusiste.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* beneficios: bento asimetrico */}
-        <section className="mt-16 md:mt-24">
-          <h2 className="text-[28px] md:text-[34px] font-semibold leading-[1.12] tracking-[-0.025em] text-fg max-w-[560px]">
-            Todo lo que necesitas para medir bien.
-          </h2>
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-            {BENEFICIOS.map((b) => (
-              <div
-                key={b.titulo}
-                className={`card p-6 md:p-7 transition-colors duration-200 hover:border-white/[0.16] ${
-                  b.ancho ? "md:col-span-2" : ""
-                }`}
-              >
-                <div className="w-10 h-10 rounded-[11px] bg-accent/12 flex items-center justify-center mb-5">
-                  <svg
-                    width="21"
-                    height="21"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="var(--color-accent-hi)"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    {b.icon}
-                  </svg>
-                </div>
-                <h3 className="text-[16px] font-semibold text-fg">{b.titulo}</h3>
-                <p className="mt-2 text-small text-fg-muted leading-relaxed max-w-[460px]">{b.texto}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-6">
-            <Link href="/calculadora" className="text-small font-medium text-fg-muted border-b border-white/[0.14]">
-              Prueba la calculadora sin crear cuenta →
-            </Link>
-          </p>
-        </section>
-
-        {/* como empezar */}
-        <section className="mt-16 md:mt-24">
-          <h2 className="text-[28px] md:text-[34px] font-semibold leading-[1.12] tracking-[-0.025em] text-fg">
-            Tres pasos, sin conectar nada.
-          </h2>
-          <ol className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-8">
-            {PASOS.map((paso, i) => (
-              <li key={paso.titulo} className="relative pt-6 border-t border-white/[0.1]">
-                <span
-                  aria-hidden="true"
-                  className="absolute -top-px left-0 h-px w-16 bg-accent"
-                />
-                <p className="font-mono-tabular text-[44px] font-medium leading-none text-accent/60">
-                  {String(i + 1).padStart(2, "0")}
-                </p>
-                <h3 className="mt-4 text-[16px] font-semibold text-fg">{paso.titulo}</h3>
-                <p className="mt-2 text-small text-fg-muted leading-relaxed">{paso.texto}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        {/* confianza + preguntas */}
-        <section className="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr] gap-10 md:gap-14 items-start">
-          <div>
-            <p className="text-micro uppercase tracking-[0.14em] font-semibold text-accent">Tu información</p>
-            <h2 className="mt-3 text-[28px] md:text-[34px] font-semibold leading-[1.12] tracking-[-0.025em] text-fg">
-              Tú registras, nosotros calculamos.
-            </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-fg-muted">
-              No nos conectamos a ningún banco ni corredora. Funciona igual con un banco, un fondo mutuo, una
-              corredora o una cuenta cripto: cualquier plataforma donde tengas plata invertida.
-            </p>
-            <p className="mt-3 text-[15px] leading-relaxed text-fg-muted">
-              Guardamos solo los valores y fechas que tú ingresas. Nunca te pedimos claves bancarias: no hay
-              scraping ni acceso automático a ninguna cuenta.
-            </p>
-          </div>
-          <TrustFaq />
-        </section>
-
-        {/* cierre */}
-        <section className="mt-16 md:mt-24">
-          <div className="relative overflow-hidden rounded-[22px] border border-accent/25 bg-surface px-6 py-10 md:px-12 md:py-14 flex items-center justify-between gap-8 flex-wrap">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -right-24 -top-32 w-[420px] h-[420px] rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(216,186,124,0.16), transparent 68%)" }}
+          <div data-revelar data-ui className="landing-producto">
+            <PatrimonioHero
+              puntos={serie}
+              valorTotal={ultimo.totalClp}
+              capitalAportadoClp={ultimo.capitalClp}
+              valorActualClp={ultimo.totalClp}
+              sinCuentas={false}
+              pie={null}
+              claveSesion="landing-ejemplo"
+              etiqueta="Patrimonio total (ejemplo)"
             />
-            <div className="relative">
-              <h2 className="text-fg text-[28px] md:text-[34px] font-semibold tracking-[-0.025em] leading-[1.12]">
-                Empieza a medir lo que
-                <br className="hidden md:block" /> de verdad ganas.
-              </h2>
-              <p className="mt-3 text-fg-muted text-[15px]">Gratis, sin conectar tu banco.</p>
-            </div>
-            <Link
-              href="/signup"
-              className="relative inline-flex items-center justify-center h-12 px-7 w-full sm:w-auto rounded-[11px] bg-[var(--accent)] text-ink text-[15px] font-semibold no-underline whitespace-nowrap transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98]"
-            >
-              Crear cuenta gratis
-            </Link>
           </div>
+        </Revelar>
+
+        {/* EL ARGUMENTO: un aporte no es ganancia, con el calculo vivo */}
+        <Revelar as="section" className="landing-marco landing-seccion grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
+          <div data-revelar>
+            <h2 className={`text-[clamp(2.25rem,5vw,4.25rem)] ${ENCABEZADO}`}>Un aporte no es ganancia.</h2>
+            <p className="mt-6 max-w-[40ch] text-lg leading-relaxed text-fg-soft">
+              Si depositas un millón y tu saldo sube un millón, no ganaste nada. Tu banco te muestra el saldo; Mi
+              portafolio te muestra lo que tu dinero produjo de verdad. Prueba con tus números.
+            </p>
+          </div>
+          <div data-revelar>
+            <CalculoVivo />
+          </div>
+        </Revelar>
+
+        {/* COMO FUNCIONA: las tres etapas como una sola barra */}
+        <Revelar as="section" className="landing-marco landing-seccion" >
+          <h2 data-revelar className={`max-w-[16ch] text-[clamp(2.25rem,5vw,4.25rem)] ${ENCABEZADO}`}>Sin conectar tu banco.</h2>
+          <div data-revelar className="landing-etapas mt-12">
+            {[
+              { tiempo: "Un minuto", texto: "Agregas una cuenta con su valor de hoy. Ese monto queda como capital aportado." },
+              { tiempo: "Segundos", texto: "Cuando quieras, anotas el valor que ves en tu banco o corredora y marcas si hubo un aporte o retiro." },
+              { tiempo: "Al instante", texto: "Ves tu patrimonio en pesos, tu ganancia real y cómo se compara con la UF y el mercado." },
+            ].map((e) => (
+              <div key={e.tiempo} className="landing-etapa">
+                <p className="text-[clamp(1.25rem,2vw,1.875rem)] font-semibold tracking-[-0.02em] text-accent-hi">{e.tiempo}</p>
+                <p className="mt-auto max-w-[30ch] text-base leading-snug text-fg-soft">{e.texto}</p>
+              </div>
+            ))}
+          </div>
+          <p data-revelar className="mt-6 max-w-[60ch] text-base text-fg-muted">
+            Nunca te pedimos claves bancarias. Tú escribes los valores; la tasa del dólar y de la UF se completa sola con
+            el dato del Banco Central.
+          </p>
+        </Revelar>
+
+        {/* LO QUE VES: filas con fragmentos reales de la interfaz */}
+        <section className="landing-marco landing-seccion" aria-labelledby="titulo-vista">
+          <h2 id="titulo-vista" className={`landing-eje max-w-[14ch] text-[clamp(2.25rem,5vw,4.25rem)] ${ENCABEZADO}`}>
+            Todo en un solo lugar.
+          </h2>
+          <div className="mt-16 flex flex-col gap-24">
+            <Revelar className="landing-fila">
+              <div data-revelar className="landing-eje">
+                <h3 className="text-[clamp(1.5rem,2.6vw,2.5rem)] font-semibold tracking-[-0.025em] text-fg">Tus cuentas, en pesos</h3>
+                <p className="mt-3 max-w-[38ch] text-base leading-relaxed text-fg-soft">
+                  Fondos, acciones, depósitos y cripto de distintas plataformas, cada una en su moneda y consolidada en
+                  pesos con la tasa de cada registro.
+                </p>
+              </div>
+              <div data-revelar data-ui className="panel landing-fragmento px-4 py-2">
+                <ul className="lista-filas">
+                  {CUENTAS_EJEMPLO.map(({ c, r, serie: s }) => (
+                    <AccountRow
+                      key={c.id}
+                      cuenta={c}
+                      rendimiento={r}
+                      valorActualFallback={r.valor}
+                      valorClpFallback={r.valor_clp}
+                      capitalAportadoFallback={null}
+                      ultimaFechaFallback="2026-10-30"
+                      ahoraMs={AHORA}
+                      serie={s.map((v) => v * 1_000_000)}
+                    />
+                  ))}
+                </ul>
+              </div>
+            </Revelar>
+            <Revelar className="landing-fila">
+              <div data-revelar className="landing-eje">
+                <h3 className="text-[clamp(1.5rem,2.6vw,2.5rem)] font-semibold tracking-[-0.025em] text-fg">Rentabilidad que se explica</h3>
+                <p className="mt-3 max-w-[38ch] text-base leading-relaxed text-fg-soft">
+                  Rendimiento sin aportes (TWR), retorno anualizado (XIRR) y peor caída, cada uno con su nombre y su
+                  explicación. Ninguno se presenta como si fuera el otro.
+                </p>
+              </div>
+              <div data-revelar data-ui className="landing-fragmento">
+                <MetricasSecundarias twr={6.2} xirr={7.4} drawdown={-3.1} />
+              </div>
+            </Revelar>
+            <Revelar className="landing-fila">
+              <div data-revelar className="landing-eje">
+                <h3 className="text-[clamp(1.5rem,2.6vw,2.5rem)] font-semibold tracking-[-0.025em] text-fg">Dónde está tu dinero</h3>
+                <p className="mt-3 max-w-[38ch] text-base leading-relaxed text-fg-soft">
+                  Por plataforma, tipo de activo o categoría propia, con un aviso cuando una sola parte concentra más del
+                  40 % de tu patrimonio.
+                </p>
+              </div>
+              <div data-revelar data-ui className="panel landing-fragmento px-5 py-4">
+                <DistribucionDetalle
+                  vacio=""
+                  grupos={[
+                    { nombre: "Corredora A", capitalAportadoClp: 4_600_000, valorActualClp: 4_820_000 },
+                    { nombre: "Corredora B", capitalAportadoClp: 3_300_000, valorActualClp: 3_640_000 },
+                    { nombre: "Banco C", capitalAportadoClp: 2_700_000, valorActualClp: 2_760_000 },
+                  ]}
+                />
+              </div>
+            </Revelar>
+            <Revelar className="landing-fila">
+              <div data-revelar className="landing-eje">
+                <h3 className="text-[clamp(1.5rem,2.6vw,2.5rem)] font-semibold tracking-[-0.025em] text-fg">Metas con progreso real</h3>
+                <p className="mt-3 max-w-[38ch] text-base leading-relaxed text-fg-soft">
+                  Asocia cuentas a una meta (el pie de un departamento, un fondo de emergencia) y ve cuánto te falta con su
+                  valor actual.
+                </p>
+              </div>
+              <div data-revelar data-ui className="panel landing-fragmento px-5 py-2">
+                <MetasList
+                  compacta
+                  metas={[
+                    { id: "m1", nombre: "Pie departamento", montoObjetivo: 20_000_000, montoActualClp: 8_460_000, fechaObjetivo: "2028-03-01", cuentasAsociadas: ["Fondo conservador", "Acciones EE.UU."] },
+                    { id: "m2", nombre: "Fondo de emergencia", montoObjetivo: 2_500_000, montoActualClp: 2_760_000, fechaObjetivo: null, cuentasAsociadas: ["Depósito en UF"] },
+                  ]}
+                />
+              </div>
+            </Revelar>
+          </div>
+          <p className="landing-eje mt-12 text-small text-fg-muted">Los montos de estas pantallas son de ejemplo.</p>
         </section>
 
-        <PublicFooter />
+        {/* PREGUNTAS: todas abiertas, la pregunta grande y la respuesta al lado */}
+        <section className="landing-marco landing-seccion" aria-labelledby="titulo-preguntas">
+          <dl className="landing-preguntas">
+            <div className="landing-pregunta">
+              <dt>
+                <h2 id="titulo-preguntas" className="text-fg-muted">Preguntas</h2>
+              </dt>
+              <dd />
+            </div>
+            {PREGUNTAS_LANDING.map((p) => (
+              <div key={p.pregunta} className="landing-pregunta">
+                <dt className="text-fg">{p.pregunta}</dt>
+                <dd className="text-base leading-relaxed text-fg-soft">{p.respuesta}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        {/* CIERRE: la pregunta en los dos bordes, la decision al centro */}
+        <div className="landing-marco">
+          <section className="landing-cierre px-4" aria-labelledby="titulo-cierre">
+            <h2 id="titulo-cierre" className={`landing-cierre-titular ${ENCABEZADO}`}>
+              Empieza a medirlo hoy.
+            </h2>
+            <div className="flex flex-col items-center gap-4">
+              <Link href="/signup" className="boton-primario h-14 px-8 text-lg no-underline">
+                Crear cuenta gratis
+              </Link>
+              <p className="text-center text-base text-fg-muted">
+                Gratis y sin conectar tu banco. ¿Primero quieres probar?{" "}
+                <Link href="/calculadora" className="text-fg-soft underline decoration-white/25 underline-offset-4 hover:text-fg">
+                  Usa la calculadora sin cuenta
+                </Link>
+                .
+              </p>
+            </div>
+          </section>
+        </div>
       </main>
-    </>
+
+      <div className="landing-marco">
+        <PublicFooter />
+      </div>
+    </div>
   );
 }

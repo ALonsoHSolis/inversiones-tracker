@@ -24,3 +24,6 @@ supabase/.temp/
 
 # cache incremental de tsc
 *.tsbuildinfo
+
+# artefactos de trabajo de la skill taste (capturas, reportes)
+.taste-skill/

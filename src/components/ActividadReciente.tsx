@@ -10,9 +10,9 @@ import type { GrupoActividad } from "@/lib/actividad";
 //  - los montos van en la moneda nativa de cada cuenta, sin convertir.
 export function ActividadReciente({ grupos }: { grupos: GrupoActividad[] }) {
   return (
-    <section className="card p-5" aria-labelledby="actividad-titulo">
+    <section className="flex flex-col gap-3" aria-labelledby="actividad-titulo">
       <div className="flex items-center justify-between gap-3">
-        <h2 id="actividad-titulo" className="titulo-bloque">
+        <h2 id="actividad-titulo" className="titulo-seccion">
           Actividad reciente
         </h2>
         <Link
@@ -22,14 +22,14 @@ export function ActividadReciente({ grupos }: { grupos: GrupoActividad[] }) {
           Ver cuentas
         </Link>
       </div>
-      <p className="-mt-1 text-micro text-fg-muted">Aportes y retiros: es tu dinero entrando o saliendo, no ganancia.</p>
+      <p className="-mt-2 text-micro text-fg-muted">Aportes y retiros: tu dinero entrando o saliendo, no ganancia.</p>
 
       {grupos.length === 0 ? (
-        <p className="mt-4 rounded-xl bg-white/[0.02] px-4 py-6 text-center text-small text-fg-muted">
+        <p className="panel px-4 py-6 text-center text-small text-fg-muted">
           Todavía no hay aportes ni retiros registrados.
         </p>
       ) : (
-        <div className="mt-3 flex flex-col gap-3">
+        <div className="panel flex flex-col gap-3 px-5 py-4">
           {grupos.map((grupo) => (
             <div key={grupo.etiqueta}>
               <h3 className="text-micro font-semibold text-fg-subtle">{grupo.etiqueta}</h3>

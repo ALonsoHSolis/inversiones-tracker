@@ -8,6 +8,7 @@ export interface DatosRegistro {
   movimientosHoy: Record<string, { tipo: TipoMovimiento; monto: number }>;
   // ultimo valor conocido (moneda nativa) de cada cuenta
   valorAnteriorPorCuenta: Record<string, number | null>;
+  ultimaFechaPorCuenta: Record<string, string | null>;
 }
 
 // consultas que alimentan los formularios de registro diario. mismas lecturas
@@ -18,7 +19,7 @@ export async function cargarDatosRegistro(supabase: SupabaseClient): Promise<Dat
   const [{ data: cuentas }, { data: snapshotsHoy }, { data: capitalPorCuenta }] = await Promise.all([
     supabase.from("cuentas").select("*").eq("activa", true).order("created_at"),
     supabase.from("snapshots").select("id, cuenta_id").eq("fecha", hoy),
-    supabase.from("capital_por_cuenta").select("cuenta_id, valor_actual"),
+    supabase.from("capital_por_cuenta").select("cuenta_id, valor_actual, ultima_fecha"),
   ]);
 
   const snapshotIdsHoy = (snapshotsHoy ?? []).map((s: { id: string }) => s.id);
@@ -42,10 +43,15 @@ export async function cargarDatosRegistro(supabase: SupabaseClient): Promise<Dat
       c.valor_actual,
     ])
   );
+  const fechaPorCuenta = new Map(
+    (capitalPorCuenta ?? []).map((c: { cuenta_id: string | null; ultima_fecha: string | null }) => [c.cuenta_id, c.ultima_fecha])
+  );
   const valorAnteriorPorCuenta: DatosRegistro["valorAnteriorPorCuenta"] = {};
+  const ultimaFechaPorCuenta: DatosRegistro["ultimaFechaPorCuenta"] = {};
   ((cuentas ?? []) as Cuenta[]).forEach((cuenta) => {
     valorAnteriorPorCuenta[cuenta.id] = valorPorCuenta.get(cuenta.id) ?? null;
+    ultimaFechaPorCuenta[cuenta.id] = fechaPorCuenta.get(cuenta.id) ?? null;
   });
 
-  return { cuentas: (cuentas ?? []) as Cuenta[], movimientosHoy, valorAnteriorPorCuenta };
+  return { cuentas: (cuentas ?? []) as Cuenta[], movimientosHoy, valorAnteriorPorCuenta, ultimaFechaPorCuenta };
 }

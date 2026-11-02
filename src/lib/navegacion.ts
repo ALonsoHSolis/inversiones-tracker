@@ -14,7 +14,7 @@ export interface Seccion {
 export const SECCIONES: Seccion[] = [
   { id: "resumen", href: "/dashboard", etiqueta: "Resumen" },
   { id: "cuentas", href: "/cuentas", etiqueta: "Cuentas" },
-  { id: "registrar", href: "/registrar", etiqueta: "Registro" },
+  { id: "registrar", href: "/registrar", etiqueta: "Registrar" },
   { id: "analisis", href: "/analisis", etiqueta: "Análisis" },
   { id: "metas", href: "/metas", etiqueta: "Metas" },
   { id: "informes", href: "/informe", etiqueta: "Informes" },
