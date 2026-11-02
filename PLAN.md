@@ -111,3 +111,35 @@ Referencias: capturas de un kit de UI de billetera digital (negro de alto contra
 - **Login/signup móvil:** marca con wordmark espaciado. El panel de escritorio traía cifras de ejemplo fijas ($17.491.080 / +10,0%): ahora dice "ejemplo ilustrativo".
 - No se adoptó "deslizar para enviar" ni teclado numérico propio (accesibilidad y riesgo de errores al registrar valores).
 - Verificación: tsc, eslint, 72 tests, axe WCAG 2.2 AA sin violaciones (8 rutas × 4 anchos + login/signup), sin desbordamiento, build.
+
+## Iteración 2 del rediseño (Claude Code, rama `claude/inversiones-tracker-prod-sqw7i8`)
+
+Mismo brief, segunda pasada con verificación en navegador real (mock local de Supabase con CLP/USD/UF, cuentas con
+datos antiguos, saldos de miles de millones y escenario vacío), axe y el detector de Impeccable. Sin cambios de
+esquema, RLS, auth ni fórmulas.
+
+### Decisiones
+
+- **Cifras:** Geist Sans con números tabulares (antes Geist Mono, que leía como terminal). Porcentajes con coma
+  decimal, coherentes con `$17.751.007`. Eje Y compacto sin decimal desde $100 M.
+- **Sin mayúsculas espaciadas** en etiquetas de producto; títulos de bloque en caso oración (`.titulo-bloque`).
+- **Superficies:** canto casi invisible (`--color-edge`), listas con divisores (`.lista-filas`) en vez de tarjetas
+  anidadas; segundo tono neutro para el sidebar.
+- **Vocabulario único:** `.boton-primario`, `.boton-secundario`, `.segmentado` (con `aria-pressed` /
+  `aria-selected`), `Ayuda` como popover nativo (Escape, tocar fuera, no empuja el layout).
+- **Inicio en dos niveles:** hero patrimonial + gráfico + comparadores a todo el ancho; debajo, columna principal
+  (métricas en una banda, cuentas compactas con detalle expandible, distribución con pestañas
+  Plataforma/Tipo/Categoría) y riel (carga rápida en ≥1280 px, metas, actividad). Escritorio ~3.900 → ~2.500 px.
+- **Comparadores sin anillos** (no tenían escala real); etiqueta y valor nunca se recortan.
+- **Cambio nominal** rotulado "vs. registro anterior · incluye aportes" (antes "esta semana": no siempre es una semana).
+- **"Registrar valor"** como acción primaria del header en escritorio; en móvil sigue en la barra inferior.
+- **Estado vacío** sin cifras ilustrativas; hero sin "+$0" en verde cuando no hay cuentas.
+- **Análisis:** comparación por cuenta como tabla (escritorio) / filas (móvil).
+- **Metas:** % alcanzado visible, confirmación de borrado en pantalla.
+
+### Verificación
+
+`tsc`, `eslint`, 74 tests (+1 `todo` que reproduce el hallazgo 5), `next build`, axe WCAG 2.2 AA sin violaciones en
+6 rutas × 8 anchos (320–1440) y en las 7 pantallas secundarias, sin desbordamiento horizontal, detector de Impeccable
+sin hallazgos. Flujos probados contra el RPC simulado: carga rápida con aporte (comprobante) y multi-cuenta con
+advertencia.

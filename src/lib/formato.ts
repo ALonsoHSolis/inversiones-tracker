@@ -60,7 +60,10 @@ export function formatoPesosCompacto(valor: number): string {
   const abs = Math.abs(valor);
   const signo = valor < 0 ? "−" : "";
   if (abs >= 1_000_000) {
-    return `${signo}$${(abs / 1_000_000).toLocaleString("es-CL", { maximumFractionDigits: 1 })} M`;
+    // desde $100 M el decimal no aporta y alarga el eje ("$3.221,3 M" no cabia
+    // en 320 px); se muestra "$3.221 M"
+    const decimales = abs >= 100_000_000 ? 0 : 1;
+    return `${signo}$${(abs / 1_000_000).toLocaleString("es-CL", { maximumFractionDigits: decimales })} M`;
   }
   if (abs >= 1_000) {
     return `${signo}$${Math.round(abs / 1_000).toLocaleString("es-CL")} mil`;

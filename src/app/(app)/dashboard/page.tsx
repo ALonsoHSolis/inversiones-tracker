@@ -188,6 +188,7 @@ export default async function DashboardPage() {
     {
       id: "tipo",
       etiqueta: "Tipo de activo",
+      etiquetaCorta: "Tipo",
       ayuda:
         "Agrupa tus cuentas por tipo (fondo mutuo, acciones, depósito a plazo, etc.) para ver cómo está repartido tu portafolio, sumando el capital aportado y el valor actual de las cuentas de ese tipo.",
       contenido: <DistribucionDetalle grupos={tipos} vacio="Todavía no hay cuentas con valor." />,
@@ -216,9 +217,10 @@ export default async function DashboardPage() {
         valorActualClp={valorActualClp}
         ultimaActualizacion={ultimaActualizacion}
         hayMonedaExtranjera={cuentasActivas.some((c) => c.moneda !== "CLP")}
+        sinCuentas={!hayCuentas}
         chart={<PortfolioChart datos={evolucionPortafolio ?? []} />}
         benchmark={
-          <MarketBenchmark
+          hayCuentas && <MarketBenchmark
             sp500={benchmarkSp500}
             uf={benchmarkUf}
             rendimientoRealPct={
@@ -254,12 +256,12 @@ export default async function DashboardPage() {
                 </Ayuda>
               </div>
               <div className="no-print flex items-center gap-1">
-                <Link
+                {hayCuentas && <Link
                   href="/cuentas"
                   className="inline-flex min-h-11 items-center rounded-lg px-2 text-small font-semibold text-fg-soft no-underline hover:text-fg focus-visible:outline-2 focus-visible:outline-accent"
                 >
                   Ver tabla
-                </Link>
+                </Link>}
                 <Link
                   href="/cuentas/nueva"
                   className="inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent"

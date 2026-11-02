@@ -6,6 +6,8 @@ import { Ayuda } from "@/components/Ayuda";
 export interface PanelDistribucion {
   id: string;
   etiqueta: string;
+  // version corta para pantallas angostas (ej. "Tipo" por "Tipo de activo")
+  etiquetaCorta?: string;
   ayuda: ReactNode;
   contenido: ReactNode;
 }
@@ -62,7 +64,14 @@ export function PestanasDistribucion({ paneles }: { paneles: PanelDistribucion[]
                 onClick={() => setActivo(p.id)}
                 onKeyDown={(e) => teclado(e, i)}
               >
-                {p.etiqueta}
+                {p.etiquetaCorta ? (
+                  <>
+                    <span className="sm:hidden">{p.etiquetaCorta}</span>
+                    <span className="hidden sm:inline">{p.etiqueta}</span>
+                  </>
+                ) : (
+                  p.etiqueta
+                )}
               </button>
             ))}
           </div>

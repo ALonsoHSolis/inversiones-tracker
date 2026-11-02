@@ -9,6 +9,8 @@ test("formatoPesosCompacto abrevia millones y miles", () => {
   assert.equal(formatoPesosCompacto(999), "$999");
   assert.equal(formatoPesosCompacto(0), "$0");
   assert.equal(formatoPesosCompacto(-2_500_000), "−$2,5 M");
+  assert.equal(formatoPesosCompacto(3_221_276_008), "$3.221 M");
+  assert.equal(formatoPesosCompacto(150_400_000), "$150 M");
 });
 
 test("formatoPct usa coma decimal y conserva signo y redondeo a 1 decimal", () => {

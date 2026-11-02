@@ -188,7 +188,8 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
             <XAxis
               dataKey="fecha"
               ticks={ejeX.ticks}
-              interval={0}
+              interval="preserveStartEnd"
+              minTickGap={14}
               padding={{ left: 16, right: 16 }}
               tickFormatter={ejeX.porDia ? formatoDia : formatoMes}
               tick={{ fontSize: 12, fill: "var(--color-fg-subtle)" }}

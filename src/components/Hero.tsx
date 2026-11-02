@@ -16,6 +16,9 @@ interface HeroProps {
   hayMonedaExtranjera: boolean;
   chart: ReactNode;
   benchmark: ReactNode;
+  // sin cuentas activas: no se muestran cambios ni ganancia (serian +$0 en
+  // verde, que se lee como una ganancia que no existe)
+  sinCuentas?: boolean;
 }
 
 // tarjeta protagonista del dashboard. jerarquia:
@@ -34,6 +37,7 @@ export function Hero({
   hayMonedaExtranjera,
   chart,
   benchmark,
+  sinCuentas = false,
 }: HeroProps) {
   const cambioNominal = valorTotal - valorTotalAnterior;
   const cambioNominalPct = valorTotalAnterior > 0 ? (cambioNominal / valorTotalAnterior) * 100 : 0;
@@ -55,13 +59,22 @@ export function Hero({
 
   return (
     <section className="card card-hero px-5 pt-6 pb-5 sm:px-7 sm:pt-7 animate-fade-up" aria-label="Resumen del portafolio">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] gap-6 lg:gap-10 lg:items-center">
+      <div
+        className={`grid grid-cols-1 gap-6 lg:gap-10 lg:items-center ${
+          sinCuentas ? "" : "lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]"
+        }`}
+      >
         <div className="min-w-0">
           <h2 className="etiqueta">Patrimonio total</h2>
           <p className="money-value cifra-xl font-mono-tabular mt-2.5 text-fg">
             <CountUp valor={valorTotal} formato="pesos" claveSesion="valor-total" />
           </p>
 
+          {sinCuentas ? (
+            <p className="mt-4 max-w-[420px] text-small leading-relaxed text-fg-muted">
+              Agrega tu primera cuenta para empezar a medir tu ganancia real, siempre separada de lo que depositas.
+            </p>
+          ) : (
           <div className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
             <span
               className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono-tabular text-small font-semibold"
@@ -80,8 +93,10 @@ export function Hero({
               cualquier aporte o retiro, así que no es tu ganancia: la ganancia real se muestra aparte.
             </Ayuda>
           </div>
+          )}
         </div>
 
+        {!sinCuentas && (
         <div className="rounded-2xl bg-white/[0.03] p-4 sm:p-5 shadow-[inset_0_0_0_1px_var(--color-edge)]">
           <div className="flex items-center gap-1">
             <h2 className="etiqueta">Ganancia real</h2>
@@ -112,7 +127,7 @@ export function Hero({
             <div className="h-full rounded-r-full" style={{ width: `${deltaPctBarra}%`, background: colorGanancia }} />
           </div>
 
-          <dl className="mt-3.5 grid grid-cols-2 gap-4">
+          <dl className="mt-3.5 flex flex-wrap gap-x-8 gap-y-3">
             <div className="min-w-0">
               <dt className="flex items-center gap-1.5 text-micro text-fg-muted">
                 <span aria-hidden="true" className="inline-block h-2 w-2 rounded-sm bg-accent/75" />
@@ -133,6 +148,7 @@ export function Hero({
             </div>
           </dl>
         </div>
+        )}
       </div>
 
       <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-micro text-fg-muted">

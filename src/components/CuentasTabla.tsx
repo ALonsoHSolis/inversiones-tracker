@@ -189,7 +189,7 @@ function FilaMovil({ fila }: { fila: FilaCuenta }) {
           </span>
         </span>
         <span className="mt-1 flex items-center justify-between gap-3 text-micro text-fg-muted">
-          <span className="min-w-0 truncate">
+          <span className="min-w-0 break-words">
             {fila.plataforma} · {fila.tipoLabel}
           </span>
           <span className="shrink-0 text-small">

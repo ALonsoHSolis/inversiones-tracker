@@ -61,9 +61,9 @@ export function MetricasSecundarias({ twr, xirr, drawdown }: MetricasSecundarias
         <h2 className="titulo-bloque">Métricas de rendimiento</h2>
         <Link
           href="/analisis"
-          className="inline-flex min-h-11 items-center gap-1 text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent rounded"
+          className="inline-flex min-h-11 shrink-0 items-center gap-1 whitespace-nowrap text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent rounded"
         >
-          Análisis completo
+          Ver análisis
           <ArrowRight size={14} aria-hidden="true" />
         </Link>
       </div>
