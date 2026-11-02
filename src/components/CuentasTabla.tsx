@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Monograma } from "@/components/Identidad";
 import { ArrowDown, ArrowUp, ArrowUpDown, History, Pencil, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { formatoFecha, formatoPct, formatoPesos } from "@/lib/formato";
@@ -137,6 +138,9 @@ function FilaEscritorio({ fila }: { fila: FilaCuenta }) {
   return (
     <tr className="border-t border-[var(--color-edge)] transition-colors duration-150 hover:bg-white/[0.02]">
       <td className="px-3 py-3">
+        <div className="flex items-center gap-3">
+        <Monograma institucion={fila.plataforma} tamano={34} />
+        <div className="min-w-0">
         <p className="flex flex-wrap items-center gap-2 text-small font-semibold text-fg">
           <Link href={`/cuentas/${fila.id}/historial`} className={`rounded text-fg no-underline hover:text-accent-hi ${FOCO}`}>
             {fila.nombre}
@@ -146,6 +150,8 @@ function FilaEscritorio({ fila }: { fila: FilaCuenta }) {
         <p className="mt-0.5 text-micro text-fg-muted">
           {fila.plataforma} · {fila.tipoLabel}
         </p>
+        </div>
+        </div>
       </td>
       <td className="px-3 py-3 text-right">
         <span className="money-value font-mono-tabular text-small font-semibold text-fg">
@@ -180,8 +186,10 @@ function FilaMovil({ fila }: { fila: FilaCuenta }) {
     <li className="flex items-stretch gap-1 border-t border-[var(--color-edge)] first:border-t-0">
       <Link
         href={`/cuentas/${fila.id}/historial`}
-        className={`min-w-0 flex-1 rounded-lg px-1 py-3 no-underline ${FOCO}`}
+        className={`flex min-w-0 flex-1 items-start gap-3 rounded-lg px-1 py-3 no-underline ${FOCO}`}
       >
+        <Monograma institucion={fila.plataforma} tamano={36} />
+        <span className="min-w-0 flex-1">
         <span className="flex items-baseline justify-between gap-3">
           <span className="min-w-0 break-words text-small font-semibold text-fg">{fila.nombre}</span>
           <span className="money-value shrink-0 font-mono-tabular text-small font-semibold text-fg">
@@ -203,6 +211,7 @@ function FilaMovil({ fila }: { fila: FilaCuenta }) {
           </span>
         )}
         <span className="sr-only">, ver historial</span>
+        </span>
       </Link>
       <Link
         href={`/cuentas/${fila.id}/editar`}
@@ -373,7 +382,7 @@ export function CuentasTabla({ filas }: { filas: FilaCuenta[] }) {
       ) : (
         <>
           {/* escritorio: tabla */}
-          <div className="card hidden overflow-x-auto md:block">
+          <div className="panel hidden overflow-x-auto px-2 md:block">
             <table className="w-full min-w-[800px] border-collapse">
               <caption className="sr-only">
                 Cuentas con su valor en pesos y rendimiento en la moneda de cada cuenta
@@ -442,7 +451,7 @@ export function CuentasTabla({ filas }: { filas: FilaCuenta[] }) {
             {agrupar ? (
               <div className="flex flex-col gap-4">
                 {grupos.map((g) => (
-                  <section key={g.clave} className="card px-4 pb-1 pt-3" aria-label={g.plataforma}>
+                  <section key={g.clave} className="panel px-4 pb-1 pt-3" aria-label={g.plataforma}>
                     <div className="flex items-baseline justify-between gap-3">
                       <h2 className="text-small font-semibold text-fg">{g.plataforma}</h2>
                       <span className="money-value font-mono-tabular text-small font-semibold text-fg-soft">
@@ -458,7 +467,7 @@ export function CuentasTabla({ filas }: { filas: FilaCuenta[] }) {
                 ))}
               </div>
             ) : (
-              <ul className="card px-4">
+              <ul className="panel px-4">
                 {visibles.map((f) => (
                   <FilaMovil key={f.id} fila={f} />
                 ))}

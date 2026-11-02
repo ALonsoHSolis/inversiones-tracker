@@ -39,11 +39,11 @@ export function PestanasDistribucion({ paneles }: { paneles: PanelDistribucion[]
   }
 
   return (
-    <section className="card p-5" aria-labelledby={`${base}-titulo`}>
+    <section className="flex flex-col gap-3" aria-labelledby={`${base}-titulo`}>
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
         <div className="flex items-center gap-1">
-          <h2 id={`${base}-titulo`} className="titulo-bloque">
-            Distribución del patrimonio
+          <h2 id={`${base}-titulo`} className="titulo-seccion">
+            Distribución
           </h2>
           <Ayuda etiqueta={`Qué muestra la distribución por ${actual.etiqueta.toLowerCase()}`}>{actual.ayuda}</Ayuda>
         </div>
@@ -84,7 +84,7 @@ export function PestanasDistribucion({ paneles }: { paneles: PanelDistribucion[]
           role="tabpanel"
           aria-labelledby={`${base}-tab-${p.id}`}
           hidden={p.id !== actual.id}
-          className="mt-4"
+          className="panel px-5 py-4"
         >
           {p.contenido}
         </div>

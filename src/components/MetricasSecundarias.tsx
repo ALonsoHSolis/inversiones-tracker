@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Ayuda } from "@/components/Ayuda";
 import { formatoPct } from "@/lib/formato";
 
@@ -56,18 +54,8 @@ const colorPorSigno = (n: number | null) =>
 export function MetricasSecundarias({ twr, xirr, drawdown }: MetricasSecundariasProps) {
   const hayCaida = drawdown != null && drawdown < 0;
   return (
-    <section aria-label="Métricas de rendimiento" className="animate-fade-up">
-      <div className="mb-3 flex items-center justify-between gap-3 px-1">
-        <h2 className="titulo-bloque">Métricas de rendimiento</h2>
-        <Link
-          href="/analisis"
-          className="inline-flex min-h-11 shrink-0 items-center gap-1 whitespace-nowrap text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent rounded"
-        >
-          Ver análisis
-          <ArrowRight size={14} aria-hidden="true" />
-        </Link>
-      </div>
-      <ul className="card grid grid-cols-3 divide-x divide-[var(--color-edge)]">
+    <section aria-label="Métricas de rendimiento">
+      <ul className="panel grid grid-cols-3 divide-x divide-[var(--color-edge)]">
         <Tarjeta
           titulo="Rendimiento sin aportes (TWR)"
           tituloCorto="TWR"

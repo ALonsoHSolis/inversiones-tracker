@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
-import { Hero } from "@/components/Hero";
+import { PatrimonioHero } from "@/components/PatrimonioHero";
+import { formatoFecha, formatoPct, formatoPesos, formatoPesosSigned } from "@/lib/formato";
 import { DistribucionDetalle } from "@/components/DistribucionCard";
 import { PestanasDistribucion, type PanelDistribucion } from "@/components/PestanasDistribucion";
 import { ArrowRight, ChevronDown, Plus } from "lucide-react";
-import { PortfolioChart } from "@/components/PortfolioChart";
 import { MarketBenchmark } from "@/components/MarketBenchmark";
 import { MetricasSecundarias } from "@/components/MetricasSecundarias";
 import { calcularMetricasPortafolio } from "@/lib/metricas-portafolio";
@@ -20,7 +20,7 @@ import type { Cuenta, RendimientoActual, TipoCuenta, TipoMovimiento } from "@/ty
 import { obtenerCambioSp500, obtenerCambioUf } from "@/lib/mercado";
 import { EmptyAccountsState } from "@/components/EmptyAccountsState";
 import Link from "next/link";
-import { fechaHoyChile } from "@/lib/fecha";
+import { fechaChileHaceDias, fechaHoyChile } from "@/lib/fecha";
 import { agruparCapital, calcularMetasConProgreso, porCategoria, porPlataforma, porTipo } from "@/lib/dashboard";
 
 export default async function DashboardPage() {
@@ -47,6 +47,7 @@ export default async function DashboardPage() {
     { count: cuentasInactivasCount },
     benchmarkSp500,
     benchmarkUf,
+    { data: valorDiario },
   ] = await Promise.all([
     supabase.from("cuentas").select("*").eq("activa", true).order("created_at"),
     supabase.from("rendimiento_actual").select("*"),
@@ -61,6 +62,12 @@ export default async function DashboardPage() {
     supabase.from("cuentas").select("id", { count: "exact", head: true }).eq("activa", false),
     obtenerCambioSp500().catch(() => null),
     obtenerCambioUf().catch(() => null),
+    // mini-grafico de cada cuenta: misma vista que usa /analisis, ultimos 120 dias
+    supabase
+      .from("valor_diario_por_cuenta")
+      .select("fecha, cuenta_id, valor_clp")
+      .gte("fecha", fechaChileHaceDias(120))
+      .order("fecha"),
   ]);
 
   // caso mas comun: todavia no hay ningun snapshot guardado hoy (primera carga
@@ -207,61 +214,126 @@ export default async function DashboardPage() {
     },
   ];
 
+  const seriePorCuenta = new Map<string, number[]>();
+  (valorDiario ?? []).forEach((v) => {
+    if (!v.cuenta_id || v.valor_clp == null) return;
+    const lista = seriePorCuenta.get(v.cuenta_id) ?? [];
+    lista.push(v.valor_clp);
+    seriePorCuenta.set(v.cuenta_id, lista);
+  });
+
+  const puntosPatrimonio = (evolucionPortafolio ?? [])
+    .filter((d) => d.fecha !== null && d.valor_total_clp !== null && d.capital_aportado_acumulado_clp !== null)
+    .map((d) => ({ fecha: d.fecha!, totalClp: d.valor_total_clp!, capitalClp: d.capital_aportado_acumulado_clp! }));
+
+  const cambioNominal = valorTotal - valorTotalAnterior;
+  const cambioNominalPct = valorTotalAnterior > 0 ? (cambioNominal / valorTotalAnterior) * 100 : 0;
+  const hayMonedaExtranjera = cuentasActivas.some((c) => c.moneda !== "CLP");
+
+  const pieHero = hayCuentas ? (
+    <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-[var(--color-edge)] pt-5 sm:flex sm:flex-wrap sm:gap-x-10">
+      <div className="min-w-0">
+        <dt className="text-micro text-fg-muted">Capital aportado</dt>
+        <dd className="money-value mt-1 font-mono-tabular text-[15px] font-semibold text-fg">{formatoPesos(capitalAportadoClp)}</dd>
+      </div>
+      <div className="min-w-0">
+        <dt className="flex items-center gap-0.5 text-micro text-fg-muted">
+          Vs. registro anterior
+          <Ayuda etiqueta="Qué es el cambio desde el registro anterior">
+            Cambio nominal del valor total desde el registro anterior de cada cuenta. Incluye aportes y retiros, así
+            que no es ganancia: la ganancia real es la cifra de arriba.
+          </Ayuda>
+        </dt>
+        <dd className="mt-1 font-mono-tabular text-[15px] font-semibold text-fg-soft">
+          <span className="money-value">{formatoPesosSigned(cambioNominal)}</span>{" "}
+          <span className="text-micro font-medium text-fg-muted">({formatoPct(cambioNominalPct)}, incluye aportes)</span>
+        </dd>
+      </div>
+      {ultimaActualizacion && (
+        <div className="min-w-0">
+          <dt className="text-micro text-fg-muted">Último registro</dt>
+          <dd className="mt-1 font-mono-tabular text-[15px] font-semibold text-fg-soft">{formatoFecha(ultimaActualizacion)}</dd>
+        </div>
+      )}
+      <div className="col-span-2 min-w-0 sm:col-span-1">
+        <dt className="text-micro text-fg-muted">Moneda</dt>
+        <dd className="mt-1 text-small text-fg-soft">
+          Pesos (CLP){hayMonedaExtranjera && <span className="text-fg-muted"> · USD y UF a la tasa de cada registro</span>}
+        </dd>
+      </div>
+    </dl>
+  ) : null;
+
   return (
-    <div className="flex flex-col gap-5 lg:gap-6">
+    <div className="flex flex-col gap-8 lg:gap-10">
       <h1 className="sr-only">Resumen del portafolio</h1>
-      <Hero
+      <PatrimonioHero
+        puntos={puntosPatrimonio}
         valorTotal={valorTotal}
-        valorTotalAnterior={valorTotalAnterior}
         capitalAportadoClp={capitalAportadoClp}
         valorActualClp={valorActualClp}
-        ultimaActualizacion={ultimaActualizacion}
-        hayMonedaExtranjera={cuentasActivas.some((c) => c.moneda !== "CLP")}
         sinCuentas={!hayCuentas}
-        chart={<PortfolioChart datos={evolucionPortafolio ?? []} />}
-        benchmark={
-          hayCuentas && <MarketBenchmark
-            sp500={benchmarkSp500}
-            uf={benchmarkUf}
-            rendimientoRealPct={
-              capitalAportadoClp > 0 ? ((valorActualClp - capitalAportadoClp) / capitalAportadoClp) * 100 : null
-            }
-          />
-        }
+        pie={pieHero}
       />
 
-      <AccionesRapidas />
+      <div className="lg:hidden">
+        <AccionesRapidas />
+      </div>
 
-      <div className="grid grid-cols-1 items-start gap-5 lg:gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-        {/* columna principal: lo que se lee */}
-        <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
+      <div className="grid grid-cols-1 items-start gap-8 lg:gap-10 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="flex min-w-0 flex-col gap-8 lg:gap-10">
           {hayCuentas && (
-            <MetricasSecundarias
-              twr={metricasPortafolio.twr}
-              xirr={metricasPortafolio.xirr}
-              drawdown={metricasPortafolio.drawdown}
-            />
+            <section aria-labelledby="desempeno-titulo" className="flex flex-col gap-4">
+              <div className="flex items-center justify-between gap-3">
+                <h2 id="desempeno-titulo" className="titulo-seccion">
+                  Desempeño
+                </h2>
+                <Link
+                  href="/analisis"
+                  className="inline-flex min-h-11 items-center gap-1 whitespace-nowrap text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent rounded"
+                >
+                  Ver análisis
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
+              <MetricasSecundarias
+                twr={metricasPortafolio.twr}
+                xirr={metricasPortafolio.xirr}
+                drawdown={metricasPortafolio.drawdown}
+              />
+              <div className="panel px-5 py-4">
+                <MarketBenchmark
+                  sp500={benchmarkSp500}
+                  uf={benchmarkUf}
+                  rendimientoRealPct={
+                    capitalAportadoClp > 0 ? ((valorActualClp - capitalAportadoClp) / capitalAportadoClp) * 100 : null
+                  }
+                />
+              </div>
+            </section>
           )}
 
-          <section className="card px-5 pt-5 pb-2" aria-labelledby="cuentas-titulo">
+          <section aria-labelledby="cuentas-titulo" className="flex flex-col gap-3">
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
               <div className="flex items-center gap-1">
-                <h2 id="cuentas-titulo" className="titulo-bloque">
-                  Tus cuentas
+                <h2 id="cuentas-titulo" className="titulo-seccion">
+                  Cuentas
                 </h2>
                 <Ayuda etiqueta="Cómo leer el rendimiento de cada cuenta">
                   El % &quot;real&quot; compara los dos últimos registros de la cuenta, en su propia moneda, ya
-                  descontando cualquier aporte o retiro. Aparece cuando hay al menos dos registros. El anualizado
-                  (en el detalle) proyecta la ganancia acumulada a una tasa por año: es una aproximación simple.
+                  descontando cualquier aporte o retiro. Aparece cuando hay al menos dos registros. La línea pequeña
+                  muestra el valor en pesos de los últimos meses (incluye aportes, por eso no va en verde ni rojo).
                 </Ayuda>
               </div>
               <div className="no-print flex items-center gap-1">
-                {hayCuentas && <Link
-                  href="/cuentas"
-                  className="inline-flex min-h-11 items-center rounded-lg px-2 text-small font-semibold text-fg-soft no-underline hover:text-fg focus-visible:outline-2 focus-visible:outline-accent"
-                >
-                  Ver tabla
-                </Link>}
+                {hayCuentas && (
+                  <Link
+                    href="/cuentas"
+                    className="inline-flex min-h-11 items-center rounded-lg px-2 text-small font-semibold text-fg-soft no-underline hover:text-fg focus-visible:outline-2 focus-visible:outline-accent"
+                  >
+                    Ver tabla
+                  </Link>
+                )}
                 <Link
                   href="/cuentas/nueva"
                   className="inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent"
@@ -271,31 +343,33 @@ export default async function DashboardPage() {
                 </Link>
               </div>
             </div>
-            <p className="text-micro text-fg-muted">Valor en pesos · rendimiento en la moneda de cada cuenta</p>
             {cuentasConDatos.length > 0 ? (
-              <ul className="mt-2 lista-filas">
-                {cuentasConDatos.map(({ cuenta, rendimiento }) => (
-                  <AccountRow
-                    key={cuenta.id}
-                    cuenta={cuenta}
-                    rendimiento={rendimiento}
-                    valorActualFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null}
-                    valorClpFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual_clp ?? null}
-                    capitalAportadoFallback={capitalPorCuentaMap.get(cuenta.id)?.capital_aportado ?? null}
-                    ultimaFechaFallback={capitalPorCuentaMap.get(cuenta.id)?.ultima_fecha ?? null}
-                    ahoraMs={hoyMs}
-                  />
-                ))}
-              </ul>
+              <div className="panel px-4 py-2 sm:px-5">
+                <ul className="lista-filas">
+                  {cuentasConDatos.map(({ cuenta, rendimiento }) => (
+                    <AccountRow
+                      key={cuenta.id}
+                      cuenta={cuenta}
+                      rendimiento={rendimiento}
+                      valorActualFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual ?? null}
+                      valorClpFallback={capitalPorCuentaMap.get(cuenta.id)?.valor_actual_clp ?? null}
+                      capitalAportadoFallback={capitalPorCuentaMap.get(cuenta.id)?.capital_aportado ?? null}
+                      ultimaFechaFallback={capitalPorCuentaMap.get(cuenta.id)?.ultima_fecha ?? null}
+                      ahoraMs={hoyMs}
+                      serie={seriePorCuenta.get(cuenta.id)}
+                    />
+                  ))}
+                </ul>
+              </div>
             ) : (
-              <div className="pb-3">
+              <div className="panel px-5">
                 <EmptyAccountsState />
               </div>
             )}
             {(cuentasInactivasCount ?? 0) > 0 && (
               <Link
                 href="/cuentas/inactivas"
-                className="mb-2 inline-flex min-h-11 items-center text-micro text-fg-muted underline decoration-white/20 underline-offset-4 hover:text-fg-soft"
+                className="inline-flex min-h-11 items-center self-start text-micro text-fg-muted underline decoration-white/20 underline-offset-4 hover:text-fg-soft"
               >
                 Ver cuentas dadas de baja
               </Link>
@@ -303,27 +377,9 @@ export default async function DashboardPage() {
           </section>
 
           {hayCuentas && <PestanasDistribucion paneles={paneles} />}
-
-          <Link
-            href="/analisis"
-            className="card group flex items-center justify-between gap-3 px-5 py-4 no-underline transition-colors duration-150 hover:bg-surface-raised focus-visible:outline-2 focus-visible:outline-accent"
-          >
-            <span className="min-w-0">
-              <span className="block titulo-bloque">Análisis avanzado</span>
-              <span className="mt-0.5 block text-micro text-fg-muted">
-                Composición histórica, comparación de cuentas (TWR, XIRR, peor caída) y salud de los datos
-              </span>
-            </span>
-            <ArrowRight
-              size={18}
-              aria-hidden="true"
-              className="shrink-0 text-fg-muted transition-transform duration-150 group-hover:translate-x-0.5"
-            />
-          </Link>
         </div>
 
-        {/* riel lateral: lo que se hace (registrar) y lo que se sigue (metas, actividad) */}
-        <aside className="flex min-w-0 flex-col gap-5 lg:gap-6" aria-label="Registro, metas y actividad">
+        <aside className="flex min-w-0 flex-col gap-8 lg:gap-10" aria-label="Registro, metas y actividad">
           {hayCuentas && (
             <div className="no-print hidden xl:flex flex-col gap-3">
               <CargaRapida
@@ -347,9 +403,9 @@ export default async function DashboardPage() {
             </div>
           )}
 
-          <section className="card px-5 pt-5 pb-3" aria-labelledby="metas-titulo">
+          <section aria-labelledby="metas-titulo" className="flex flex-col gap-3">
             <div className="flex items-center justify-between gap-3">
-              <h2 id="metas-titulo" className="titulo-bloque">
+              <h2 id="metas-titulo" className="titulo-seccion">
                 Metas
               </h2>
               <Link
@@ -359,7 +415,7 @@ export default async function DashboardPage() {
                 {metasConProgreso.length > 0 ? "Gestionar" : "Crear"}
               </Link>
             </div>
-            <div className="mt-1">
+            <div className={metasConProgreso.length > 0 ? "panel px-5 py-2" : ""}>
               <MetasList metas={metasConProgreso} compacta />
             </div>
           </section>

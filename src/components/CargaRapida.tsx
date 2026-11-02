@@ -41,7 +41,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta, c
   if (cuentas.length === 0) return null;
 
   return (
-    <section id="carga-rapida" aria-labelledby="carga-rapida-titulo" className="card p-5 scroll-mt-6">
+    <section id="carga-rapida" aria-labelledby="carga-rapida-titulo" className="panel p-5 scroll-mt-6">
       <div className="flex items-center gap-1 mb-0.5">
         <h2 id="carga-rapida-titulo" className="titulo-bloque">
           Carga rápida

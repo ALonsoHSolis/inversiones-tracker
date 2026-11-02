@@ -5,7 +5,8 @@ import { formatoPesos, formatoPesosSigned } from "@/lib/formato";
 
 // el formateo se elige por nombre, no por funcion: un server component no puede
 // pasarle una funcion a un client component (next lo rechaza al serializar).
-const FORMATOS = { pesos: formatoPesos, pesosSigned: formatoPesosSigned } as const;
+const formatoNumero = (v: number) => Math.round(v).toLocaleString("es-CL");
+const FORMATOS = { pesos: formatoPesos, pesosSigned: formatoPesosSigned, numero: formatoNumero } as const;
 export type FormatoCountUp = keyof typeof FORMATOS;
 
 // cifra que "cobra vida" una vez por sesion: sube de 0 al valor real en ~0,9 s

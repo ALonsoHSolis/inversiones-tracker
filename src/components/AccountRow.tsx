@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronDown, Clock3, History, Pencil, SquarePen } from "lucide-react";
+import { MiniGrafico, Monograma } from "@/components/Identidad";
 import { calcularEfectoTipoCambio, calcularRendimientoAnualizado } from "@/lib/rendimiento";
 import { formatoPct, formatoPesos } from "@/lib/formato";
 import { TIPOS } from "@/lib/tipos-cuenta";
@@ -32,6 +33,9 @@ interface AccountRowProps {
   // usa esa pagina) y pasado como prop -- llamar Date.now() directo aca
   // adentro violaria la regla de pureza del render (react-hooks/purity).
   ahoraMs: number;
+  // valores en pesos de los ultimos registros (valor_diario_por_cuenta), para
+  // el mini-grafico. opcional.
+  serie?: number[];
 }
 
 // el símbolo de moneda importa: rendimiento.valor y aportes_netos vienen en
@@ -59,6 +63,7 @@ export function AccountRow({
   capitalAportadoFallback,
   ultimaFechaFallback,
   ahoraMs,
+  serie = [],
 }: AccountRowProps) {
   const valor = rendimiento?.valor ?? valorActualFallback;
   const valorClp = rendimiento?.valor_clp ?? valorClpFallback;
@@ -90,9 +95,10 @@ export function AccountRow({
   const hayDetalle = rendimientoAnualizado != null || efectoTipoCambio != null;
 
   return (
-    <li className="py-3">
+    <li className="py-1">
       <details className="group">
-        <summary className="list-none [&::-webkit-details-marker]:hidden grid cursor-pointer grid-cols-[minmax(0,1fr)_auto_24px] items-start gap-x-3 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+        <summary className="fila-cuenta list-none [&::-webkit-details-marker]:hidden grid cursor-pointer grid-cols-[40px_minmax(0,1fr)_auto_20px] sm:grid-cols-[40px_minmax(0,1fr)_72px_auto_20px] items-center gap-x-3 rounded-xl px-2 py-2.5 -mx-2 transition-colors duration-150 hover:bg-white/[0.035] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          <Monograma institucion={cuenta.plataforma} />
           <span className="min-w-0">
             <span className="block break-words text-small font-semibold leading-snug text-fg">{cuenta.nombre}</span>
             <span className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-micro text-fg-muted">
@@ -110,8 +116,11 @@ export function AccountRow({
               )}
             </span>
           </span>
+          <span className="hidden sm:block">
+            <MiniGrafico valores={serie} />
+          </span>
           <span className="text-right">
-            <span className="money-value block whitespace-nowrap font-mono-tabular text-small font-semibold text-fg">
+            <span className="money-value block whitespace-nowrap font-mono-tabular text-[15px] font-semibold text-fg">
               {valorClp != null ? formatoPesos(valorClp) : "Sin datos aún"}
             </span>
             {pct != null ? (
@@ -128,13 +137,13 @@ export function AccountRow({
               <span className="mt-0.5 block text-micro text-fg-subtle">Sin comparación aún</span>
             )}
           </span>
-          <span className="grid h-6 w-6 place-items-center rounded-full text-fg-subtle transition-colors group-hover:text-fg-soft">
+          <span className="grid h-5 w-5 place-items-center rounded-full text-fg-subtle transition-colors group-hover:text-fg-soft">
             <ChevronDown size={16} aria-hidden="true" className="transition-transform duration-200 group-open:rotate-180" />
             <span className="sr-only">Ver detalle y acciones de {cuenta.nombre}</span>
           </span>
         </summary>
 
-        <div className="mt-3 rounded-xl bg-white/[0.025] p-3 shadow-[inset_0_0_0_1px_var(--color-edge)]">
+        <div className="mb-2 ml-[52px] mt-1 rounded-xl bg-white/[0.025] p-3 shadow-[inset_0_0_0_1px_var(--color-edge)]">
           {hayDetalle && (
             <dl className="grid grid-cols-1 gap-2 text-micro sm:grid-cols-2">
               {rendimientoAnualizado != null && (
@@ -172,7 +181,7 @@ export function AccountRow({
         </div>
       </details>
       {tieneAporte && rendimiento && (
-        <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-micro text-fg-muted">
+        <p className="mb-2 ml-[52px] flex flex-wrap items-center gap-x-2 gap-y-1 text-micro text-fg-muted">
           <span className="money-value rounded-md bg-accent/12 px-1.5 py-0.5 font-mono-tabular font-semibold text-accent-hi">
             {/* aportes_netos siempre cae a 0 via coalesce en la vista sql, nunca null */}
             {rendimiento.aportes_netos! > 0 ? "Aporte " : "Retiro −"}

@@ -39,7 +39,7 @@ export function MarketBenchmark({ sp500, uf, rendimientoRealPct }: MarketBenchma
   return (
     <section aria-label="Comparadores de mercado">
       <div className="mb-3.5 flex items-center gap-1">
-        <h2 className="titulo-bloque">Comparadores</h2>
+        <h3 className="text-small font-semibold text-fg-soft">Comparadores</h3>
         <Ayuda>
           El primero es tu rendimiento real acumulado (ganancia total sobre capital aportado), desde que
           creaste cada cuenta. Los otros son referencias de mercado del último mes: la UF mide si le ganas a

@@ -143,3 +143,24 @@ esquema, RLS, auth ni fórmulas.
 6 rutas × 8 anchos (320–1440) y en las 7 pantallas secundarias, sin desbordamiento horizontal, detector de Impeccable
 sin hallazgos. Flujos probados contra el RPC simulado: carga rápida con aporte (comprobante) y multi-cuenta con
 advertencia.
+
+## Iteración 3: dirección "Robinhood/Copilot" (pedido del usuario: "no lo veo premium")
+
+El usuario marcó cuatro problemas (gráfico plano, todo son tarjetas, falta personalidad, falta interacción) y eligió
+la dirección estilo Robinhood/Copilot. Sin cambios de esquema, RLS, auth ni fórmulas.
+
+- **Hero sin tarjeta** (`PatrimonioHero`): la cifra del patrimonio (hasta 72 px, "$" reducido) y un gráfico grande
+  propio en SVG son la pantalla. Brillo champán de fondo que se desvanece hacia todos los bordes.
+- **Recorrido del gráfico:** mouse, dedo (arrastre horizontal; el vertical sigue haciendo scroll) o flechas del
+  teclado (`role="slider"` con `aria-valuetext`). La cifra grande y la ganancia real muestran ese día; la ganancia
+  de un punto es total − capital aportado acumulado de `evolucion_portafolio` (la misma resta del tooltip anterior).
+- **Gráfico:** eje X proporcional a la fecha; la línea del patrimonio une registros reales con rectas (sin curvas
+  que inventen picos); el capital aportado va en escalones punteados (un aporte es un salto real); eje Y ajustado al
+  rango de los datos. Geometría en `src/lib/grafico-patrimonio.ts` con tests.
+- **Cuentas con identidad:** monograma por institución (color estable, paleta sin verde/rojo) y mini-gráfico del
+  valor en pesos de los últimos 120 días (`valor_diario_por_cuenta`). Va en tono neutro: incluye aportes, no es
+  rendimiento.
+- **Menos cajas:** títulos de sección fuera de los contenedores (`.titulo-seccion`), superficies `.panel` sin
+  borde ni sombra; la franja de datos del hero (capital, cambio vs. registro anterior, último registro, moneda) es
+  una lista con divisor, no una tarjeta.
+- Se eliminaron `Hero.tsx` y `PortfolioChart.tsx` (reemplazados).
