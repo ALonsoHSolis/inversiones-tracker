@@ -148,7 +148,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
           disabled={accion !== null}
           className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-ink text-[14px] font-semibold disabled:opacity-50"
         >
-          {accion === "guardar" ? "guardando..." : "guardar cambios"}
+          {accion === "guardar" ? "Guardando…" : "Guardar cambios"}
         </button>
 
         {!bajaConfirm ? (
@@ -170,17 +170,17 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
                 type="button"
                 onClick={darDeBaja}
                 disabled={accion !== null}
-                className="h-[34px] px-3.5 rounded-lg bg-[var(--neg)] text-ink text-micro font-bold disabled:opacity-50"
+                className="h-10 px-4 rounded-[10px] bg-[var(--neg)] text-ink text-small font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
               >
-                {accion === "baja" ? "dando de baja..." : "confirmar"}
+                {accion === "baja" ? "Dando de baja…" : "Sí, dar de baja"}
               </button>
               <button
                 type="button"
                 onClick={() => setBajaConfirm(false)}
                 disabled={accion !== null}
-                className="h-[34px] px-3.5 rounded-lg border border-control text-fg-soft text-micro font-semibold disabled:opacity-50"
+                className="boton-secundario disabled:opacity-50"
               >
-                cancelar
+                Cancelar
               </button>
             </div>
           </div>

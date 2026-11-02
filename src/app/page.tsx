@@ -180,8 +180,8 @@ export default function LandingPage() {
               { tiempo: "Al instante", texto: "Ves tu patrimonio en pesos, tu ganancia real y cómo se compara con la UF y el mercado." },
             ].map((e) => (
               <div key={e.tiempo} className="landing-etapa">
-                <p className="text-[clamp(1.25rem,2vw,1.875rem)] font-semibold tracking-[-0.02em] text-ink">{e.tiempo}</p>
-                <p className="mt-auto max-w-[30ch] text-base leading-snug text-ink/80">{e.texto}</p>
+                <p className="text-[clamp(1.25rem,2vw,1.875rem)] font-semibold tracking-[-0.02em] text-accent-hi">{e.tiempo}</p>
+                <p className="mt-auto max-w-[30ch] text-base leading-snug text-fg-soft">{e.texto}</p>
               </div>
             ))}
           </div>
@@ -295,23 +295,25 @@ export default function LandingPage() {
         </section>
 
         {/* CIERRE: la pregunta en los dos bordes, la decision al centro */}
-        <section className="landing-cierre landing-marco" aria-labelledby="titulo-cierre">
-          <h2 id="titulo-cierre" className="sr-only">¿Cuánto ganaste de verdad?</h2>
-          <p aria-hidden="true" className={`landing-cierre-linea ${ENCABEZADO}`}>¿Cuánto ganaste</p>
-          <div className="landing-cierre-centro">
-            <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
-              <Link href="/signup" className="boton-primario h-14 w-[min(72vw,240px)] text-lg no-underline">
+        <div className="landing-marco">
+          <section className="landing-cierre px-4" aria-labelledby="titulo-cierre">
+            <h2 id="titulo-cierre" className={`landing-cierre-titular ${ENCABEZADO}`}>
+              ¿Cuánto ganaste de verdad?
+            </h2>
+            <div className="flex flex-col items-center gap-4">
+              <Link href="/signup" className="boton-primario h-14 px-8 text-lg no-underline">
                 Crear cuenta gratis
               </Link>
-              <span className="text-lg text-fg-muted">o</span>
-              <Link href="/calculadora" className="boton-secundario h-14 w-[min(72vw,240px)] text-lg no-underline">
-                Probar la calculadora
-              </Link>
+              <p className="text-center text-base text-fg-muted">
+                Gratis y sin conectar tu banco. ¿Primero quieres probar?{" "}
+                <Link href="/calculadora" className="text-fg-soft underline decoration-white/25 underline-offset-4 hover:text-fg">
+                  Usa la calculadora sin cuenta
+                </Link>
+                .
+              </p>
             </div>
-            <p className="mt-4 text-center text-base text-fg-muted">Gratis, sin conectar tu banco. La calculadora no necesita cuenta.</p>
-          </div>
-          <p aria-hidden="true" className={`landing-cierre-linea ${ENCABEZADO}`}>de verdad?</p>
-        </section>
+          </section>
+        </div>
       </main>
 
       <div className="landing-marco">
