@@ -161,7 +161,7 @@ export default async function AnalisisPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1160px]">
-      <h1 className="text-[22px] font-semibold tracking-[-0.02em] text-fg">Análisis</h1>
+      <h1 className="text-2xl font-semibold tracking-[-0.02em] text-fg">Análisis</h1>
       <p className="mt-1 text-small text-fg-muted max-w-[640px]">
         Composición histórica, comparación entre cuentas y calidad de tus datos. Cada métrica usa una metodología
         distinta; la ayuda de cada bloque explica cuál.
@@ -169,7 +169,7 @@ export default async function AnalisisPage() {
 
       <nav
         aria-label="Secciones del análisis"
-        className="no-print sticky top-14 lg:top-16 z-10 -mx-4 sm:-mx-6 lg:-mx-8 mt-5 border-b border-[var(--line)] bg-ink/90 px-4 sm:px-6 lg:px-8 backdrop-blur-md"
+        className="no-print sticky top-14 lg:top-16 z-10 -mx-4 sm:-mx-6 lg:-mx-8 mt-5 border-b border-[var(--color-edge)] bg-ink/90 px-4 sm:px-6 lg:px-8 backdrop-blur-md"
       >
         <ul className="flex gap-1 overflow-x-auto py-2 [scrollbar-width:none]">
           {secciones.map((sec) => (
@@ -190,30 +190,31 @@ export default async function AnalisisPage() {
           <CompositionChart porPlataforma={composicionPorPlataforma} porTipo={composicionPorTipo} />
         </div>
         {cuentasActivas.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-            <div id="comparacion" className="scroll-mt-32">
-              <AccountComparison
-                cuentas={comparacionCuentas}
-                gananciaTotalClp={gananciaTotalClp}
-                twrPortafolio={twrPortafolio}
-                drawdownPortafolio={drawdownPortafolio}
-                xirrPortafolio={xirrPortafolio}
-              />
-            </div>
-            <div id="salud" className="scroll-mt-32">
-              <DataHealthView alertas={alertasSalud} />
-            </div>
+          <div id="comparacion" className="scroll-mt-32">
+            <AccountComparison
+              cuentas={comparacionCuentas}
+              gananciaTotalClp={gananciaTotalClp}
+              twrPortafolio={twrPortafolio}
+              drawdownPortafolio={drawdownPortafolio}
+              xirrPortafolio={xirrPortafolio}
+            />
+          </div>
+        )}
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+        {cuentasActivas.length > 0 && (
+          <div id="salud" className="scroll-mt-32">
+            <DataHealthView alertas={alertasSalud} />
           </div>
         )}
 
         <section id="metodologia" aria-labelledby="metodologia-titulo" className="card scroll-mt-32 p-5">
-          <h2 id="metodologia-titulo" className="text-small font-semibold text-fg">
+          <h2 id="metodologia-titulo" className="titulo-bloque">
             Cómo leer las métricas
           </h2>
           <p className="mt-1 text-micro text-fg-muted">
             Ninguna reemplaza a otra: cada una responde una pregunta distinta.
           </p>
-          <dl className="mt-4 grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2">
+          <dl className="mt-4 grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
             {[
               ["Rendimiento real", "Cambio de valor de una cuenta menos los aportes y retiros del período. Un depósito nunca cuenta como ganancia. Se muestra en la moneda de cada cuenta."],
               ["Ganancia real total", "Valor actual menos capital aportado, todo en pesos con la tasa de cada registro. Incluye el efecto del tipo de cambio en tus cuentas en USD o UF."],
@@ -229,6 +230,7 @@ export default async function AnalisisPage() {
             ))}
           </dl>
         </section>
+        </div>
       </div>
     </div>
   );

@@ -144,3 +144,17 @@ test("XIRR necesita flujos de ambos signos", () => {
     null
   );
 });
+
+// HALLAZGO (no corregido, ver docs/hallazgos-rediseno.md #5): si todos los
+// flujos caen el mismo dia (cuenta creada hoy con valor = aporte), el VPN es 0
+// para cualquier tasa y la biseccion devuelve el punto medio del rango
+// (~450 %). /analisis muestra "XIRR +450,0%" para esa cuenta. el resultado
+// esperado seria null (sin horizonte temporal no hay tasa anual). marcado
+// `todo` para que reproduzca el caso sin bloquear la suite hasta decidirlo.
+test("calcularXIRR sin horizonte temporal deberia ser null (hallazgo 5)", { todo: true }, () => {
+  const xirr = calcularXIRR([
+    { fecha: "2026-11-02", monto: -300_000 },
+    { fecha: "2026-11-02", monto: 300_000 },
+  ]);
+  assert.equal(xirr, null);
+});

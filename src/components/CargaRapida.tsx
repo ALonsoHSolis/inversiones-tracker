@@ -42,8 +42,8 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta, c
 
   return (
     <section id="carga-rapida" aria-labelledby="carga-rapida-titulo" className="card p-5 scroll-mt-6">
-      <div className="flex items-center gap-1.5 mb-1">
-        <h2 id="carga-rapida-titulo" className="text-small font-semibold text-fg">
+      <div className="flex items-center gap-1 mb-0.5">
+        <h2 id="carga-rapida-titulo" className="titulo-bloque">
           Carga rápida
         </h2>
         <Ayuda>
@@ -407,6 +407,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
             </select>
             <InputMonto
               id={idMonto}
+              ariaLabel={`Monto del ${movimientoTipo}${cuenta ? ` en ${cuenta.moneda}` : ""}`}
               placeholder="Monto"
               invalido={!!errores.monto}
               describedBy={errores.monto ? `${idMonto}-error` : undefined}

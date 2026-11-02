@@ -105,7 +105,7 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
               <Logo subtitle="Estado de cuenta" />
               <div className="sm:text-right">
                 <p className="text-micro uppercase tracking-[0.14em] font-semibold text-accent">Informe mensual</p>
-                <p className="mt-1 text-[22px] font-semibold tracking-[-0.02em] text-fg">{nombreMes(mes)}</p>
+                <p className="mt-1 text-2xl font-semibold tracking-[-0.02em] text-fg">{nombreMes(mes)}</p>
                 <p className="mt-0.5 text-micro text-fg-muted">Emitido el {fechaHoyChile().split("-").reverse().join("-")}</p>
               </div>
             </header>

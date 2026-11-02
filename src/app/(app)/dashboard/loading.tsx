@@ -1,96 +1,49 @@
-function AccountRowSkeleton() {
+// esqueleto del inicio: replica la composicion real (hero con grafico a todo
+// el ancho, columna principal y riel) para que la carga no salte de layout.
+// va dentro de AppShell, asi que no dibuja su propio header.
+function Fila() {
   return (
-    <div className="border border-white/[0.07] rounded-xl px-[15px] py-[13px] flex items-center justify-between gap-3">
-      <div className="flex flex-col gap-2 min-w-0">
-        <div className="skeleton h-3.5 w-32" />
-        <div className="skeleton h-2.5 w-20" />
+    <div className="flex items-center justify-between gap-3 py-3.5">
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="skeleton h-3.5 w-40" />
+        <div className="skeleton h-2.5 w-24" />
       </div>
       <div className="flex flex-col items-end gap-2">
-        <div className="skeleton h-3.5 w-20" />
+        <div className="skeleton h-3.5 w-24" />
         <div className="skeleton h-2.5 w-14" />
       </div>
     </div>
   );
 }
 
-function BreakdownCardSkeleton() {
-  return (
-    <section className="card p-5">
-      <div className="skeleton h-3.5 w-32 mb-2" />
-      <div className="skeleton h-2.5 w-44 mb-4" />
-      <div className="flex flex-col gap-[15px]">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="flex flex-col gap-[7px]">
-            <div className="flex items-baseline justify-between gap-2.5">
-              <div className="skeleton h-3 w-24" />
-              <div className="skeleton h-3 w-16" />
-            </div>
-            <div className="skeleton h-1.5 w-full" />
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export default function Loading() {
   return (
-    <main className="max-w-[1160px] mx-auto px-6 pt-[26px] pb-16">
-      <header className="flex items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <div className="skeleton w-10 h-10 rounded-xl" />
-          <div className="flex flex-col gap-1.5">
-            <div className="skeleton h-3.5 w-24" />
-            <div className="skeleton h-2.5 w-36" />
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="skeleton h-[34px] w-20 rounded-[9px]" />
-          <div className="skeleton h-[34px] w-20 rounded-[9px]" />
-        </div>
-      </header>
-
-      <section className="card px-7 py-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.6)]">
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(280px,1fr)_minmax(360px,1.35fr)] gap-8">
+    <div className="flex flex-col gap-5 lg:gap-6" aria-busy="true" aria-label="Cargando tu portafolio">
+      <section className="card px-5 pt-6 pb-5 sm:px-7 sm:pt-7">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-10">
           <div>
-            <div className="skeleton h-3 w-40 mb-3" />
-            <div className="skeleton h-11 w-56 mb-4" />
-            <div className="skeleton h-6 w-32 rounded-full mb-6" />
-            <div className="h-px bg-white/[0.07] my-5" />
-            <div className="grid grid-cols-3 gap-3.5">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="flex flex-col gap-1.5">
-                  <div className="skeleton h-2.5 w-16" />
-                  <div className="skeleton h-4 w-20" />
-                </div>
-              ))}
-            </div>
+            <div className="skeleton h-3.5 w-28" />
+            <div className="skeleton mt-3 h-12 w-64 max-w-full" />
+            <div className="skeleton mt-4 h-6 w-48 rounded-full" />
           </div>
-          <div className="skeleton h-[210px] w-full" />
+          <div className="skeleton h-[150px] w-full rounded-2xl" />
         </div>
+        <div className="skeleton mt-8 h-[230px] w-full sm:h-[320px]" />
       </section>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <BreakdownCardSkeleton />
-        <BreakdownCardSkeleton />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-4 mt-4 items-start">
-        <section className="card p-5">
-          <div className="skeleton h-3.5 w-24 mb-4" />
-          <div className="flex flex-col gap-[9px]">
-            <AccountRowSkeleton />
-            <AccountRowSkeleton />
-            <AccountRowSkeleton />
-          </div>
+      <div className="grid grid-cols-1 items-start gap-5 lg:gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="card px-5 py-3">
+          <Fila />
+          <Fila />
+          <Fila />
+          <Fila />
         </section>
         <section className="card p-5">
-          <div className="skeleton h-3.5 w-28 mb-4" />
-          <div className="skeleton h-10 w-full mb-3.5" />
-          <div className="skeleton h-10 w-full mb-3.5" />
-          <div className="skeleton h-10 w-full" />
+          <div className="skeleton h-3.5 w-24" />
+          <div className="skeleton mt-4 h-10 w-full" />
+          <div className="skeleton mt-3 h-10 w-full" />
+          <div className="skeleton mt-3 h-10 w-full" />
         </section>
       </div>
-    </main>
+    </div>
   );
 }

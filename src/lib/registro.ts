@@ -5,6 +5,7 @@
 // de validacion y de advertencia tambien son las de antes, ahora sin
 // window.confirm: el formulario las muestra en pantalla.
 import type { TipoMovimiento } from "../types/database";
+import { formatoPorcentaje } from "./formato.ts";
 
 export function calcularValorSugerido(valorAnterior: number | null, monto: string, tipo: TipoMovimiento): string {
   const base = valorAnterior ?? 0;
@@ -74,7 +75,7 @@ export function advertenciaRegistro(e: EntradaAdvertencia): string | null {
   }
   const pct = estimarRendimientoPct(e.valorAnterior, e.valorNuevo, e.incluyeMovimiento, e.tipo, e.monto);
   if (pct != null && Math.abs(pct) >= UMBRAL_RENDIMIENTO_IMPLAUSIBLE) {
-    return `Con este valor, el rendimiento de "${e.nombreCuenta}" sería de ${pct.toFixed(1)}% respecto al registro anterior. ¿El valor es correcto?`;
+    return `Con este valor, el rendimiento de "${e.nombreCuenta}" sería de ${pct < 0 ? "−" : ""}${formatoPorcentaje(pct)} respecto al registro anterior. ¿El valor es correcto?`;
   }
   return null;
 }

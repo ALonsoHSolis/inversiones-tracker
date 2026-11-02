@@ -77,14 +77,14 @@ export default async function CuentasPage() {
     <div className="mx-auto flex max-w-[1100px] flex-col gap-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[22px] font-semibold tracking-[-0.02em] text-fg">Tus cuentas</h1>
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-fg">Tus cuentas</h1>
           <p className="mt-1 max-w-[560px] text-small text-fg-muted">
             Cada cuenta con su valor en pesos y su rendimiento real, ya descontados los aportes y retiros.
           </p>
         </div>
         <Link
           href="/cuentas/nueva"
-          className="inline-flex h-10 items-center gap-2 rounded-full bg-[var(--accent)] px-4 text-small font-semibold text-ink no-underline transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="boton-primario no-underline"
         >
           <Plus size={16} strokeWidth={2.2} aria-hidden="true" />
           Agregar cuenta

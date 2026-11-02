@@ -42,8 +42,11 @@ function compararConNullAlFinal(a: number | null, b: number | null): number {
 
 function textoRacha(racha: RachaResultado): string {
   if (racha.tipo == null || racha.longitud === 0) return "sin racha";
-  const plural = racha.longitud === 1 ? "registro" : "registros";
-  return `${racha.longitud} ${plural} ${racha.tipo}${racha.longitud === 1 ? "o" : "s"} seguido${racha.longitud === 1 ? "" : "s"}`;
+  // racha.tipo es "positiva"/"negativa" (femenino); "registro" es masculino,
+  // asi que se concuerda aca: antes salia "1 registro negativao seguido".
+  const uno = racha.longitud === 1;
+  const adjetivo = racha.tipo === "positiva" ? "positivo" : "negativo";
+  return `${racha.longitud} ${uno ? "registro" : "registros"} ${adjetivo}${uno ? "" : "s"} seguido${uno ? "" : "s"}`;
 }
 
 export function AccountComparison({
@@ -65,11 +68,14 @@ export function AccountComparison({
     );
   });
 
+  const color = (n: number | null) => (n == null ? "var(--color-fg-muted)" : n >= 0 ? "var(--color-pos)" : "var(--color-neg)");
+  const pct = (n: number | null) => (n != null ? formatoPct(n) : "—");
+
   return (
-    <section className="card p-5">
-      <div className="flex items-center gap-1.5 mb-1">
-        <p className="text-small font-semibold text-fg">Análisis de rendimiento</p>
-        <Ayuda>
+    <section className="card p-5" aria-labelledby="comparacion-titulo">
+      <div className="flex items-center gap-1 mb-0.5">
+        <h2 id="comparacion-titulo" className="titulo-bloque">Rendimiento por cuenta</h2>
+        <Ayuda etiqueta="Cómo leer TWR, XIRR y peor caída">
           El TWR (time-weighted return) encadena el rendimiento de cada período de tu portafolio
           completo, ya descontando aportes y retiros en cada uno — mide qué tan bien se desempeñó tu
           plata, sin importar cuánto le agregaste o sacaste en el camino. El máximo drawdown es la
@@ -82,112 +88,110 @@ export function AccountComparison({
           recuperó entre dos actualizaciones tuyas, no queda reflejado.
         </Ayuda>
       </div>
-      <p className="text-micro text-fg-muted mb-4">Rendimiento compuesto y comparación entre tus cuentas</p>
+      <p className="text-micro text-fg-muted">Rendimiento compuesto del portafolio y comparación entre tus cuentas</p>
 
-      <div className="grid grid-cols-3 gap-3.5">
-        <div>
-          <p className="text-micro font-medium text-fg-muted">TWR del portafolio</p>
-          <p
-            className="money-value mt-1 font-mono-tabular font-semibold text-base"
-            style={{ color: twrPortafolio == null ? "var(--color-fg)" : twrPortafolio >= 0 ? "var(--pos)" : "var(--neg)" }}
+      <dl className="mt-4 grid grid-cols-3 divide-x divide-[var(--color-edge)] rounded-xl bg-white/[0.025] py-3 shadow-[inset_0_0_0_1px_var(--color-edge)]">
+        <div className="min-w-0 px-3 sm:px-4">
+          <dt className="etiqueta">TWR</dt>
+          <dd className="money-value mt-1 font-mono-tabular text-lg font-semibold" style={{ color: color(twrPortafolio) }}>
+            {pct(twrPortafolio)}
+          </dd>
+        </div>
+        <div className="min-w-0 px-3 sm:px-4">
+          <dt className="etiqueta">XIRR anual</dt>
+          <dd className="money-value mt-1 font-mono-tabular text-lg font-semibold" style={{ color: color(xirrPortafolio) }}>
+            {pct(xirrPortafolio)}
+          </dd>
+        </div>
+        <div className="min-w-0 px-3 sm:px-4">
+          <dt className="etiqueta">Peor caída</dt>
+          <dd
+            className="money-value mt-1 font-mono-tabular text-lg font-semibold"
+            style={{ color: drawdownPortafolio != null && drawdownPortafolio < 0 ? "var(--color-neg)" : "var(--color-fg)" }}
           >
-            {twrPortafolio != null ? formatoPct(twrPortafolio) : "—"}
-          </p>
+            {drawdownPortafolio != null && drawdownPortafolio < 0 ? formatoPct(drawdownPortafolio) : "Sin caídas"}
+          </dd>
         </div>
-        <div>
-          <p className="text-micro font-medium text-fg-muted">Peor caída registrada</p>
-          <p className="money-value mt-1 font-mono-tabular font-semibold text-base" style={{ color: "var(--neg)" }}>
-            {drawdownPortafolio != null && drawdownPortafolio < 0 ? formatoPct(drawdownPortafolio) : "sin caídas"}
-          </p>
-        </div>
-        <div>
-          <p className="text-micro font-medium text-fg-muted">XIRR del portafolio</p>
-          <p
-            className="money-value mt-1 font-mono-tabular font-semibold text-base"
-            style={{ color: xirrPortafolio == null ? "var(--color-fg)" : xirrPortafolio >= 0 ? "var(--pos)" : "var(--neg)" }}
-          >
-            {xirrPortafolio != null ? formatoPct(xirrPortafolio) : "—"}
-          </p>
-        </div>
-      </div>
+      </dl>
 
-      <div className="h-px bg-white/[0.07] my-4" />
-
-      <div className="flex items-center justify-between gap-3 mb-3">
-        <p className="text-micro text-fg-muted">Por cuenta</p>
-        <div className="flex gap-0.5 bg-white/[0.04] p-[3px] rounded-[9px]">
-          <button
-            type="button"
-            onClick={() => setOrden("anualizado")}
-            className="h-6 px-2.5 rounded-md text-xs font-semibold"
-            style={{
-              background: orden === "anualizado" ? "rgba(255,255,255,.1)" : "transparent",
-              color: orden === "anualizado" ? "var(--color-fg)" : "var(--color-fg-muted)",
-            }}
-          >
+      <div className="mt-5 mb-2 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-small font-medium text-fg-soft">Por cuenta</p>
+        <div role="group" aria-label="Ordenar cuentas por" className="segmentado">
+          <button type="button" aria-pressed={orden === "anualizado"} onClick={() => setOrden("anualizado")}>
             Anualizado
           </button>
-          <button
-            type="button"
-            onClick={() => setOrden("contribucion")}
-            className="h-6 px-2.5 rounded-md text-xs font-semibold"
-            style={{
-              background: orden === "contribucion" ? "rgba(255,255,255,.1)" : "transparent",
-              color: orden === "contribucion" ? "var(--color-fg)" : "var(--color-fg-muted)",
-            }}
-          >
+          <button type="button" aria-pressed={orden === "contribucion"} onClick={() => setOrden("contribucion")}>
             Contribución
           </button>
         </div>
       </div>
 
-      <div className="flex flex-col gap-[9px]">
+      {/* escritorio: tabla comparativa */}
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[640px] border-collapse text-small">
+          <caption className="sr-only">Comparación de rendimiento entre cuentas</caption>
+          <thead>
+            <tr className="text-micro text-fg-muted">
+              <th scope="col" className="py-2 pr-3 text-left font-semibold">Cuenta</th>
+              <th scope="col" className="whitespace-nowrap px-3 py-2 text-right font-semibold">Anualizado</th>
+              <th scope="col" className="whitespace-nowrap px-3 py-2 text-right font-semibold">Contribución</th>
+              <th scope="col" className="px-3 py-2 text-right font-semibold">TWR</th>
+              <th scope="col" className="px-3 py-2 text-right font-semibold">XIRR</th>
+              <th scope="col" className="py-2 pl-3 text-left font-semibold">Racha</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filas.map((c) => {
+              const contribucion = contribucionPct(c.gananciaClp, gananciaTotalClp);
+              return (
+                <tr key={c.id} className="border-t border-[var(--color-edge)]">
+                  <th scope="row" className="py-3 pr-3 text-left font-semibold text-fg">{c.nombre}</th>
+                  <td className="px-3 py-3 text-right font-mono-tabular font-semibold" style={{ color: color(c.rendimientoAnualizado) }}>
+                    {pct(c.rendimientoAnualizado)}
+                  </td>
+                  <td className="px-3 py-3 text-right font-mono-tabular text-fg-soft">{pct(contribucion)}</td>
+                  <td className="px-3 py-3 text-right font-mono-tabular" style={{ color: color(c.twr) }}>{pct(c.twr)}</td>
+                  <td className="px-3 py-3 text-right font-mono-tabular" style={{ color: color(c.xirr) }}>{pct(c.xirr)}</td>
+                  <td className="py-3 pl-3 text-micro text-fg-muted">{textoRacha(c.racha)}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* celular: filas */}
+      <ul className="lista-filas md:hidden">
         {filas.map((c) => {
           const contribucion = contribucionPct(c.gananciaClp, gananciaTotalClp);
           return (
-            <div key={c.id} className="border border-white/[0.07] rounded-xl px-[15px] py-[13px]">
+            <li key={c.id} className="py-3">
               <div className="flex items-start justify-between gap-3">
-                <span className="text-small font-semibold text-fg">{c.nombre}</span>
-                <div className="text-right whitespace-nowrap">
-                  <p
-                    className="font-mono-tabular text-small font-semibold"
-                    style={{
-                      color:
-                        c.rendimientoAnualizado == null
-                          ? "var(--color-fg-muted)"
-                          : c.rendimientoAnualizado >= 0
-                            ? "var(--pos)"
-                            : "var(--neg)",
-                    }}
-                  >
-                    {c.rendimientoAnualizado != null ? formatoPct(c.rendimientoAnualizado) : "—"}{" "}
-                    <span className="text-fg-subtle font-medium">anualizado</span>
-                  </p>
-                </div>
+                <span className="min-w-0 break-words text-small font-semibold text-fg">{c.nombre}</span>
+                <span className="shrink-0 text-right font-mono-tabular text-small font-semibold" style={{ color: color(c.rendimientoAnualizado) }}>
+                  {pct(c.rendimientoAnualizado)}
+                  <span className="ml-1 font-medium text-fg-subtle">anual</span>
+                </span>
               </div>
-              <p className="mt-1.5 text-micro text-fg-muted">
-                {contribucion != null ? `${formatoPct(contribucion)} del rendimiento total` : "sin contribución medible"}
-                {" · "}
-                {textoRacha(c.racha)}
+              <p className="mt-1 text-micro leading-relaxed text-fg-muted">
+                {contribucion != null ? `${formatoPct(contribucion)} del rendimiento total` : "Sin contribución medible"}
                 {c.twr != null && (
                   <>
-                    {" · "}
-                    TWR{" "}
-                    <span style={{ color: c.twr >= 0 ? "var(--pos)" : "var(--neg)" }}>{formatoPct(c.twr)}</span>
+                    {" · "}TWR <span className="font-mono-tabular" style={{ color: color(c.twr) }}>{formatoPct(c.twr)}</span>
                   </>
                 )}
                 {c.xirr != null && (
                   <>
-                    {" · "}
-                    XIRR{" "}
-                    <span style={{ color: c.xirr >= 0 ? "var(--pos)" : "var(--neg)" }}>{formatoPct(c.xirr)}</span>
+                    {" · "}XIRR <span className="font-mono-tabular" style={{ color: color(c.xirr) }}>{formatoPct(c.xirr)}</span>
                   </>
                 )}
+                {" · "}
+                {textoRacha(c.racha)}
               </p>
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
     </section>
   );
 }

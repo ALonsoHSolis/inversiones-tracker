@@ -26,8 +26,8 @@ export function DataHealthView({ alertas }: DataHealthViewProps) {
 
   return (
     <section className="card p-5">
-      <div className="flex items-center gap-1.5 mb-1">
-        <p className="text-small font-semibold text-fg">Salud de tus datos</p>
+      <div className="flex items-center gap-1 mb-0.5">
+        <h2 className="titulo-bloque">Salud de tus datos</h2>
         <Ayuda>
           Revisa automáticamente tus cuentas en busca de cosas que valga la pena mirar dos veces:
           cuentas que llevan tiempo sin actualizarse, saltos de rendimiento poco plausibles en el
@@ -35,25 +35,25 @@ export function DataHealthView({ alertas }: DataHealthViewProps) {
           dos registros consecutivos de la misma cuenta.
         </Ayuda>
       </div>
-      <p className="text-micro text-fg-muted mb-4">Cosas que vale la pena revisar</p>
+      <p className="text-micro text-fg-muted mb-2">Cosas que vale la pena revisar</p>
 
       {cuentasConAlertas.length === 0 ? (
-        <p className="text-small text-fg-muted">Todo en orden — no hay nada que revisar por ahora.</p>
+        <p className="mt-2 text-small text-fg-muted">Todo en orden — no hay nada que revisar por ahora.</p>
       ) : (
-        <div className="flex flex-col gap-2.5">
+        <div className="lista-filas">
           {cuentasConAlertas.map((a) => (
-            <div key={a.cuentaId} className="border border-white/[0.07] rounded-xl px-[15px] py-[13px]">
+            <div key={a.cuentaId} className="py-3">
               <p className="text-small font-semibold text-fg">{a.nombre}</p>
               <ul className="mt-1.5 flex flex-col gap-1 text-micro text-fg-muted">
                 {a.diasSinActualizar != null && (
                   <li>
-                    sin actualizar hace{" "}
+                    Sin actualizar hace{" "}
                     <span className="font-mono-tabular text-warn">{Math.floor(a.diasSinActualizar)} días</span>
                   </li>
                 )}
                 {a.saltos.map((s, i) => (
                   <li key={`salto-${i}`}>
-                    salto de{" "}
+                    Salto de{" "}
                     <span className="font-mono-tabular" style={{ color: s.pct >= 0 ? "var(--pos)" : "var(--neg)" }}>
                       {formatoPct(s.pct)}
                     </span>{" "}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowDown, ArrowUp, ArrowUpDown, Pencil, Search, X } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, History, Pencil, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { formatoFecha, formatoPct, formatoPesos } from "@/lib/formato";
 import {
@@ -69,33 +69,28 @@ function ChipMovimiento({ fila }: { fila: FilaCuenta }) {
   return (
     <span
       title="Hubo un movimiento de capital en el último período; no se cuenta como rendimiento."
-      className="rounded-md bg-accent/15 px-1.5 py-px text-micro font-semibold text-accent"
+      className="rounded-md bg-accent/12 px-1.5 py-px text-micro font-semibold text-accent-hi"
     >
-      {esAporte ? "+ aporte" : "− retiro"}
+      {esAporte ? "Aporte" : "Retiro"}
     </span>
   );
 }
 
 function Acciones({ fila }: { fila: FilaCuenta }) {
+  const icono = `grid h-9 w-9 place-items-center rounded-lg text-fg-muted no-underline hover:bg-white/[0.06] hover:text-fg ${FOCO}`;
   return (
-    <div className="flex items-center justify-end gap-1">
+    <div className="flex items-center justify-end gap-0.5">
       <Link
         href={`/registrar?cuenta=${fila.id}`}
-        className={`rounded-lg px-2.5 py-2 text-small font-semibold text-accent no-underline hover:bg-white/[0.06] hover:text-accent-hi ${FOCO}`}
+        className={`mr-1 rounded-lg px-2.5 py-2 text-small font-semibold text-accent no-underline hover:bg-white/[0.06] hover:text-accent-hi ${FOCO}`}
       >
-        Registrar
+        Registrar<span className="sr-only"> valor de {fila.nombre}</span>
       </Link>
-      <Link
-        href={`/cuentas/${fila.id}/historial`}
-        className={`rounded-lg px-2.5 py-2 text-small font-medium text-fg-soft no-underline hover:bg-white/[0.06] hover:text-fg ${FOCO}`}
-      >
-        Historial
+      <Link href={`/cuentas/${fila.id}/historial`} aria-label={`Historial de ${fila.nombre}`} title="Historial" className={icono}>
+        <History size={16} strokeWidth={1.9} aria-hidden="true" />
       </Link>
-      <Link
-        href={`/cuentas/${fila.id}/editar`}
-        className={`rounded-lg px-2.5 py-2 text-small font-medium text-fg-soft no-underline hover:bg-white/[0.06] hover:text-fg ${FOCO}`}
-      >
-        Editar
+      <Link href={`/cuentas/${fila.id}/editar`} aria-label={`Editar ${fila.nombre}`} title="Editar" className={icono}>
+        <Pencil size={16} strokeWidth={1.9} aria-hidden="true" />
       </Link>
     </div>
   );
@@ -127,7 +122,7 @@ function CabeceraOrdenable({
       <button
         type="button"
         onClick={() => alOrdenar(clave)}
-        className={`inline-flex items-center gap-1.5 rounded-md px-1 py-1 text-micro font-semibold uppercase tracking-[0.08em] transition-colors duration-150 hover:text-fg ${FOCO} ${
+        className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-md px-1 py-1 text-micro font-semibold transition-colors duration-150 hover:text-fg ${FOCO} ${
           activa ? "text-fg" : "text-fg-muted"
         }`}
       >
@@ -140,10 +135,12 @@ function CabeceraOrdenable({
 
 function FilaEscritorio({ fila }: { fila: FilaCuenta }) {
   return (
-    <tr className="border-t border-[var(--line)] transition-colors duration-150 hover:bg-white/[0.03]">
+    <tr className="border-t border-[var(--color-edge)] transition-colors duration-150 hover:bg-white/[0.02]">
       <td className="px-3 py-3">
         <p className="flex flex-wrap items-center gap-2 text-small font-semibold text-fg">
-          {fila.nombre}
+          <Link href={`/cuentas/${fila.id}/historial`} className={`rounded text-fg no-underline hover:text-accent-hi ${FOCO}`}>
+            {fila.nombre}
+          </Link>
           <ChipMovimiento fila={fila} />
         </p>
         <p className="mt-0.5 text-micro text-fg-muted">
@@ -180,19 +177,19 @@ function FilaEscritorio({ fila }: { fila: FilaCuenta }) {
 
 function FilaMovil({ fila }: { fila: FilaCuenta }) {
   return (
-    <li className="flex items-stretch gap-1 border-t border-[var(--line)] first:border-t-0">
+    <li className="flex items-stretch gap-1 border-t border-[var(--color-edge)] first:border-t-0">
       <Link
         href={`/cuentas/${fila.id}/historial`}
         className={`min-w-0 flex-1 rounded-lg px-1 py-3 no-underline ${FOCO}`}
       >
         <span className="flex items-baseline justify-between gap-3">
-          <span className="truncate text-small font-semibold text-fg">{fila.nombre}</span>
+          <span className="min-w-0 break-words text-small font-semibold text-fg">{fila.nombre}</span>
           <span className="money-value shrink-0 font-mono-tabular text-small font-semibold text-fg">
             {fila.valorClp != null ? formatoPesos(fila.valorClp) : "sin datos"}
           </span>
         </span>
         <span className="mt-1 flex items-center justify-between gap-3 text-micro text-fg-muted">
-          <span className="min-w-0 truncate">
+          <span className="min-w-0 break-words">
             {fila.plataforma} · {fila.tipoLabel}
           </span>
           <span className="shrink-0 text-small">
@@ -386,7 +383,7 @@ export function CuentasTabla({ filas }: { filas: FilaCuenta[] }) {
                   <CabeceraOrdenable clave="nombre" etiqueta="Cuenta" {...cabeceraProps} />
                   <CabeceraOrdenable clave="valor" etiqueta="Valor (CLP)" alineada="right" {...cabeceraProps} />
                   <CabeceraOrdenable clave="rendimiento" etiqueta="Rend. real" alineada="right" {...cabeceraProps} />
-                  <th scope="col" className="px-3 py-2 text-right text-micro font-semibold uppercase tracking-[0.08em] text-fg-muted">
+                  <th scope="col" className="whitespace-nowrap px-3 py-2 text-right text-micro font-semibold text-fg-muted">
                     Anualizado
                   </th>
                   <CabeceraOrdenable clave="actualizacion" etiqueta="Último registro" {...cabeceraProps} />

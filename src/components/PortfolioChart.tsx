@@ -47,8 +47,8 @@ function TooltipPersonalizado({ active, payload }: { active?: boolean; payload?:
   const esPositivo = punto.gananciaClp >= 0;
 
   return (
-    <div className="rounded-[10px] bg-[rgba(8,13,22,0.94)] border border-white/[0.1] backdrop-blur-[10px] px-3 py-2.5 min-w-[190px] shadow-[0_14px_34px_rgba(0,0,0,0.5)]">
-      <p className="text-micro text-fg-muted mb-1.5">{formatoFecha(punto.fecha)}</p>
+    <div className="min-w-[200px] rounded-xl bg-surface-raised px-3.5 py-3 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.85),0_0_0_1px_rgba(148,170,200,0.16)]">
+      <p className="mb-2 font-mono-tabular text-micro font-medium text-fg-soft">{formatoFecha(punto.fecha)}</p>
       <div className="flex items-center gap-2 mb-1.5">
         <span className="w-2 h-2 rounded-[2px] bg-accent" />
         <span className="text-micro text-fg-muted">Valor total</span>
@@ -57,14 +57,14 @@ function TooltipPersonalizado({ active, payload }: { active?: boolean; payload?:
         </span>
       </div>
       <div className="flex items-center gap-2 mb-1.5">
-        <span className="w-2 h-2 rounded-[2px] bg-white/[0.3]" />
+        <span className="w-2.5 h-0 border-t-2 border-dashed border-white/[0.45]" />
         <span className="text-micro text-fg-muted">Capital</span>
         <span className="font-mono-tabular text-micro font-semibold text-white ml-auto">
           {formatoPesos(punto.capitalAportadoClp)}
         </span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="w-2 h-2 rounded-[2px]" style={{ background: "rgba(65,215,170, 0.6)" }} />
+        <span className="w-2 h-2 rounded-[2px]" style={{ background: esPositivo ? "var(--pos)" : "var(--neg)" }} />
         <span className="text-micro text-fg-muted">Ganancia</span>
         <span
           className="font-mono-tabular text-micro font-semibold ml-auto"
@@ -115,7 +115,7 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
     return (
       <div>
         <div className="flex items-center justify-between flex-wrap gap-x-3 gap-y-2 mb-2">
-          <h2 className="text-small font-semibold text-fg">Evolución del portafolio</h2>
+          <h2 className="titulo-bloque">Evolución del portafolio</h2>
         </div>
         <p className="text-micro text-fg-muted py-8 text-center">
           Todavía no hay suficiente historial para graficar — vuelve cuando tengas al menos dos fechas
@@ -140,15 +140,16 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
   return (
     <div>
       <div className="flex items-center justify-between flex-wrap gap-x-3 gap-y-2 mb-2">
-        <div className="flex items-center gap-1.5">
-          <h2 className="text-small font-semibold text-fg">Evolución del portafolio</h2>
+        <div className="flex items-center gap-1">
+          <h2 className="titulo-bloque">Evolución del portafolio</h2>
           <Ayuda>
-            El área gris es el capital que has aportado, acumulado (crece en escalones, cuando haces
-            un aporte o retiro). El área verde o roja encima es tu ganancia o pérdida real sobre ese
-            capital. La línea del valor total va sobre ambas.
+            La línea punteada es el capital que has aportado, acumulado: crece en escalones cuando haces
+            un aporte o retiro. El área verde o roja encima es tu ganancia o pérdida real sobre ese
+            capital. La línea champán es el valor total. No se suavizan los datos: cada escalón es un
+            registro real.
           </Ayuda>
         </div>
-        <div role="group" aria-label="Período del gráfico" className="flex gap-0.5 bg-white/[0.04] p-[3px] rounded-[10px]">
+        <div role="group" aria-label="Período del gráfico" className="segmentado">
           {PERIODOS.map((p) => {
             const activo = p === periodo;
             return (
@@ -157,9 +158,6 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
                 type="button"
                 onClick={() => setPeriodo(p)}
                 aria-pressed={activo}
-                className={`h-9 sm:h-8 min-w-11 px-3 rounded-lg text-small font-semibold transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent ${
-                  activo ? "bg-white/[0.12] text-fg shadow-[0_1px_2px_rgba(0,0,0,.3)]" : "text-fg-muted hover:text-fg"
-                }`}
               >
                 {p}
               </button>
@@ -173,28 +171,29 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
         </p>
       )}
       <p className="sr-only">{resumen}</p>
-      <div className="h-[220px] sm:h-[300px]" role="img" aria-label={resumen}>
+      <div className="h-[230px] sm:h-[320px] -mx-1" role="img" aria-label={resumen}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={puntos} margin={{ top: 14, right: 4, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id={`${gradientId}-capital`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0.16} />
-                <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0.02} />
+                <stop offset="0%" stopColor="#9fb0c8" stopOpacity={0.1} />
+                <stop offset="100%" stopColor="#9fb0c8" stopOpacity={0.01} />
               </linearGradient>
               <linearGradient id={`${gradientId}-ganancia`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={colorGanancia} stopOpacity={0.32} />
-                <stop offset="100%" stopColor={colorGanancia} stopOpacity={0.03} />
+                <stop offset="0%" stopColor={colorGanancia} stopOpacity={0.22} />
+                <stop offset="100%" stopColor={colorGanancia} stopOpacity={0.02} />
               </linearGradient>
             </defs>
-            <CartesianGrid horizontal vertical={false} stroke="rgba(255,255,255,.06)" />
+            <CartesianGrid horizontal vertical={false} stroke="rgba(148,170,200,.08)" strokeDasharray="2 4" />
             <XAxis
               dataKey="fecha"
               ticks={ejeX.ticks}
-              interval={0}
+              interval="preserveStartEnd"
+              minTickGap={14}
               padding={{ left: 16, right: 16 }}
               tickFormatter={ejeX.porDia ? formatoDia : formatoMes}
               tick={{ fontSize: 12, fill: "var(--color-fg-subtle)" }}
-              axisLine={{ stroke: "rgba(255,255,255,.06)" }}
+              axisLine={false}
               tickLine={false}
             />
             <YAxis
@@ -206,13 +205,14 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
               axisLine={false}
               tickLine={false}
             />
-            <Tooltip content={<TooltipPersonalizado />} cursor={{ stroke: "var(--accent)", strokeOpacity: 0.26 }} />
+            <Tooltip content={<TooltipPersonalizado />} cursor={{ stroke: "rgba(234,211,162,.45)", strokeWidth: 1 }} />
             <Area
               type="stepAfter"
               dataKey="capitalAportadoClp"
               stackId="portafolio"
-              stroke="rgba(255,255,255,.28)"
-              strokeWidth={1.4}
+              stroke="rgba(211,218,230,.5)"
+              strokeWidth={1.3}
+              strokeDasharray="4 4"
               fill={`url(#${gradientId}-capital)`}
               isAnimationActive={false}
             />
@@ -248,18 +248,18 @@ export function PortfolioChart({ datos }: PortfolioChartProps) {
           </ComposedChart>
         </ResponsiveContainer>
       </div>
-      <div className="flex gap-x-4 gap-y-1.5 mt-3 flex-wrap">
+      <div className="flex gap-x-5 gap-y-1.5 mt-3 flex-wrap">
         <span className="inline-flex items-center gap-1.5 text-micro font-medium text-fg-muted">
           <span aria-hidden="true" className="w-3 h-0.5 rounded-full bg-accent" />
           Valor total
         </span>
         <span className="inline-flex items-center gap-1.5 text-micro font-medium text-fg-muted">
-          <span className="w-2.5 h-2.5 rounded-[3px] bg-white/[0.08] border border-white/[0.28]" />
+          <span aria-hidden="true" className="w-3 h-0 border-t-2 border-dashed border-white/[0.5]" />
           Capital aportado
         </span>
         <span className="inline-flex items-center gap-1.5 text-micro font-medium text-fg-muted">
-          <span className="w-2.5 h-2.5 rounded-[3px]" style={{ background: "rgba(65,215,170, 0.3)" }} />
-          Ganancia real
+          <span aria-hidden="true" className="w-2.5 h-2.5 rounded-[3px]" style={{ background: colorGanancia, opacity: 0.45 }} />
+          {gananciaEsPositivaHoy ? "Ganancia real" : "Pérdida real"}
         </span>
       </div>
     </div>

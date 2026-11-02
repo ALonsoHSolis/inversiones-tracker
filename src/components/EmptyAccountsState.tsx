@@ -1,44 +1,41 @@
 import Link from "next/link";
+import { Landmark, LineChart, Plus, SquarePen } from "lucide-react";
+
+// estado vacio que ensena el producto en tres pasos. no muestra cifras de
+// ejemplo: antes habia un "+$251.500" ilustrativo que podia leerse como dato.
+const PASOS = [
+  { Icono: Landmark, titulo: "Agrega una cuenta", texto: "Con su valor de hoy. Ese monto cuenta como capital aportado." },
+  { Icono: SquarePen, titulo: "Registra su valor", texto: "Cada semana o cuando quieras, marcando si hubo aportes o retiros." },
+  { Icono: LineChart, titulo: "Ve tu ganancia real", texto: "Lo que produjo tu dinero, siempre separado de lo que depositaste." },
+];
 
 export function EmptyAccountsState() {
   return (
-    <div className="flex flex-col items-center text-center gap-4 py-10 px-4">
-      <div className="w-12 h-12 rounded-xl bg-accent/15 border border-accent/30 flex items-end justify-center gap-[3px] px-[11px] py-3">
-        <span className="w-1 h-2 bg-accent/60 rounded-[1px]" />
-        <span className="w-1 h-[14px] bg-accent/85 rounded-[1px]" />
-        <span className="w-1 h-[20px] bg-accent-hi rounded-[1px]" />
-      </div>
-      <div>
-        <p className="text-[17px] font-semibold tracking-[-0.01em] text-fg">Empieza con tu primera cuenta</p>
-        <p className="mt-1.5 text-small text-fg-muted max-w-[320px] mx-auto leading-relaxed">
-          Agrégala con su valor actual y te mostraremos tu rendimiento real, siempre separado de lo que depositas.
-        </p>
-      </div>
-      <Link
-        href="/cuentas/nueva"
-        className="inline-flex items-center gap-1.5 h-10 px-5 rounded-[10px] bg-[var(--accent)] text-ink text-small font-semibold no-underline transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98]"
-      >
-        + Agregar tu primera cuenta
+    <div className="py-6">
+      <p className="text-[17px] font-semibold tracking-[-0.01em] text-fg">Empieza con tu primera cuenta</p>
+      <p className="mt-1 max-w-[460px] text-small leading-relaxed text-fg-muted">
+        Una cuenta es cualquier inversión que quieras seguir: un fondo mutuo, acciones, un depósito a plazo o cripto.
+      </p>
+      <ol className="mt-5 grid gap-3 sm:grid-cols-3">
+        {PASOS.map(({ Icono, titulo, texto }, i) => (
+          <li key={titulo} className="rounded-xl bg-white/[0.025] p-4 shadow-[inset_0_0_0_1px_var(--color-edge)]">
+            <span className="flex items-center gap-2 text-small font-semibold text-fg">
+              <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full bg-accent/12 text-accent-hi">
+                <Icono size={15} strokeWidth={2} />
+              </span>
+              <span>
+                <span className="sr-only">Paso {i + 1}: </span>
+                {titulo}
+              </span>
+            </span>
+            <span className="mt-2 block text-micro leading-relaxed text-fg-muted">{texto}</span>
+          </li>
+        ))}
+      </ol>
+      <Link href="/cuentas/nueva" className="boton-primario mt-5 h-11 rounded-full px-5 no-underline">
+        <Plus size={16} strokeWidth={2.2} aria-hidden="true" />
+        Agregar tu primera cuenta
       </Link>
-
-      <div className="mt-3 w-full max-w-[300px] text-left bg-white/[0.03] border border-white/[0.08] rounded-xl p-4">
-        <p className="text-micro uppercase tracking-[0.1em] font-semibold text-fg-subtle text-center mb-3">
-          Así se ve con datos (ejemplo)
-        </p>
-        <p className="text-micro uppercase tracking-[0.1em] font-semibold text-fg-muted">Ganancia real</p>
-        <p className="font-mono-tabular mt-1 font-semibold text-[20px] text-pos">
-          +$251.500 <span className="text-micro font-medium">(+6,2%)</span>
-        </p>
-        <svg viewBox="0 0 120 32" width="100%" height="32" preserveAspectRatio="none" className="block mt-2.5" aria-hidden="true">
-          <path
-            d="M0 26 C15 25,25 22,35 21 C50 19,60 15,75 13 C90 11,105 9,120 4"
-            fill="none"
-            stroke="var(--accent)"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-        </svg>
-      </div>
     </div>
   );
 }
