@@ -14,7 +14,7 @@ import type { Cuenta, RendimientoActual } from "@/types/database";
 import { SiteNav } from "@/components/SiteNav";
 
 export const metadata: Metadata = {
-  title: "Mi portafolio — todo tu patrimonio, una perspectiva más clara",
+  title: "Mi portafolio — ¿cuánto ganaste de verdad?",
   description:
     "Consolida tus inversiones de distintas plataformas en pesos chilenos y descubre tu rendimiento real, sin confundir un aporte con una ganancia.",
   alternates: { canonical: "/" },
@@ -103,8 +103,11 @@ export default function LandingPage() {
         <section className="landing-marco flex min-h-[88svh] flex-col justify-center pt-16 pb-20" aria-labelledby="titulo-landing">
           <h1 id="titulo-landing" className={`landing-titular ${ENCABEZADO}`}>
             <span className="landing-linea">
+              <span>¿Cuánto ganaste</span>
+            </span>
+            <span className="landing-linea">
               <span>
-                Todo tu patrimonio.
+                de verdad?
                 <span data-ui aria-hidden="true" className="landing-ventana">
                   <svg viewBox="0 0 120 40" preserveAspectRatio="none">
                     <path d="M0 33 L20 33 L20 26 L52 26 L52 17 L86 17 L86 11 L120 11" fill="none" stroke="rgba(211,218,230,.55)" strokeWidth="1.6" strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
@@ -112,9 +115,6 @@ export default function LandingPage() {
                   </svg>
                 </span>
               </span>
-            </span>
-            <span className="landing-linea">
-              <span>Una perspectiva más clara.</span>
             </span>
           </h1>
           <div className="landing-sube mt-10 grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
@@ -298,7 +298,7 @@ export default function LandingPage() {
         <div className="landing-marco">
           <section className="landing-cierre px-4" aria-labelledby="titulo-cierre">
             <h2 id="titulo-cierre" className={`landing-cierre-titular ${ENCABEZADO}`}>
-              ¿Cuánto ganaste de verdad?
+              Empieza a medirlo hoy.
             </h2>
             <div className="flex flex-col items-center gap-4">
               <Link href="/signup" className="boton-primario h-14 px-8 text-lg no-underline">
