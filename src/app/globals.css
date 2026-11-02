@@ -15,21 +15,21 @@
      fg 18,1 / 16,3 / 14,4 - fg-soft 13,8 / 12,4 / 11,0 - fg-muted 9,3 / 8,3 / 7,4
      fg-subtle 6,3 / 5,7 / 5,0 - accent 10,4 / 9,3 / 8,3 - pos 10,7 / 9,6 / 8,5
      neg 7,7 / 6,9 / 6,1. todos los colores de texto superan AA (4,5). */
-  --color-ink: #080d16;
-  --color-surface: #121a27;
-  --color-surface-raised: #1a2534;
+  --color-ink: #090d15;
+  --color-surface: #17202d;
+  --color-surface-raised: #1f2a3a;
 
   --color-fg: #f5f7fb;
   --color-fg-soft: #d3dae6;
   --color-fg-muted: #a8b4c5;
   --color-fg-subtle: #8794a8;
 
-  --color-accent: #d8ba7c;
+  --color-accent: #e0bc78;
   --color-accent-hi: #ead3a2;
 
-  --color-pos: #41d7aa;
+  --color-pos: #42d7b0;
   --color-pos-soft: #7ee8c4;
-  --color-neg: #ff7885;
+  --color-neg: #f07b85;
   --color-neg-soft: #f2a6a6;
 
   --color-warn: #e8a857;
@@ -88,7 +88,7 @@ body {
      afuera (.titulo-seccion), asi la pagina se lee como secciones con
      contenido y no como una pila de cajas iguales. */
   .panel {
-    background-color: rgba(18, 26, 39, 0.88);
+    background-color: rgba(23, 32, 45, 0.88);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
     border-radius: 20px;
   }
@@ -212,7 +212,7 @@ body {
    texto siempre queda sobre --color-surface o mas oscuro: contraste intacto. */
 .card-hero {
   background-image:
-    radial-gradient(120% 80% at 85% -20%, rgba(216, 186, 124, 0.14), transparent 60%),
+    radial-gradient(120% 80% at 85% -20%, rgba(224, 188, 120, 0.14), transparent 60%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 40%);
   border-color: rgba(234, 211, 162, 0.2);
 }
@@ -237,7 +237,7 @@ body {
 
 /* superficies del navegador: tambien llevan la marca */
 ::selection {
-  background-color: rgba(216, 186, 124, 0.32);
+  background-color: rgba(224, 188, 120, 0.32);
   color: var(--color-fg);
 }
 
@@ -513,7 +513,7 @@ html {
   mask-image: linear-gradient(to right, transparent, #000 18%, #000 60%, transparent),
     linear-gradient(to bottom, #000 30%, transparent);
   mask-composite: intersect;
-  background: radial-gradient(60% 70% at 18% 0%, rgba(216, 186, 124, 0.11), transparent 70%),
+  background: radial-gradient(60% 70% at 18% 0%, rgba(224, 188, 120, 0.11), transparent 70%),
     radial-gradient(50% 60% at 90% 30%, rgba(127, 147, 174, 0.08), transparent 70%);
 }
 
@@ -550,7 +550,7 @@ html {
 }
 .periodos > button[aria-pressed="true"] {
   color: var(--color-accent-hi);
-  background-color: rgba(216, 186, 124, 0.14);
+  background-color: rgba(224, 188, 120, 0.14);
 }
 .periodos > button:focus-visible {
   outline: 2px solid var(--color-accent);
@@ -559,7 +559,7 @@ html {
 
 /* al cambiar de periodo la linea entra con un fundido corto (estado, no adorno) */
 .linea-patrimonio {
-  filter: drop-shadow(0 0 6px rgba(216, 186, 124, 0.35));
+  filter: drop-shadow(0 0 6px rgba(224, 188, 120, 0.35));
   animation: lineaEntra 260ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 @keyframes lineaEntra {
@@ -573,16 +573,16 @@ html {
 
 /* el ultimo registro "respira": senala que es el dato vigente */
 .punto-vivo {
-  box-shadow: 0 0 0 0 rgba(216, 186, 124, 0.45);
+  box-shadow: 0 0 0 0 rgba(224, 188, 120, 0.45);
   animation: puntoVivo 2.4s ease-out infinite;
 }
 @keyframes puntoVivo {
   0% {
-    box-shadow: 0 0 0 0 rgba(216, 186, 124, 0.45);
+    box-shadow: 0 0 0 0 rgba(224, 188, 120, 0.45);
   }
   70%,
   100% {
-    box-shadow: 0 0 0 10px rgba(216, 186, 124, 0);
+    box-shadow: 0 0 0 10px rgba(224, 188, 120, 0);
   }
 }
 

@@ -10,7 +10,7 @@ const BASE_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 // color de la barra del navegador movil / pwa: el fondo oscuro de la marca.
 export const viewport: Viewport = {
-  themeColor: "#080d16",
+  themeColor: "#090d15",
   colorScheme: "dark",
   viewportFit: "cover",
 };

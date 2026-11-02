@@ -161,7 +161,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
             dar de baja esta cuenta
           </button>
         ) : (
-          <div className="bg-[rgba(255,120,133,0.08)] border border-[rgba(255,120,133,0.25)] rounded-[10px] px-3.5 py-3">
+          <div className="bg-[rgba(240,123,133,0.08)] border border-[rgba(240,123,133,0.25)] rounded-[10px] px-3.5 py-3">
             <p className="text-micro text-neg-soft leading-relaxed mb-2.5">
               ¿Dar de baja esta cuenta? No se borra el historial, pero dejará de aparecer en el portafolio.
             </p>

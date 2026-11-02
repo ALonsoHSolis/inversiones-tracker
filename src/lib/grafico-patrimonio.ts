@@ -84,3 +84,16 @@ export function indiceMasCercano(xs: number[], fraccion: number): number {
   }
   return mejor;
 }
+
+// aportes netos (aportes - retiros, en CLP) de cada registro respecto del
+// anterior: el salto del capital aportado acumulado que ya entrega la vista
+// evolucion_portafolio. no recalcula conversiones; solo resta dos valores de
+// la misma columna. el primer registro de la serie no tiene con que compararse.
+export function aportesPorFecha(puntos: PuntoPatrimonio[]): Map<string, number> {
+  const mapa = new Map<string, number>();
+  for (let i = 1; i < puntos.length; i++) {
+    const delta = puntos[i].capitalClp - puntos[i - 1].capitalClp;
+    if (Math.abs(delta) >= 1) mapa.set(puntos[i].fecha, delta);
+  }
+  return mapa;
+}

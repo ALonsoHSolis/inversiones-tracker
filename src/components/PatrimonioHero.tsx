@@ -8,6 +8,7 @@ import { formatoFecha, formatoPct, formatoPesos, formatoPesosSigned } from "@/li
 import {
   ALTO,
   ANCHO,
+  aportesPorFecha,
   construirGeometria,
   filtrarPeriodo,
   indiceMasCercano,
@@ -61,6 +62,9 @@ export function PatrimonioHero({
 
   const { puntos, insuficiente } = useMemo(() => filtrarPeriodo(todos, periodo), [todos, periodo]);
   const geo = useMemo(() => construirGeometria(puntos), [puntos]);
+  // aportes calculados sobre TODA la serie (asi el primer punto de un
+  // periodo tambien sabe si tuvo un aporte respecto del registro anterior)
+  const aportes = useMemo(() => aportesPorFecha(todos), [todos]);
 
   const activo = indice != null && geo ? puntos[indice] : null;
   const total = activo ? activo.totalClp : valorTotal;
@@ -102,10 +106,12 @@ export function PatrimonioHero({
   const ultimoX = geo ? (geo.xs[geo.xs.length - 1] / ANCHO) * 100 : 0;
   const ultimoY = geo ? (geo.ysTotal[geo.ysTotal.length - 1] / ALTO) * 100 : 0;
 
+  const aporteActivo = activo ? aportes.get(activo.fecha) ?? 0 : 0;
+
   const textoPunto = activo
     ? `${formatoFecha(activo.fecha)}: patrimonio ${formatoPesos(activo.totalClp)}, ganancia real ${formatoPesosSigned(
         activo.totalClp - activo.capitalClp
-      )}`
+      )}${aporteActivo !== 0 ? `; incluye ${aporteActivo > 0 ? "un aporte" : "un retiro"} de ${formatoPesos(Math.abs(aporteActivo))}` : ""}`
     : "Hoy";
 
   return (
@@ -123,7 +129,7 @@ export function PatrimonioHero({
 
       {!sinCuentas && (
         <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="inline-flex items-center gap-1.5 font-mono-tabular text-[17px] font-semibold" style={{ color }}>
+          <span className="inline-flex items-center gap-1.5 font-mono-tabular text-lg font-semibold" style={{ color }}>
             <Icono size={18} strokeWidth={2.2} aria-hidden="true" />
             <span className="money-value">{formatoPesosSigned(ganancia)}</span>
             {gananciaPct != null && <span className="font-medium opacity-90">({formatoPct(gananciaPct)})</span>}
@@ -135,6 +141,19 @@ export function PatrimonioHero({
             ganancia acumulada hasta ese día.
           </Ayuda>
         </div>
+      )}
+
+      {!sinCuentas && (
+        <p className="mt-1.5 min-h-[1.5em] text-small text-fg-muted" aria-hidden="true">
+          {aporteActivo !== 0 && (
+            <>
+              <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-accent align-middle" />
+              Este registro incluye {aporteActivo > 0 ? "un aporte" : "un retiro"} de{" "}
+              <span className="money-value font-mono-tabular text-fg-soft">{formatoPesos(Math.abs(aporteActivo))}</span>,
+              que no cuenta como {aporteActivo > 0 ? "ganancia" : "pérdida"}.
+            </>
+          )}
+        </p>
       )}
 
       {sinCuentas ? (
@@ -172,9 +191,9 @@ export function PatrimonioHero({
             <svg viewBox={`0 0 ${ANCHO} ${ALTO}`} preserveAspectRatio="none" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden="true">
               <defs>
                 <linearGradient id={`${idGradiente}-area`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#d8ba7c" stopOpacity="0.24" />
-                  <stop offset="70%" stopColor="#d8ba7c" stopOpacity="0.04" />
-                  <stop offset="100%" stopColor="#d8ba7c" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#e0bc78" stopOpacity="0.24" />
+                  <stop offset="70%" stopColor="#e0bc78" stopOpacity="0.04" />
+                  <stop offset="100%" stopColor="#e0bc78" stopOpacity="0" />
                 </linearGradient>
               </defs>
               {[0.25, 0.5, 0.75].map((f) => (
@@ -196,6 +215,20 @@ export function PatrimonioHero({
               />
             </svg>
 
+            {/* aportes y retiros: un punto sobre el escalon del capital */}
+            {puntos.map((p, i) =>
+              aportes.has(p.fecha) && i > 0 ? (
+                <span
+                  key={p.fecha}
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-ink ${
+                    (aportes.get(p.fecha) ?? 0) > 0 ? "bg-accent-hi" : "bg-fg-muted"
+                  }`}
+                  style={{ left: `${(geo.xs[i] / ANCHO) * 100}%`, top: `${(geo.ysCapital[i] / ALTO) * 100}%` }}
+                />
+              ) : null
+            )}
+
             {/* marcador del punto recorrido (html: un circulo en svg con
                 preserveAspectRatio="none" saldria ovalado) */}
             {xPct != null && yPct != null ? (
@@ -203,7 +236,7 @@ export function PatrimonioHero({
                 <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 w-px bg-accent-hi/35" style={{ left: `${xPct}%` }} />
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-accent bg-ink shadow-[0_0_0_4px_rgba(216,186,124,0.18)]"
+                  className="pointer-events-none absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-accent bg-ink shadow-[0_0_0_4px_rgba(224,188,120,0.18)]"
                   style={{ left: `${xPct}%`, top: `${yPct}%` }}
                 />
               </>
@@ -245,6 +278,10 @@ export function PatrimonioHero({
               <span className="inline-flex items-center gap-1.5">
                 <span aria-hidden="true" className="w-3.5 border-t-2 border-dashed border-white/45" />
                 Capital aportado
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent-hi" />
+                Aporte o retiro
               </span>
             </div>
           </div>

@@ -37,3 +37,9 @@ test("filtrarPeriodo y indiceMasCercano", () => {
   assert.equal(indiceMasCercano([0, 400, 1000], 0.45), 1);
   assert.equal(indiceMasCercano([0, 400, 1000], 2), 2);
 });
+
+test("aportesPorFecha: el salto del capital aportado, con signo, sin el primer registro", async () => {
+  const { aportesPorFecha } = await import("./grafico-patrimonio.ts");
+  const m = aportesPorFecha([p("2026-01-01", 100, 100), p("2026-01-08", 160, 150), p("2026-01-15", 170, 150), p("2026-01-22", 140, 120)]);
+  assert.deepEqual([...m.entries()], [["2026-01-08", 50], ["2026-01-22", -30]]);
+});

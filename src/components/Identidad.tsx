@@ -2,7 +2,7 @@
 // mini-grafico de su valor. solo presentacion.
 
 const COLORES = [
-  { bg: "rgba(216,186,124,0.16)", fg: "#ead3a2" },
+  { bg: "rgba(224,188,120,0.16)", fg: "#ead3a2" },
   { bg: "rgba(159,176,200,0.16)", fg: "#c3cfdf" },
   { bg: "rgba(211,154,106,0.16)", fg: "#e2b48e" },
   { bg: "rgba(169,155,192,0.18)", fg: "#cbbfe0" },

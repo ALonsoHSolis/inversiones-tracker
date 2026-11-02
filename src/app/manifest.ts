@@ -10,8 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Rendimiento real de tus inversiones, sin confundir aportes con ganancias.",
     start_url: "/dashboard",
     display: "standalone",
-    background_color: "#080d16",
-    theme_color: "#080d16",
+    background_color: "#090d15",
+    theme_color: "#090d15",
     icons: [
       {
         src: "/icon.png",

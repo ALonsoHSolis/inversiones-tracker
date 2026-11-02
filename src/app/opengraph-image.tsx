@@ -18,12 +18,12 @@ export default function Image() {
           flexDirection: "column",
           justifyContent: "center",
           padding: "80px",
-          background: "linear-gradient(135deg, #121a27 0%, #080d16 70%)",
+          background: "linear-gradient(135deg, #17202d 0%, #090d15 70%)",
           color: "#f5f7fb",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <div style={{ width: 14, height: 14, borderRadius: 999, background: "#d8ba7c", display: "flex" }} />
+          <div style={{ width: 14, height: 14, borderRadius: 999, background: "#e0bc78", display: "flex" }} />
           <div style={{ fontSize: 32, fontWeight: 600, color: "#a8b4c5", display: "flex" }}>Mi portafolio</div>
         </div>
         <div style={{ fontSize: 58, fontWeight: 700, marginTop: 28, maxWidth: 920, lineHeight: 1.15, display: "flex" }}>

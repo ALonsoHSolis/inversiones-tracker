@@ -288,7 +288,7 @@ export default function LandingPage() {
             {PREGUNTAS_LANDING.map((p) => (
               <div key={p.pregunta} className="landing-pregunta">
                 <dt className="text-fg">{p.pregunta}</dt>
-                <dd className="text-[1.0625rem] leading-relaxed text-fg-soft">{p.respuesta}</dd>
+                <dd className="text-base leading-relaxed text-fg-soft">{p.respuesta}</dd>
               </div>
             ))}
           </dl>
