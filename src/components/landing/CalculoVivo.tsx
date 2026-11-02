@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import { calcularRendimiento } from "@/lib/rendimiento";
-import { formatoMiles, formatoPct, formatoPesosSigned, normalizarMontoIngresado } from "@/lib/formato";
+import { formatoMiles, formatoPct, formatoPesosSigned, normalizarMontoIngresado, montoParaEditar } from "@/lib/formato";
 
 // la prueba del producto en la landing: el visitante escribe cuanto tenia,
 // cuanto tiene hoy y cuanto deposito, y ve la ganancia "aparente" (lo que
@@ -28,7 +28,7 @@ function Campo({ id, etiqueta, valor, alCambiar }: { id: string; etiqueta: strin
           type="text"
           inputMode="decimal"
           autoComplete="off"
-          value={enfocado ? valor : formatoMiles(valor)}
+          value={enfocado ? montoParaEditar(valor) : formatoMiles(valor)}
           onFocus={() => setEnfocado(true)}
           onBlur={() => setEnfocado(false)}
           onChange={(e) => alCambiar(normalizarMontoIngresado(e.target.value))}
@@ -52,6 +52,11 @@ export function CalculoVivo() {
   const aparentePct = vAntes > 0 ? (aparente / vAntes) * 100 : null;
   const real = calcularRendimiento(vAntes, vHoy, vAporte > 0 ? [{ tipo: "aporte", monto: vAporte }] : []);
   const colorReal = real.gananciaReal >= 0 ? "var(--color-pos)" : "var(--color-neg)";
+  // sin valor anterior no hay nada que comparar: no se muestra ninguna cifra
+  // (antes, con el campo vacio, salia "+1.000 % de ganancia real" en verde)
+  const faltaAnterior = vAntes <= 0;
+  const aporteMayorQueHoy = vAporte > 0 && vAporte > vHoy;
+  const escenarioActivo = ESCENARIOS.find((e) => e.antes === antes && e.hoy === hoy && e.aporte === aporte)?.etiqueta;
 
   return (
     <div data-ui className="calculo-vivo">
@@ -65,21 +70,33 @@ export function CalculoVivo() {
         <div className="rounded-2xl bg-white/[0.03] p-5">
           <p className="text-small font-medium text-fg-muted">Mirando solo el saldo</p>
           <p className="mt-2 font-mono-tabular text-[clamp(1.75rem,4vw,2.5rem)] font-medium leading-none tracking-[-0.03em] text-fg-soft">
-            {formatoPesosSigned(aparente)}
+            {faltaAnterior ? "—" : formatoPesosSigned(aparente)}
           </p>
           <p className="mt-2 text-small text-fg-muted">
-            {aparentePct != null ? `${formatoPct(aparentePct)} que parece ganancia` : "Escribe el valor anterior"}
+            {faltaAnterior || aparentePct == null
+              ? "Escribe el valor de la semana pasada"
+              : `${formatoPct(aparentePct)} que ${aparente >= 0 ? "parece ganancia" : "parece pérdida"}`}
           </p>
         </div>
         <div className="rounded-2xl bg-surface-raised p-5">
           <p className="text-small font-medium text-accent-hi">Con Mi portafolio</p>
-          <p className="mt-2 font-mono-tabular text-[clamp(1.75rem,4vw,2.5rem)] font-semibold leading-none tracking-[-0.03em]" style={{ color: colorReal }}>
-            {formatoPesosSigned(real.gananciaReal)}
+          <p
+            className="mt-2 font-mono-tabular text-[clamp(1.75rem,4vw,2.5rem)] font-semibold leading-none tracking-[-0.03em]"
+            style={{ color: faltaAnterior ? "var(--color-fg-muted)" : colorReal }}
+          >
+            {faltaAnterior ? "—" : formatoPesosSigned(real.gananciaReal)}
           </p>
           <p className="mt-2 text-small text-fg-soft">
-            {real.rendimientoPct != null ? `${formatoPct(real.rendimientoPct)} de ganancia real` : "Sin base para calcular"}
-            {vAporte > 0 && " · tu depósito no cuenta como ganancia"}
+            {faltaAnterior || real.rendimientoPct == null
+              ? "Necesitamos el valor de la semana pasada para comparar"
+              : `${formatoPct(real.rendimientoPct)} de ${real.gananciaReal >= 0 ? "ganancia" : "pérdida"} real`}
+            {!faltaAnterior && vAporte > 0 && " · tu depósito no cuenta como ganancia"}
           </p>
+          {aporteMayorQueHoy && (
+            <p className="mt-2 text-small text-warn">
+              El depósito supera el valor de hoy: revisa los montos.
+            </p>
+          )}
         </div>
       </div>
 
@@ -88,12 +105,13 @@ export function CalculoVivo() {
           <button
             key={e.etiqueta}
             type="button"
+            aria-pressed={escenarioActivo === e.etiqueta}
             onClick={() => {
               setAntes(e.antes);
               setHoy(e.hoy);
               setAporte(e.aporte);
             }}
-            className="boton-secundario rounded-full"
+            className={`boton-secundario rounded-full ${escenarioActivo === e.etiqueta ? "!bg-surface-raised !text-fg shadow-[inset_0_0_0_1px_var(--color-accent)]" : ""}`}
           >
             {e.etiqueta}
           </button>

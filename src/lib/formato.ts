@@ -81,19 +81,22 @@ export function formatoMontoNativo(monto: number, moneda: string): string {
 }
 
 // normaliza lo que el usuario escribe en un campo de monto al formato crudo
-// que espera Number(...) (punto decimal, sin separador de miles). antes el
-// campo solo descartaba lo que no fuera digito o punto: "1234,5" (coma
-// decimal chilena) se convertia en "12345" -- diez veces el monto -- y
-// "1.234.567" (puntos de miles) quedaba como NaN. reglas:
-//   - con coma: la coma es el decimal y los puntos son miles ("1.234,56" -> "1234.56")
-//   - sin coma y con 2+ puntos: los puntos son miles ("1.234.567" -> "1234567")
-//   - un solo punto: se mantiene como decimal, igual que antes ("37.5" -> "37.5")
+// que espera Number(...) (punto decimal, sin separador de miles), con la regla
+// chilena que fijo el usuario: el PUNTO siempre es separador de miles y la
+// COMA siempre es el decimal.
+//   "500.000"   -> "500000"   (antes: 500 -- un aporte mil veces mas chico)
+//   "1.234,56"  -> "1234.56"
+//   "1234,5"    -> "1234.5"   (antes del primer arreglo: 12345)
+//   "37,25"     -> "37.25"    (UF con decimales: siempre con coma)
 export function normalizarMontoIngresado(texto: string): string {
-  const limpio = texto.replace(/[^\d.,]/g, "");
-  if (limpio.includes(",")) {
-    const [entero, ...resto] = limpio.replace(/\./g, "").split(",");
-    return resto.length > 0 ? `${entero}.${resto.join("")}` : entero;
-  }
-  const puntos = (limpio.match(/\./g) ?? []).length;
-  return puntos >= 2 ? limpio.replace(/\./g, "") : limpio;
+  const limpio = texto.replace(/[^\d,]/g, "");
+  const [entero, ...resto] = limpio.split(",");
+  return resto.length > 0 ? `${entero}.${resto.join("")}` : entero;
+}
+
+// valor crudo ("1234.5") -> como se muestra MIENTRAS se edita ("1234,5"): el
+// campo nunca muestra un punto decimal, que la regla de arriba leeria como
+// separador de miles al seguir escribiendo.
+export function montoParaEditar(valorCrudo: string): string {
+  return valorCrudo.replace(".", ",");
 }

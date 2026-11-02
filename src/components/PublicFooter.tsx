@@ -10,11 +10,11 @@ const BLOG_HABILITADO = false;
 // enlaces van en una fila legible (15 px). sin etiquetas en mayusculas
 // espaciadas ni linea divisoria: separa el espacio.
 export function PublicFooter() {
-  const enlace = "text-[15px] text-fg-muted no-underline hover:text-fg";
+  const enlace = "inline-flex min-h-11 items-center text-[15px] text-fg-muted no-underline hover:text-fg";
   return (
     <footer className="mt-24 pb-10">
       <p className="text-[clamp(2.75rem,9vw,8rem)] font-semibold leading-none tracking-[-0.045em] text-fg/90">Mi portafolio</p>
-      <nav aria-label="Pie de página" className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3">
+      <nav aria-label="Pie de página" className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-1">
         <Link href="/como-funciona" className={enlace}>
           Cómo funciona
         </Link>

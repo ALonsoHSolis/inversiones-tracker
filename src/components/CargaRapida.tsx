@@ -126,6 +126,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
   const tieneMovimientoOriginal = !!movimientoSemilla;
   const tasaRequestId = useRef(0);
   const panelAdvertencia = useRef<HTMLDivElement>(null);
+  const raiz = useRef<HTMLDivElement>(null);
 
   // al aparecer la advertencia, se enfoca (y por lo tanto se hace visible) para
   // que no quede escondida bajo el teclado o la barra inferior del celular.
@@ -173,10 +174,15 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
   // propio mensaje de la regla del lint recomienda ("callback... cuando
   // cambia el estado externo"), en vez de una funcion nombrada que dispara
   // el aviso de "setState sincrono dentro de un effect".
+  //
+  // la busqueda espera a que el formulario sea VISIBLE (IntersectionObserver):
+  // en el inicio, bajo 1280 px, la carga rapida esta montada pero oculta, y
+  // antes pedia igual la tasa a mindicador.cl (audit: peticion inutil en movil).
   useEffect(() => {
     if (cuenta.moneda === "CLP") return;
-    const requestId = ++tasaRequestId.current;
     let cancelado = false;
+    const buscar = () => {
+    const requestId = ++tasaRequestId.current;
     obtenerTasaCambio(cuenta.moneda as Exclude<Moneda, "CLP">)
       .then(({ valor: v, fecha }) => {
         if (cancelado || tasaRequestId.current !== requestId) return;
@@ -192,8 +198,24 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
         setCargandoTasa(false);
         setErrorTasa("no se pudo obtener la tasa de cambio, revisa tu conexion e intenta de nuevo");
       });
+    };
+    const el = raiz.current;
+    if (!el || !("IntersectionObserver" in window)) {
+      buscar();
+      return () => {
+        cancelado = true;
+      };
+    }
+    const obs = new IntersectionObserver((entradas) => {
+      if (entradas.some((e) => e.isIntersecting)) {
+        obs.disconnect();
+        buscar();
+      }
+    });
+    obs.observe(el);
     return () => {
       cancelado = true;
+      obs.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -297,7 +319,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
   const idMonto = "cr-monto";
 
   return (
-    <>
+    <div ref={raiz}>
       <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-3 mt-4">
         <div>
           <span className="text-micro font-semibold text-fg-muted">Fecha</span>
@@ -536,6 +558,6 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
           </p>
         )}
       </div>
-    </>
+    </div>
   );
 }

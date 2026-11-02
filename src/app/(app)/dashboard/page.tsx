@@ -267,6 +267,7 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col gap-8 lg:gap-10">
       <h1 className="sr-only">Resumen del portafolio</h1>
+
       <PatrimonioHero
         puntos={puntosPatrimonio}
         valorTotal={valorTotal}
@@ -313,7 +314,7 @@ export default async function DashboardPage() {
           <section aria-labelledby="cuentas-titulo" className="flex flex-col gap-3">
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
               <div className="flex items-center gap-1">
-                <h2 id="cuentas-titulo" className="titulo-seccion">
+                <h2 id="cuentas-titulo" tabIndex={-1} className="titulo-seccion scroll-mt-24 outline-none">
                   Cuentas
                 </h2>
                 <Ayuda etiqueta="Cómo leer el rendimiento de cada cuenta">

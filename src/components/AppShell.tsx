@@ -105,6 +105,14 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
       >
         Saltar al contenido
       </a>
+      {activa === "resumen" && (
+        <a
+          href="#cuentas-titulo"
+          className="no-print sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-small focus:font-semibold focus:text-ink"
+        >
+          Ir a tus cuentas
+        </a>
+      )}
 
       {/* sidebar de escritorio */}
       <aside

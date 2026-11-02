@@ -382,7 +382,7 @@ export function CuentasTabla({ filas }: { filas: FilaCuenta[] }) {
       ) : (
         <>
           {/* escritorio: tabla */}
-          <div className="panel hidden overflow-x-auto px-2 md:block">
+          <div className="panel relative hidden overflow-x-auto px-2 md:block">
             <table className="w-full min-w-[800px] border-collapse">
               <caption className="sr-only">
                 Cuentas con su valor en pesos y rendimiento en la moneda de cada cuenta
