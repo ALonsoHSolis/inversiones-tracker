@@ -305,9 +305,6 @@ export default async function DashboardPage() {
                 <MarketBenchmark
                   sp500={benchmarkSp500}
                   uf={benchmarkUf}
-                  rendimientoRealPct={
-                    capitalAportadoClp > 0 ? ((valorActualClp - capitalAportadoClp) / capitalAportadoClp) * 100 : null
-                  }
                 />
               </div>
             </section>
@@ -386,6 +383,9 @@ export default async function DashboardPage() {
                 cuentas={cuentas ?? []}
                 movimientosHoy={movimientosHoy}
                 valorAnteriorPorCuenta={valorAnteriorPorCuenta}
+                ultimaFechaPorCuenta={Object.fromEntries(
+                  (cuentas ?? []).map((c) => [c.id, capitalPorCuentaMap.get(c.id)?.ultima_fecha ?? null])
+                )}
               />
               <details className="group">
                 <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-lg px-1 text-small font-semibold text-accent hover:text-accent-hi [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-accent">

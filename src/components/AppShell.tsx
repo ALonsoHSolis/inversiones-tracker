@@ -199,7 +199,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
                   {padre.etiqueta}
                 </Link>
               )}
-              <p className="truncate text-base lg:text-[17px] font-semibold tracking-[-0.01em] text-fg">{titulo}</p>
+              <p className="truncate text-base lg:text-lg font-semibold tracking-[-0.01em] text-fg">{titulo}</p>
             </div>
 
             {activa !== "registrar" && (
@@ -240,7 +240,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
                 <Link
                   href={s.href}
                   aria-current={esActiva ? "page" : undefined}
-                  className={`flex h-[60px] flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-medium transition-colors duration-150 motion-reduce:transition-none ${FOCO} ${
+                  className={`flex h-[60px] flex-col items-center justify-center gap-0.5 rounded-full text-micro font-medium transition-colors duration-150 motion-reduce:transition-none ${FOCO} ${
                     esActiva ? "text-fg" : "text-fg-muted active:text-fg"
                   }`}
                 >
@@ -262,7 +262,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
               onClick={() => setMasAbierto(true)}
               aria-haspopup="dialog"
               aria-expanded={masAbierto}
-              className={`flex h-[60px] w-full flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-medium transition-colors duration-150 motion-reduce:transition-none ${FOCO} ${
+              className={`flex h-[60px] w-full flex-col items-center justify-center gap-0.5 rounded-full text-micro font-medium transition-colors duration-150 motion-reduce:transition-none ${FOCO} ${
                 SECCIONES_MAS.includes(activa as SeccionId) ? "text-fg" : "text-fg-muted active:text-fg"
               }`}
             >

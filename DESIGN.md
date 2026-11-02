@@ -49,6 +49,10 @@ typography:
   label:
     fontFamily: "Geist, system-ui, sans-serif"
     fontSize: "13px"
+  micro:
+    fontFamily: "Geist, system-ui, sans-serif"
+    fontSize: "12px"
+    fontWeight: 500
     fontWeight: 500
     lineHeight: 1.35
   figure:
@@ -159,7 +163,8 @@ Una sola familia, **Geist**, para todo: títulos, interfaz y cifras. Las cifras 
 - **Headline** (600, clamp(2.25rem, 5vw, 4.25rem), 1.02): titulares de la landing; dos líneas como máximo.
 - **Title** (600, 18 px, 1.25): títulos de sección de la app (`.titulo-seccion`), fuera de los paneles.
 - **Body** (400, 15 px, 1.55): texto de lectura; 16–20 px en la landing; medida de 40–75 caracteres.
-- **Label** (500, 13 px): etiquetas de métricas (`.etiqueta`); nunca debajo de 13 px lo que se lee.
+- **Label** (500, 13 px): etiquetas de métricas (`.etiqueta`). Piso absoluto: 12 px (`text-micro`) para
+  metadatos, leyendas y etiquetas de la barra móvil; nada que se lea va por debajo.
 
 ### Named Rules
 - **Montos en notación chilena.** Pesos con punto de miles ($17.751.007); porcentajes con coma decimal (+2,9 %);

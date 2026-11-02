@@ -221,8 +221,8 @@ export function PatrimonioHero({
                 <span
                   key={p.fecha}
                   aria-hidden="true"
-                  className={`pointer-events-none absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-ink ${
-                    (aportes.get(p.fecha) ?? 0) > 0 ? "bg-accent-hi" : "bg-fg-muted"
+                  className={`pointer-events-none absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ${
+                    (aportes.get(p.fecha) ?? 0) > 0 ? "bg-accent-hi ring-2 ring-ink" : "border-2 border-fg-muted bg-ink"
                   }`}
                   style={{ left: `${(geo.xs[i] / ANCHO) * 100}%`, top: `${(geo.ysCapital[i] / ALTO) * 100}%` }}
                 />
@@ -281,7 +281,11 @@ export function PatrimonioHero({
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent-hi" />
-                Aporte o retiro
+                Aporte
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full border-2 border-fg-muted" />
+                Retiro
               </span>
             </div>
           </div>

@@ -19,6 +19,9 @@ interface CargaRapidaProps {
   // valor_actual (moneda nativa) de capital_por_cuenta -- mismo dato que ya
   // usa SnapshotForm para sugerir el valor y advertir si no cambio.
   valorAnteriorPorCuenta: Record<string, number | null>;
+  // fecha (yyyy-mm-dd) del ultimo registro de cada cuenta, para mostrar
+  // "Último registro" y avisar si guardar reemplaza el registro de hoy
+  ultimaFechaPorCuenta?: Record<string, string | null>;
   // cuenta preseleccionada (ej. al llegar desde /registrar?cuenta=...)
   cuentaInicialId?: string;
 }
@@ -32,7 +35,7 @@ const borde = (invalido: boolean) => (invalido ? "border-[var(--neg)]" : "border
 // falta ese dia -- el caso comun es actualizar una o dos cuentas, no todas.
 // misma logica de guardado, guardrails y rpc que SnapshotForm, solo que
 // aplicada a una cuenta elegida en un desplegable en vez de a todas a la vez.
-export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta, cuentaInicialId }: CargaRapidaProps) {
+export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta, ultimaFechaPorCuenta = {}, cuentaInicialId }: CargaRapidaProps) {
   const [cuentaId, setCuentaId] = useState(
     cuentas.some((c) => c.id === cuentaInicialId) ? (cuentaInicialId as string) : (cuentas[0]?.id ?? "")
   );
@@ -61,6 +64,7 @@ export function CargaRapida({ cuentas, movimientosHoy, valorAnteriorPorCuenta, c
           cuenta={cuenta}
           movimientoSemilla={movimientosHoy[cuenta.id]}
           valorAnterior={valorAnteriorPorCuenta[cuenta.id] ?? null}
+          ultimaFecha={ultimaFechaPorCuenta[cuenta.id] ?? null}
         />
       )}
     </section>
@@ -71,6 +75,16 @@ interface FormularioCargaRapidaProps {
   cuenta: Cuenta;
   movimientoSemilla: { tipo: TipoMovimiento; monto: number } | undefined;
   valorAnterior: number | null;
+  ultimaFecha: string | null;
+}
+
+// error del servidor -> mensaje para personas (el detalle tecnico va a la
+// consola). el valor escrito se conserva para reintentar.
+function mensajeGuardado(mensaje: string): string {
+  const m = mensaje.toLowerCase();
+  if (m.includes("fetch") || m.includes("network")) return "No hay conexión. Revisa tu internet y vuelve a intentarlo; tu valor sigue escrito.";
+  if (m.includes("tasa_cambio")) return "Falta la tasa de cambio de esta cuenta. Escríbela o reintenta buscarla.";
+  return "No se pudo guardar el registro. Vuelve a intentarlo; tu valor sigue escrito.";
 }
 
 // formulario de la cuenta elegida, montado con key={cuenta.id} desde
@@ -79,7 +93,7 @@ interface FormularioCargaRapidaProps {
 // formulario" (el patron que react recomienda para esto: computar el estado
 // inicial a partir de las props en vez de resetearlo en un effect). el unico
 // effect que queda aca es el legitimo: buscar la tasa de cambio al montar.
-function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: FormularioCargaRapidaProps) {
+function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultimaFecha }: FormularioCargaRapidaProps) {
   const router = useRouter();
 
   const [valor, setValor] = useState("");
@@ -256,7 +270,8 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
 
     setGuardando(false);
     if (error) {
-      setResultado(error.message);
+      console.error("guardar_snapshot_con_movimiento:", error.message);
+      setResultado(mensajeGuardado(error.message));
       return;
     }
     setComprobante({
@@ -314,10 +329,19 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
               if (errores.valor) setErrores((e) => ({ ...e, valor: undefined }));
             }}
           />
-          {errores.valor && (
+          {errores.valor ? (
             <p id={`${idValor}-error`} role="alert" className="mt-1 text-micro font-medium text-[var(--neg)]">
               {errores.valor}
             </p>
+          ) : (
+            valorAnterior != null &&
+            ultimaFecha && (
+              <p className="mt-1.5 text-micro text-fg-muted">
+                {ultimaFecha === fechaHoyChile() ? "Ya registraste hoy " : "Último registro: "}
+                <span className="money-value font-mono-tabular text-fg-soft">{formatoMontoNativo(valorAnterior, cuenta.moneda)}</span>
+                {ultimaFecha === fechaHoyChile() ? "; guardar lo reemplaza." : ` el ${formatoFecha(ultimaFecha)}`}
+              </p>
+            )
           )}
         </div>
       </div>
@@ -467,8 +491,8 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
       <div aria-live="polite">
         {resultado === "ok" && (
           <div className="animate-fade-up mt-4 rounded-2xl border border-dashed border-white/[0.18] bg-white/[0.03] px-4 py-4">
-            <p className="flex items-center gap-2 text-small font-semibold text-[var(--pos)]">
-              <CheckCircle2 size={18} aria-hidden="true" />
+            <p className="flex items-center gap-2 text-small font-semibold text-fg">
+              <CheckCircle2 size={18} aria-hidden="true" className="text-accent" />
               Registro guardado
             </p>
             {comprobante && (
@@ -508,7 +532,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior }: For
         )}
         {resultado && resultado !== "ok" && (
           <p role="alert" className="mt-3 text-center text-small font-medium text-[var(--neg)]">
-            No se pudo guardar: {resultado}
+            {resultado}
           </p>
         )}
       </div>

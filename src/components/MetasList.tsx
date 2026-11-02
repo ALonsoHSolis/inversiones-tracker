@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Target } from "lucide-react";
+import { Check, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { formatoPesos, formatoFecha } from "@/lib/formato";
@@ -102,7 +102,7 @@ export function MetasList({ metas, compacta = false }: MetasListProps) {
               </div>
               <p
                 className="shrink-0 font-mono-tabular text-base font-semibold"
-                style={{ color: cumplida ? "var(--color-pos)" : "var(--color-fg)" }}
+                style={{ color: "var(--color-fg)" }}
               >
                 {Math.floor(pct)}%
               </p>
@@ -119,7 +119,7 @@ export function MetasList({ metas, compacta = false }: MetasListProps) {
             >
               <div
                 className="h-full rounded-full"
-                style={{ width: `${pctVisual}%`, background: cumplida ? "var(--color-pos)" : "var(--color-accent)" }}
+                style={{ width: `${pctVisual}%`, background: "var(--color-slate)" }}
               />
             </div>
 
@@ -127,8 +127,8 @@ export function MetasList({ metas, compacta = false }: MetasListProps) {
               <span className="money-value font-mono-tabular font-semibold text-fg-soft">
                 {formatoPesos(meta.montoActualClp)}
               </span>
-              <span className="font-mono-tabular font-medium" style={{ color: cumplida ? "var(--color-pos)" : "var(--color-fg-muted)" }}>
-                {cumplida ? "Cumplida" : <><span className="money-value">{formatoPesos(faltante)}</span> por llegar</>}
+              <span className="inline-flex items-center gap-1 font-mono-tabular font-medium" style={{ color: cumplida ? "var(--color-fg)" : "var(--color-fg-muted)" }}>
+                {cumplida ? <><Check size={13} strokeWidth={2.4} aria-hidden="true" className="text-accent" />Cumplida</> : <><span className="money-value">{formatoPesos(faltante)}</span> por llegar</>}
               </span>
             </div>
 

@@ -130,8 +130,9 @@ export function AccountRow({
               >
                 {formatoPct(pct)}
                 <span className="ml-1 font-medium text-fg-subtle">
-                  real{cuenta.moneda !== "CLP" ? ` en ${cuenta.moneda}` : ""}
+                  vs. anterior{cuenta.moneda !== "CLP" ? ` · ${cuenta.moneda}` : ""}
                 </span>
+                <span className="sr-only">: rendimiento real respecto del registro anterior, ya descontados aportes y retiros</span>
               </span>
             ) : (
               <span className="mt-0.5 block text-micro text-fg-subtle">Sin comparación aún</span>
