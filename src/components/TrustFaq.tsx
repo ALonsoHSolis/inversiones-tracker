@@ -27,7 +27,7 @@ export const PREGUNTAS = [
 export function TrustFaq() {
   return (
     <div>
-      <div className="card divide-y divide-white/[0.07]">
+      <div className="card divide-y divide-tint/[0.07]">
         {PREGUNTAS.map((item) => (
           <details key={item.pregunta} className="group p-[18px]">
             <summary className="flex items-center justify-between gap-3 cursor-pointer list-none [&::-webkit-details-marker]:hidden">

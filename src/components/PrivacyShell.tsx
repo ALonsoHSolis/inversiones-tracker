@@ -41,12 +41,12 @@ export function PrivacyToggleButton({ compact = false }: { compact?: boolean }) 
       aria-pressed={oculto}
       aria-label={compact ? (oculto ? "Mostrar montos" : "Ocultar montos") : undefined}
       title={titulo}
-      className={`inline-flex items-center justify-center gap-2 h-10 rounded-full border text-small font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+      className={`inline-flex items-center justify-center gap-2 h-10 rounded-full border text-small font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink ${
         compact ? "w-10" : "px-3.5"
       } ${
         oculto
-          ? "border-accent/60 bg-accent/15 text-accent-hi"
-          : "border-white/[0.1] bg-white/[0.03] text-fg-soft hover:border-white/[0.2]"
+          ? "border-accent/60 bg-accent/15 text-accent-ink"
+          : "border-tint/[0.1] bg-tint/[0.03] text-fg-soft hover:border-tint/[0.2]"
       }`}
     >
       <Icono size={16} strokeWidth={1.8} aria-hidden="true" />

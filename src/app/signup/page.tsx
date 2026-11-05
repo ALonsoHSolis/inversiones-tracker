@@ -5,7 +5,7 @@ import { PasswordInput } from "@/components/PasswordInput";
 import { AuthShell } from "@/components/AuthShell";
 
 const inputClass =
-  "h-11 px-[13px] border border-control rounded-[10px] text-base text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(224,188,120,0.15)]";
+  "h-11 px-[13px] border border-control rounded-[10px] text-base text-fg bg-tint/[0.04] focus:outline-none focus:border-accent-ink focus:shadow-[0_0_0_3px_rgba(212,175,55,0.15)]";
 
 export default async function SignupPage({
   searchParams,
@@ -36,7 +36,7 @@ export default async function SignupPage({
           />
           <span className="text-micro text-fg-muted leading-relaxed">
             Acepto los{" "}
-            <Link href="/terminos" target="_blank" rel="noopener noreferrer" className="text-fg-soft border-b border-white/[0.14]">
+            <Link href="/terminos" target="_blank" rel="noopener noreferrer" className="text-fg-soft border-b border-tint/[0.14]">
               Términos
             </Link>{" "}
             y la{" "}
@@ -44,7 +44,7 @@ export default async function SignupPage({
               href="/privacidad"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-fg-soft border-b border-white/[0.14]"
+              className="text-fg-soft border-b border-tint/[0.14]"
             >
               política de privacidad
             </Link>
@@ -57,7 +57,7 @@ export default async function SignupPage({
 
       <p className="mt-4 text-small text-fg-muted">
         ¿Ya tienes cuenta?{" "}
-        <Link href="/login" className="font-semibold text-[var(--accent)]">
+        <Link href="/login" className="font-semibold text-accent-ink">
           Inicia sesión
         </Link>
       </p>

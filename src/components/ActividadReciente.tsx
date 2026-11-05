@@ -17,7 +17,7 @@ export function ActividadReciente({ grupos }: { grupos: GrupoActividad[] }) {
         </h2>
         <Link
           href="/cuentas"
-          className="no-print inline-flex min-h-11 items-center text-small font-semibold text-accent no-underline rounded hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent"
+          className="no-print inline-flex min-h-11 items-center text-small font-semibold text-accent-ink no-underline rounded hover:text-accent-ink focus-visible:outline-2 focus-visible:outline-accent-ink"
         >
           Ver cuentas
         </Link>
@@ -42,7 +42,7 @@ export function ActividadReciente({ grupos }: { grupos: GrupoActividad[] }) {
                       <span
                         aria-hidden="true"
                         className={`grid h-8 w-8 shrink-0 place-items-center rounded-full ${
-                          esAporte ? "bg-accent/12 text-accent-hi" : "bg-white/[0.06] text-fg-soft"
+                          esAporte ? "bg-accent/12 text-accent-ink" : "bg-tint/[0.06] text-fg-soft"
                         }`}
                       >
                         <Icono size={16} strokeWidth={2} />

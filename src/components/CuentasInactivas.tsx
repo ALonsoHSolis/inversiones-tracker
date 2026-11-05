@@ -64,7 +64,7 @@ export function CuentasInactivas({ cuentas }: CuentasInactivasProps) {
               type="button"
               onClick={() => reactivar(cuenta)}
               disabled={reactivandoId === cuenta.id}
-              className="text-micro font-semibold text-[var(--accent)] underline disabled:opacity-50 shrink-0"
+              className="text-micro font-semibold text-accent-ink underline disabled:opacity-50 shrink-0"
             >
               {reactivandoId === cuenta.id ? "reactivando..." : "reactivar"}
             </button>

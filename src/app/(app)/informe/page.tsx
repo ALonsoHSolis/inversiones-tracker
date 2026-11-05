@@ -88,7 +88,7 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
     <div className="mx-auto max-w-[860px]">
       {informe && mes && (
         <div className="no-print flex justify-end mb-4">
-          <PrintButton className="inline-flex items-center h-10 px-4 rounded-full bg-[var(--accent)] text-ink text-small font-semibold transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" />
+          <PrintButton className="inline-flex items-center h-10 px-4 rounded-full bg-[var(--accent)] text-on-accent text-small font-semibold transition-[transform,background-color] duration-150 hover:bg-accent-hi active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink" />
         </div>
       )}
 
@@ -101,10 +101,10 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
           </section>
         ) : (
           <article className="card p-7 md:p-10 animate-fade-up">
-            <header className="flex items-start justify-between gap-6 flex-wrap pb-6 border-b border-white/[0.08]">
+            <header className="flex items-start justify-between gap-6 flex-wrap pb-6 border-b border-tint/[0.08]">
               <Logo subtitle="Estado de cuenta" />
               <div className="sm:text-right">
-                <p className="text-micro uppercase tracking-[0.14em] font-semibold text-accent">Informe mensual</p>
+                <p className="text-micro uppercase tracking-[0.14em] font-semibold text-accent-ink">Informe mensual</p>
                 <p className="mt-1 text-2xl font-semibold tracking-[-0.02em] text-fg">{nombreMes(mes)}</p>
                 <p className="mt-0.5 text-micro text-fg-muted">Emitido el {fechaHoyChile().split("-").reverse().join("-")}</p>
               </div>
@@ -118,8 +118,8 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
                   aria-current={m === mes ? "page" : undefined}
                   className={`px-3 py-1 rounded-full border text-micro font-medium ${
                     m === mes
-                      ? "border-accent/60 bg-accent/15 text-accent-hi"
-                      : "border-white/[0.1] text-fg-muted hover:border-white/[0.24]"
+                      ? "border-accent/60 bg-accent/15 text-accent-ink"
+                      : "border-tint/[0.1] text-fg-muted hover:border-tint/[0.24]"
                   }`}
                 >
                   {nombreMes(m)}
@@ -153,7 +153,7 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
                   ],
                   ["Valor al cierre", formatoPesos(informe.valorFinClp)],
                 ].map(([k, v]) => (
-                  <div key={k} className="border-t border-white/[0.08] pt-3">
+                  <div key={k} className="border-t border-tint/[0.08] pt-3">
                     <dt className="text-micro text-fg-muted">{k}</dt>
                     <dd className="money-value mt-1 font-mono-tabular text-[17px] font-semibold text-fg">{v}</dd>
                   </div>
@@ -166,19 +166,19 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
                 Acumulado al cierre del mes
               </p>
               <dl className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-5">
-                <div className="border-t border-white/[0.08] pt-3">
+                <div className="border-t border-tint/[0.08] pt-3">
                   <dt className="text-micro text-fg-muted">Capital aportado</dt>
                   <dd className="money-value mt-1 font-mono-tabular text-[17px] font-semibold text-fg">
                     {formatoPesos(informe.capitalAcumuladoClp)}
                   </dd>
                 </div>
-                <div className="border-t border-white/[0.08] pt-3">
+                <div className="border-t border-tint/[0.08] pt-3">
                   <dt className="text-micro text-fg-muted">Valor del portafolio</dt>
                   <dd className="money-value mt-1 font-mono-tabular text-[17px] font-semibold text-fg">
                     {formatoPesos(informe.valorFinClp)}
                   </dd>
                 </div>
-                <div className="border-t border-white/[0.08] pt-3">
+                <div className="border-t border-tint/[0.08] pt-3">
                   <dt className="text-micro text-fg-muted">Ganancia total</dt>
                   <dd
                     className="money-value mt-1 font-mono-tabular text-[17px] font-semibold"
@@ -210,7 +210,7 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
                   </thead>
                   <tbody>
                     {filas.map((f) => (
-                      <tr key={f.id} className="border-t border-white/[0.07]">
+                      <tr key={f.id} className="border-t border-tint/[0.07]">
                         <td className="py-3 pr-3">
                           <p className="font-semibold text-fg">{f.nombre}</p>
                           <p className="text-micro text-fg-muted">
@@ -240,7 +240,7 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
                     ))}
                   </tbody>
                   <tfoot>
-                    <tr className="border-t border-white/[0.16]">
+                    <tr className="border-t border-tint/[0.16]">
                       <td className="py-3 pr-3 font-semibold text-fg">Total</td>
                       <td className="money-value py-3 px-3 text-right font-mono-tabular font-semibold text-fg-soft">
                         {formatoPesos(totales.capital)}
@@ -259,7 +259,7 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
                   </tfoot>
                 </table>
               </div>
-              <ul className="mt-4 sm:hidden divide-y divide-white/[0.07] border-y border-white/[0.07]">
+              <ul className="mt-4 sm:hidden divide-y divide-tint/[0.07] border-y border-tint/[0.07]">
                 {filas.map((f) => (
                   <li key={f.id} className="py-3.5">
                     <div className="flex items-start justify-between gap-3">
@@ -292,7 +292,7 @@ export default async function InformePage({ searchParams }: { searchParams: Prom
               </ul>
             </section>
 
-            <footer className="mt-9 pt-5 border-t border-white/[0.08] text-micro leading-relaxed text-fg-muted">
+            <footer className="mt-9 pt-5 border-t border-tint/[0.08] text-micro leading-relaxed text-fg-muted">
               Los aportes y retiros nunca se cuentan como ganancia. Los montos en pesos de cuentas en USD o UF usan
               la tasa de cambio del día de cada registro, no la de hoy. El rendimiento por cuenta se muestra en su
               moneda nativa; los totales, en pesos chilenos.

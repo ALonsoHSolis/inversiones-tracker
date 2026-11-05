@@ -46,7 +46,7 @@ export default function BlogPage() {
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="block card p-5 no-underline hover:border-white/[0.2] transition-colors"
+              className="block card p-5 no-underline hover:border-tint/[0.2] transition-colors"
             >
               <p className="text-micro text-fg-muted font-mono-tabular">{formatoFecha(post.date)}</p>
               <h2 className="mt-1 text-[16px] font-semibold text-fg">{post.title}</h2>

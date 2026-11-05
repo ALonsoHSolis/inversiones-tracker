@@ -248,7 +248,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
   const algunaCargandoTasa = Object.values(filas).some((f) => f.cargandoTasa);
 
   const CAMPO =
-    "h-10 rounded-[10px] border border-control bg-white/[0.04] px-3 text-right text-small font-mono-tabular text-fg focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent/30";
+    "h-10 rounded-[10px] border border-control bg-tint/[0.04] px-3 text-right text-small font-mono-tabular text-fg focus:outline-none focus:border-accent focus-visible:ring-2 focus-visible:ring-accent/30";
   const nombrePorId = new Map(cuentas.map((c) => [c.id, c.nombre]));
   const hayCuentasSinAviso =
     advertencias != null &&
@@ -289,7 +289,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                     onClick={() =>
                       actualizarFila(cuenta.id, { valor: String(anterior), valorEditadoManualmente: true })
                     }
-                    className="-my-1 min-h-8 shrink-0 rounded-md px-1.5 text-micro font-medium text-fg-muted underline decoration-white/20 underline-offset-4 hover:text-fg focus-visible:outline-2 focus-visible:outline-accent"
+                    className="-my-1 min-h-8 shrink-0 rounded-md px-1.5 text-micro font-medium text-fg-muted underline decoration-tint/20 underline-offset-4 hover:text-fg focus-visible:outline-2 focus-visible:outline-accent-ink"
                   >
                     Sin cambios
                   </button>
@@ -347,13 +347,13 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                 <button
                   type="button"
                   onClick={() => actualizarMovimiento(cuenta, { incluyeMovimiento: true })}
-                  className="mt-1.5 inline-flex min-h-9 items-center gap-1 self-start rounded-md text-micro font-semibold text-accent hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent"
+                  className="mt-1.5 inline-flex min-h-9 items-center gap-1 self-start rounded-md text-micro font-semibold text-accent-ink hover:text-accent-ink focus-visible:outline-2 focus-visible:outline-accent-ink"
                 >
                   <Plus size={13} strokeWidth={2.4} aria-hidden="true" />
                   Añadir aporte o retiro
                 </button>
               ) : (
-                <fieldset className="mt-2 flex flex-col gap-2 rounded-[10px] bg-white/[0.03] p-2.5">
+                <fieldset className="mt-2 flex flex-col gap-2 rounded-[10px] bg-tint/[0.03] p-2.5">
                   <legend className="sr-only">Aporte o retiro de {cuenta.nombre}</legend>
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-micro font-medium text-fg-muted">
@@ -363,7 +363,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                     <button
                       type="button"
                       onClick={() => actualizarMovimiento(cuenta, { incluyeMovimiento: false })}
-                      className="min-h-8 shrink-0 rounded-md px-1 text-micro text-fg-muted underline decoration-white/20 underline-offset-4 hover:text-fg"
+                      className="min-h-8 shrink-0 rounded-md px-1 text-micro text-fg-muted underline decoration-tint/20 underline-offset-4 hover:text-fg"
                     >
                       Quitar
                     </button>
@@ -375,7 +375,7 @@ export function SnapshotForm({ cuentas, movimientosHoy, valorAnteriorPorCuenta }
                       onChange={(e) =>
                         actualizarMovimiento(cuenta, { movimientoTipo: e.target.value as TipoMovimiento })
                       }
-                      className="h-9 shrink-0 rounded-lg border border-control bg-surface-raised px-2 text-small text-fg focus-visible:outline-2 focus-visible:outline-accent"
+                      className="h-9 shrink-0 rounded-lg border border-control bg-surface-raised px-2 text-small text-fg focus-visible:outline-2 focus-visible:outline-accent-ink"
                     >
                       <option value="aporte">Aporte</option>
                       <option value="retiro">Retiro</option>

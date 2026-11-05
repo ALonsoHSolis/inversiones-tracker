@@ -82,15 +82,15 @@ export function nombreGrupoPorCuenta(cuentas: Cuenta[], grupoDe: ClaveGrupo): Ma
 // paleta ciclica del grafico de composicion: la cantidad de grupos es
 // dinamica. sin verde ni rojo a proposito: esos colores significan
 // ganancia/perdida.
-// categoricos sin champan (es el acento de marca y accion, DESIGN.md) ni
+// categoricos sin dorado (es el acento de marca y accion, DESIGN.md) ni
 // verde/rojo (ganancia/perdida)
 export const PALETA_COMPOSICION = [
   "var(--color-slate)",
   "var(--color-copper)",
   "var(--color-mauve)",
-  "#c3cfdf",
+  "var(--color-cat-navy)",
   "var(--color-steel)",
-  "#e2b48e",
+  "var(--color-cat-arena)",
   "var(--color-clay)",
   "var(--color-stone)",
 ];

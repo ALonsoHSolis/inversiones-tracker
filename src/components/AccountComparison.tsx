@@ -90,7 +90,7 @@ export function AccountComparison({
       </div>
       <p className="text-micro text-fg-muted">Rendimiento compuesto del portafolio y comparación entre tus cuentas</p>
 
-      <dl className="mt-4 grid grid-cols-3 divide-x divide-[var(--color-edge)] rounded-xl bg-white/[0.025] py-3 shadow-[inset_0_0_0_1px_var(--color-edge)]">
+      <dl className="mt-4 grid grid-cols-3 divide-x divide-[var(--color-edge)] rounded-xl bg-tint/[0.025] py-3 shadow-[inset_0_0_0_1px_var(--color-edge)]">
         <div className="min-w-0 px-3 sm:px-4">
           <dt className="etiqueta">TWR</dt>
           <dd className="money-value mt-1 font-mono-tabular text-lg font-semibold" style={{ color: color(twrPortafolio) }}>

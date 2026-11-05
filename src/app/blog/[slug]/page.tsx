@@ -61,11 +61,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         dangerouslySetInnerHTML={{ __html: post.html }}
       />
 
-      <div className="mt-10 pt-6 border-t border-white/[0.07] flex items-center justify-between gap-4 flex-wrap">
+      <div className="mt-10 pt-6 border-t border-tint/[0.07] flex items-center justify-between gap-4 flex-wrap">
         <p className="text-small text-fg-muted">¿Quieres ver tu propio rendimiento real?</p>
         <Link
           href="/signup"
-          className="inline-flex items-center h-10 px-5 rounded-[9px] bg-[var(--accent)] text-ink text-small font-semibold no-underline whitespace-nowrap"
+          className="inline-flex items-center h-10 px-5 rounded-[9px] bg-[var(--accent)] text-on-accent text-small font-semibold no-underline whitespace-nowrap"
         >
           Crear cuenta gratis →
         </Link>

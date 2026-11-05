@@ -44,7 +44,7 @@ export function PasswordInput({ name, placeholder, minLength, mostrarFortaleza }
           onClick={() => setMostrar((v) => !v)}
           aria-controls={idCampo}
           aria-pressed={mostrar}
-          className="min-h-8 rounded px-1 text-micro font-medium text-[var(--accent)] focus-visible:outline-2 focus-visible:outline-accent"
+          className="min-h-8 rounded px-1 text-micro font-medium text-accent-ink focus-visible:outline-2 focus-visible:outline-accent-ink"
         >
           {mostrar ? "Ocultar" : "Mostrar"}
         </button>
@@ -58,11 +58,11 @@ export function PasswordInput({ name, placeholder, minLength, mostrarFortaleza }
         minLength={minLength}
         value={valor}
         onChange={(e) => setValor(e.target.value)}
-        className="h-11 px-[13px] border border-control rounded-[10px] text-base text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(224,188,120,0.15)]"
+        className="h-11 px-[13px] border border-control rounded-[10px] text-base text-fg bg-tint/[0.04] focus:outline-none focus:border-accent-ink focus:shadow-[0_0_0_3px_rgba(212,175,55,0.15)]"
       />
       {fortaleza && (
         <div className="flex items-center gap-2">
-          <div className="flex-1 h-1 rounded-full bg-white/[0.1] overflow-hidden">
+          <div className="flex-1 h-1 rounded-full bg-tint/[0.1] overflow-hidden">
             <div className="h-full rounded-full" style={{ width: fortaleza.ancho, background: fortaleza.color }} />
           </div>
           <span className="text-micro font-medium" style={{ color: fortaleza.color }}>

@@ -30,7 +30,7 @@ export default function PrivacidadPage() {
           <Link href="/terminos" className={`${legalNavClass} text-fg-muted`}>
             términos
           </Link>
-          <Link href="/privacidad" className={`${legalNavClass} font-semibold text-[var(--accent)]`}>
+          <Link href="/privacidad" className={`${legalNavClass} font-semibold text-accent-ink`}>
             privacidad
           </Link>
           <Link href="/disclaimer" className={`${legalNavClass} text-fg-muted`}>
@@ -85,7 +85,7 @@ export default function PrivacidadPage() {
         <p className="text-small text-fg-muted leading-relaxed">
           Puedes solicitar acceso, corrección o eliminación de tus datos, o el cierre completo de tu
           cuenta, en cualquier momento escribiendo a{" "}
-          <FeedbackLink className="text-fg-soft border-b border-white/[0.2]">alonso.hsolis@gmail.com</FeedbackLink>.
+          <FeedbackLink className="text-fg-soft border-b border-tint/[0.2]">alonso.hsolis@gmail.com</FeedbackLink>.
         </p>
 
         <h2 className="text-[15px] font-semibold mt-8 mb-2">7. Cookies y sesión</h2>
@@ -103,7 +103,7 @@ export default function PrivacidadPage() {
         <h2 className="text-[15px] font-semibold mt-8 mb-2">9. Contacto</h2>
         <p className="text-small text-fg-muted leading-relaxed">
           Si tienes preguntas sobre esta política, escríbenos a{" "}
-          <FeedbackLink className="text-fg-soft border-b border-white/[0.2]">alonso.hsolis@gmail.com</FeedbackLink>.
+          <FeedbackLink className="text-fg-soft border-b border-tint/[0.2]">alonso.hsolis@gmail.com</FeedbackLink>.
         </p>
       </div>
 

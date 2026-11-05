@@ -33,7 +33,7 @@ export default function DisclaimerPage() {
           <Link href="/privacidad" className={`${legalNavClass} text-fg-muted`}>
             privacidad
           </Link>
-          <Link href="/disclaimer" className={`${legalNavClass} font-semibold text-[var(--accent)]`}>
+          <Link href="/disclaimer" className={`${legalNavClass} font-semibold text-accent-ink`}>
             disclaimer
           </Link>
         </nav>
@@ -49,7 +49,7 @@ export default function DisclaimerPage() {
         <p className="text-small text-fg-muted leading-relaxed">
           El rendimiento que ves se calcula restando tus aportes netos del cambio de valor de tu cuenta
           (ver{" "}
-          <Link href="/como-funciona" className="text-fg-soft border-b border-white/[0.2]">
+          <Link href="/como-funciona" className="text-fg-soft border-b border-tint/[0.2]">
             cómo funciona
           </Link>{" "}
           para el detalle con ejemplos). Es una fórmula simple, pensada para uso personal — no usa
@@ -87,7 +87,7 @@ export default function DisclaimerPage() {
         <h2 className="text-[15px] font-semibold mt-8 mb-2">7. Contacto</h2>
         <p className="text-small text-fg-muted leading-relaxed">
           Si tienes dudas sobre el alcance de estos cálculos, escríbenos a{" "}
-          <FeedbackLink className="text-fg-soft border-b border-white/[0.2]">alonso.hsolis@gmail.com</FeedbackLink>.
+          <FeedbackLink className="text-fg-soft border-b border-tint/[0.2]">alonso.hsolis@gmail.com</FeedbackLink>.
         </p>
       </div>
 

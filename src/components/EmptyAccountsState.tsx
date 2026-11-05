@@ -18,9 +18,9 @@ export function EmptyAccountsState() {
       </p>
       <ol className="mt-5 grid gap-3 sm:grid-cols-3">
         {PASOS.map(({ Icono, titulo, texto }, i) => (
-          <li key={titulo} className="rounded-xl bg-white/[0.025] p-4 shadow-[inset_0_0_0_1px_var(--color-edge)]">
+          <li key={titulo} className="rounded-xl bg-tint/[0.025] p-4 shadow-[inset_0_0_0_1px_var(--color-edge)]">
             <span className="flex items-center gap-2 text-small font-semibold text-fg">
-              <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full bg-accent/12 text-accent-hi">
+              <span aria-hidden="true" className="grid h-7 w-7 place-items-center rounded-full bg-accent/12 text-accent-ink">
                 <Icono size={15} strokeWidth={2} />
               </span>
               <span>

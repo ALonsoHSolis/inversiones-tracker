@@ -21,7 +21,7 @@ export default function Error({
         <button
           type="button"
           onClick={() => reset()}
-          className="mt-5 h-11 w-full rounded-[10px] bg-[var(--accent)] text-ink text-[14px] font-semibold"
+          className="mt-5 h-11 w-full rounded-[10px] bg-[var(--accent)] text-on-accent text-[14px] font-semibold"
         >
           reintentar
         </button>

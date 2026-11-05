@@ -6,7 +6,7 @@ import { calcularProyeccion, type EscenarioProyeccion } from "@/lib/proyeccion";
 import { formatoPesos, formatoPesosSigned } from "@/lib/formato";
 
 const inputClass =
-  "h-11 px-3 rounded-[10px] border border-control text-right text-[14px] font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+  "h-11 px-3 rounded-[10px] border border-control text-right text-[14px] font-mono-tabular bg-tint/[0.04] text-fg focus:outline-none focus:border-accent-ink focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
 
 const ESCENARIOS: { clave: keyof ReturnType<typeof calcularProyeccion>; etiqueta: string; color: string }[] = [
   { clave: "conservador", etiqueta: "Conservador", color: "var(--color-fg-muted)" },
@@ -16,7 +16,7 @@ const ESCENARIOS: { clave: keyof ReturnType<typeof calcularProyeccion>; etiqueta
 
 function TarjetaEscenario({ etiqueta, color, escenario }: { etiqueta: string; color: string; escenario: EscenarioProyeccion }) {
   return (
-    <div className="border border-white/[0.07] rounded-xl px-[15px] py-[13px]">
+    <div className="border border-tint/[0.07] rounded-xl px-[15px] py-[13px]">
       <p className="text-micro font-semibold uppercase tracking-[0.07em]" style={{ color }}>
         {etiqueta} · {escenario.tasaAnual.toFixed(1)}% anual
       </p>
@@ -90,7 +90,7 @@ export function ProyeccionForm() {
         </label>
       </div>
 
-      <div className="h-px bg-white/[0.07] my-5" />
+      <div className="h-px bg-tint/[0.07] my-5" />
 
       {!hayDatos ? (
         <p className="text-small text-fg-muted text-center py-2">

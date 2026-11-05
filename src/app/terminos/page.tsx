@@ -27,7 +27,7 @@ export default function TerminosPage() {
         <p className="mt-1 text-micro text-fg-subtle">última actualización: 25-07-2026</p>
 
         <nav className="flex items-center gap-4 mt-4">
-          <Link href="/terminos" className={`${legalNavClass} font-semibold text-[var(--accent)]`}>
+          <Link href="/terminos" className={`${legalNavClass} font-semibold text-accent-ink`}>
             términos
           </Link>
           <Link href="/privacidad" className={`${legalNavClass} text-fg-muted`}>
@@ -74,7 +74,7 @@ export default function TerminosPage() {
           Mi portafolio se entrega &quot;tal cual&quot; (as-is) y &quot;según disponibilidad&quot;, sin garantías de
           ningún tipo, explícitas o implícitas, incluyendo garantías de disponibilidad continua,
           ausencia de errores o idoneidad para un propósito particular. Consulta también nuestro{" "}
-          <Link href="/disclaimer" className="text-fg-soft border-b border-white/[0.2]">
+          <Link href="/disclaimer" className="text-fg-soft border-b border-tint/[0.2]">
             disclaimer
           </Link>{" "}
           sobre el alcance de los cálculos de rendimiento.
@@ -84,7 +84,7 @@ export default function TerminosPage() {
         <p className="text-small text-fg-muted leading-relaxed">
           Puedes dejar de usar la plataforma y solicitar el cierre de tu cuenta y la eliminación de tus
           datos en cualquier momento, escribiendo a{" "}
-          <FeedbackLink className="text-fg-soft border-b border-white/[0.2]">alonso.hsolis@gmail.com</FeedbackLink>. Nos
+          <FeedbackLink className="text-fg-soft border-b border-tint/[0.2]">alonso.hsolis@gmail.com</FeedbackLink>. Nos
           reservamos el derecho de suspender o cerrar cuentas que hagan un uso indebido del servicio.
         </p>
 
@@ -104,7 +104,7 @@ export default function TerminosPage() {
         <h2 className="text-[15px] font-semibold mt-8 mb-2">8. Contacto</h2>
         <p className="text-small text-fg-muted leading-relaxed">
           Si tienes preguntas sobre estos términos, escríbenos a{" "}
-          <FeedbackLink className="text-fg-soft border-b border-white/[0.2]">alonso.hsolis@gmail.com</FeedbackLink>.
+          <FeedbackLink className="text-fg-soft border-b border-tint/[0.2]">alonso.hsolis@gmail.com</FeedbackLink>.
         </p>
       </div>
 

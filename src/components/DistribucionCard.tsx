@@ -9,7 +9,7 @@ import { calcularParticipaciones, UMBRAL_CONCENTRACION, type GrupoEntrada } from
 // unico medio. los montos y % salen tal cual de calcularParticipaciones.
 export function DistribucionDetalle({ grupos, vacio }: { grupos: GrupoEntrada[]; vacio: string }) {
   if (grupos.length === 0) {
-    return <p className="rounded-xl bg-white/[0.02] px-4 py-6 text-center text-small text-fg-muted">{vacio}</p>;
+    return <p className="rounded-xl bg-tint/[0.02] px-4 py-6 text-center text-small text-fg-muted">{vacio}</p>;
   }
   const partes = calcularParticipaciones(grupos);
   const resumen = partes.map((p) => `${p.nombre} ${p.porcentaje.toFixed(0)}%`).join(", ");
@@ -35,7 +35,7 @@ export function DistribucionDetalle({ grupos, vacio }: { grupos: GrupoEntrada[];
           return (
             <li key={p.nombre}>
               <details className="group">
-                <summary className="list-none [&::-webkit-details-marker]:hidden grid min-h-12 cursor-pointer grid-cols-[minmax(0,1fr)_auto_20px] items-center gap-x-3 rounded-lg py-2.5 transition-colors duration-150 hover:bg-white/[0.02] focus-visible:outline-2 focus-visible:outline-accent">
+                <summary className="list-none [&::-webkit-details-marker]:hidden grid min-h-12 cursor-pointer grid-cols-[minmax(0,1fr)_auto_20px] items-center gap-x-3 rounded-lg py-2.5 transition-colors duration-150 hover:bg-tint/[0.02] focus-visible:outline-2 focus-visible:outline-accent-ink">
                   <span className="min-w-0">
                     <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
                       <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-[2px]" style={{ background: p.color }} />
@@ -47,7 +47,7 @@ export function DistribucionDetalle({ grupos, vacio }: { grupos: GrupoEntrada[];
                         </span>
                       )}
                     </span>
-                    <span aria-hidden="true" className="mt-1.5 ml-4 block h-[3px] max-w-[220px] overflow-hidden rounded-full bg-white/[0.05]">
+                    <span aria-hidden="true" className="mt-1.5 ml-4 block h-[3px] max-w-[220px] overflow-hidden rounded-full bg-tint/[0.05]">
                       <span className="block h-full rounded-full" style={{ width: `${p.porcentaje}%`, background: p.color, opacity: 0.8 }} />
                     </span>
                   </span>

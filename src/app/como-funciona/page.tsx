@@ -39,7 +39,7 @@ export default function ComoFuncionaPage() {
                 <span className="font-mono-tabular font-semibold text-fg">$505.000</span>
               </li>
             </ul>
-            <div className="h-px bg-white/[0.07] my-4" />
+            <div className="h-px bg-tint/[0.07] my-4" />
             <p className="text-small text-fg-muted">
               ¿Ganaste <span className="font-mono-tabular font-semibold text-fg">$5.000</span>?{" "}
               <span className="font-semibold text-pos">Sí.</span>{" "}
@@ -65,7 +65,7 @@ export default function ComoFuncionaPage() {
                 <span className="font-mono-tabular font-semibold text-fg">$1.005.000</span>
               </li>
             </ul>
-            <div className="h-px bg-white/[0.07] my-4" />
+            <div className="h-px bg-tint/[0.07] my-4" />
             <p className="text-small text-fg-muted">
               ¿Ganaste <span className="font-mono-tabular font-semibold text-fg">$505.000</span>?{" "}
               <span className="font-semibold text-neg">No.</span>{" "}
@@ -89,7 +89,7 @@ export default function ComoFuncionaPage() {
         <div className="flex items-center gap-3 mt-8">
           <Link
             href="/signup"
-            className="inline-flex items-center h-11 px-6 rounded-[11px] bg-[var(--accent)] text-ink text-[14px] font-bold no-underline"
+            className="inline-flex items-center h-11 px-6 rounded-[11px] bg-[var(--accent)] text-on-accent text-[14px] font-bold no-underline"
           >
             Crear cuenta gratis
           </Link>

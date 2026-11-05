@@ -98,7 +98,7 @@ export function SelectorCuenta({ cuentas, valor, onChange, etiqueta = "Cuenta" }
         aria-haspopup="listbox"
         aria-expanded={abierto}
         aria-labelledby={`${idBase}-etiqueta ${idBase}-valor`}
-        className="mt-1 flex h-11 w-full items-center justify-between gap-2 rounded-[10px] border border-control bg-surface-raised px-3 text-left text-small text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="mt-1 flex h-11 w-full items-center justify-between gap-2 rounded-[10px] border border-control bg-surface-raised px-3 text-left text-small text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
       >
         <span id={`${idBase}-valor`} className="min-w-0 truncate">
           {seleccionada ? (
@@ -117,7 +117,7 @@ export function SelectorCuenta({ cuentas, valor, onChange, etiqueta = "Cuenta" }
       </button>
 
       {abierto && (
-        <div className="absolute left-0 right-0 top-full z-20 mt-1.5 overflow-hidden rounded-xl border border-[var(--line)] bg-surface-raised shadow-[0_24px_60px_-20px_rgba(0,0,0,0.8)]">
+        <div className="absolute left-0 right-0 top-full z-20 mt-1.5 overflow-hidden rounded-xl border border-[var(--line)] bg-surface-raised shadow-[0_24px_60px_-20px_rgba(21,34,56,0.16)]">
           <div className="relative border-b border-[var(--line)]">
             <Search size={16} aria-hidden="true" className="pointer-events-none absolute left-3 top-3.5 text-fg-muted" />
             <input
@@ -151,7 +151,7 @@ export function SelectorCuenta({ cuentas, valor, onChange, etiqueta = "Cuenta" }
                   onMouseEnter={() => setActiva(i)}
                   onClick={() => elegir(c.id)}
                   className={`flex min-h-11 cursor-pointer items-center justify-between gap-3 px-3 py-2 text-small ${
-                    i === activa ? "bg-white/[0.07]" : ""
+                    i === activa ? "bg-tint/[0.07]" : ""
                   }`}
                 >
                   <span className="min-w-0">
@@ -160,7 +160,7 @@ export function SelectorCuenta({ cuentas, valor, onChange, etiqueta = "Cuenta" }
                       {c.plataforma} · {c.moneda}
                     </span>
                   </span>
-                  {esSeleccionada && <Check size={16} aria-hidden="true" className="shrink-0 text-accent" />}
+                  {esSeleccionada && <Check size={16} aria-hidden="true" className="shrink-0 text-accent-ink" />}
                 </li>
               );
             })}

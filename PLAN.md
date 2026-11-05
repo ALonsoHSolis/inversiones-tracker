@@ -164,3 +164,26 @@ la dirección estilo Robinhood/Copilot. Sin cambios de esquema, RLS, auth ni fó
   borde ni sombra; la franja de datos del hero (capital, cambio vs. registro anterior, último registro, moneda) es
   una lista con divisor, no una tarjeta.
 - Se eliminaron `Hero.tsx` y `PortfolioChart.tsx` (reemplazados).
+
+## Iteración 4: "Navy & Gold", inspirada en Skipo (pedido del usuario)
+
+Referencias en `design-reference/skipo/` (capturas, estilos y resumen recopilados por el usuario el 2026-11-04).
+Se tomaron principios, no la identidad: nada de su logo, textos, fuentes, ilustraciones 3D ni videos.
+
+Decisiones del usuario: fondo blanco roto #F8F9FA, estructura y títulos azul marino #152238, acentos dorado #D4AF37,
+párrafos gris carbón #333333; aspecto premium y minimalista; app y landing en el mismo PR; vidrio y secciones claras
+en la landing.
+
+- Tema claro como base y bloques `.tema-navy` (menú lateral, barra móvil, navegación pública, pie, tarjeta del
+  patrimonio, bandas de la landing) que redefinen los mismos tokens; `.tema-claro` para volver a claro dentro de navy.
+- Dorado solo como relleno, línea o marcador (2,0:1 sobre blanco); texto, íconos y foco en dorado tinta #7D6213.
+- Inicio: tarjeta navy del patrimonio con selector gráfico/anillo (reparto por plataforma de `calcularParticipaciones`,
+  ya usado en la pestaña Plataforma), acciones rápidas en cuadrados, barra de color por plataforma en cada cuenta.
+- Landing: hero navy con titular en peso regular y "de verdad" en dorado, píldoras y botones de vidrio, la app en un
+  celular (maqueta estática con datos de ejemplo), secciones alternadas claro/navy, filas en tarjetas que invierten el
+  orden, cierre y pie navy.
+- Sin cambios en lógica financiera, esquema, RLS, auth ni RPC.
+
+Verificado con build de producción y Supabase simulado: axe 0 violaciones en `/`, `/login`, `/signup`,
+`/calculadora`, `/como-funciona` (320–1440) y en las pantallas de la app (320, 768, 1024); sin desborde horizontal a
+320 px; `npm test` 79/79 (+1 todo), lint y tsc limpios. No se probó con datos reales ni en Vercel.

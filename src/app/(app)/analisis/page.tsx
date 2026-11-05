@@ -176,7 +176,7 @@ export default async function AnalisisPage() {
             <li key={sec.id} className="shrink-0">
               <a
                 href={`#${sec.id}`}
-                className="inline-flex h-10 items-center rounded-full px-3.5 text-small font-medium text-fg-muted no-underline transition-colors duration-150 hover:bg-white/[0.06] hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+                className="inline-flex h-10 items-center rounded-full px-3.5 text-small font-medium text-fg-muted no-underline transition-colors duration-150 hover:bg-tint/[0.06] hover:text-fg focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent-ink"
               >
                 {sec.etiqueta}
               </a>

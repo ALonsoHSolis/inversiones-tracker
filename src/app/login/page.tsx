@@ -5,7 +5,7 @@ import { PasswordInput } from "@/components/PasswordInput";
 import { AuthShell } from "@/components/AuthShell";
 
 const inputClass =
-  "h-11 px-[13px] border border-control rounded-[10px] text-base text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus:shadow-[0_0_0_3px_rgba(224,188,120,0.15)]";
+  "h-11 px-[13px] border border-control rounded-[10px] text-base text-fg bg-tint/[0.04] focus:outline-none focus:border-accent-ink focus:shadow-[0_0_0_3px_rgba(212,175,55,0.15)]";
 
 export default async function LoginPage({
   searchParams,
@@ -32,16 +32,16 @@ export default async function LoginPage({
       <div className="flex flex-col items-start gap-2.5 mt-5">
         <p className="text-small text-fg-muted">
           ¿No tienes cuenta?{" "}
-          <Link href="/signup" className="font-semibold text-[var(--accent)]">
+          <Link href="/signup" className="font-semibold text-accent-ink">
             Crear cuenta gratis
           </Link>
         </p>
-        <Link href="/recuperar-password" className="text-small text-fg-muted border-b border-white/[0.14]">
+        <Link href="/recuperar-password" className="text-small text-fg-muted border-b border-tint/[0.14]">
           ¿Olvidaste tu contraseña?
         </Link>
       </div>
 
-      <details className="mt-[22px] border-t border-white/[0.07] pt-4 group" open={Boolean(confirmError || confirmMensaje)}>
+      <details className="mt-[22px] border-t border-tint/[0.07] pt-4 group" open={Boolean(confirmError || confirmMensaje)}>
         <summary className="flex items-center gap-2 text-micro text-fg-muted cursor-pointer list-none [&::-webkit-details-marker]:hidden">
           <span className="inline-block transition-transform duration-200 group-open:rotate-90">▸</span>
           ¿No recibiste el correo de confirmación?
