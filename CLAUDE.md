@@ -6,6 +6,8 @@ Tracker personal de rendimiento de inversiones repartidas en varias plataformas 
 
 El schema y el scaffold ya existen en este repo. No los reconstruyas desde cero, extiendelos. Antes de tocar nada, lee `supabase/schema.sql` completo — tiene comentarios explicando cada decision — y `README.md`.
 
+Notas por plataforma (como registrar sus productos, que cuenta como aporte y que como ganancia) en `docs/plataformas/`. Hoy: `skipo.md`.
+
 ## Reglas de negocio ya fijadas (no las reinterpretes ni las cambies sin preguntar)
 
 1. **Rendimiento neto de aportes.** Un deposito a mitad de semana nunca debe aparecer como ganancia. La vista `rendimiento_semanal` ya resuelve esto restando `aportes_netos` del cambio de valor. Si agregas cualquier pantalla que muestre "cuanto gane", usa esta vista o el mismo calculo, no restes valores de snapshots directamente.
