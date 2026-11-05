@@ -16,7 +16,7 @@ interface MetaFormProps {
 }
 
 const inputClass =
-  "h-11 px-3 rounded-[10px] border border-control text-[14px] text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+  "h-11 px-3 rounded-[10px] border border-control text-[14px] text-fg bg-tint/[0.04] focus:outline-none focus:border-accent-ink focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
 const labelClass = "text-micro font-semibold text-fg-muted";
 
 // mismo criterio que CuentaForm/EditarCuentaForm: nunca error.message crudo.
@@ -142,7 +142,7 @@ export function MetaForm({ cuentas }: MetaFormProps) {
         {cuentas.length > 0 && (
           <div className="flex flex-col gap-[7px]">
             <span className={labelClass}>Cuentas que aportan a esta meta (opcional)</span>
-            <div className="flex flex-col gap-1.5 rounded-[10px] border border-white/[0.14] bg-white/[0.02] p-2.5">
+            <div className="flex flex-col gap-1.5 rounded-[10px] border border-tint/[0.14] bg-tint/[0.02] p-2.5">
               {cuentas.map((c) => (
                 <label key={c.id} className="flex items-center gap-2.5 py-1 cursor-pointer">
                   <input
@@ -165,7 +165,7 @@ export function MetaForm({ cuentas }: MetaFormProps) {
           type="button"
           onClick={guardarMeta}
           disabled={guardando}
-          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-ink text-[14px] font-semibold disabled:opacity-50"
+          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-on-accent text-[14px] font-semibold disabled:opacity-50"
         >
           {guardando ? "Creando..." : "Crear meta"}
         </button>

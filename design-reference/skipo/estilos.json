@@ -1,0 +1,830 @@
+{
+  "html": {
+    "background-color": "rgb(255, 255, 255)"
+  },
+  "body": {
+    "background-color": "rgba(0, 0, 0, 0)",
+    "color": "rgb(0, 0, 0)",
+    "font-family": "Poppins, \"Poppins Fallback\""
+  },
+  "variables": {},
+  "nota_variables": "El sitio (Astro + Tailwind v3) no define variables CSS propias en :root; los colores vienen del tema de Tailwind (ver tokens_color_tailwind).",
+  "tokens_color_tailwind": {
+    "secondary-color": {
+      "border": "rgb(28 54 90)",
+      "bg": "rgb(28 54 90)"
+    },
+    "background-color": {
+      "bg": "rgb(11 16 29)"
+    },
+    "blue-20": {
+      "bg": "rgb(10 23 40)"
+    },
+    "blue-30": {
+      "bg": "rgb(11 27 51)"
+    },
+    "blue-primary": {
+      "bg": "rgb(15 34 61)",
+      "text": "rgb(15 34 61)"
+    },
+    "dark-blue": {
+      "bg": "rgb(10 23 40)",
+      "text": "rgb(10 23 40)"
+    },
+    "light-blue": {
+      "bg": "rgb(47 82 132)"
+    },
+    "light-gray": {
+      "bg": "rgb(156 156 156)",
+      "text": "rgb(156 156 156)"
+    },
+    "primary": {
+      "bg": "rgb(0 216 174)"
+    },
+    "turquoise": {
+      "bg": "rgb(0 216 174)"
+    }
+  },
+  "elementos": {
+    "h1": {
+      "descripcion": "Titular del hero",
+      "selector": "h1",
+      "texto": "Invertir evolucionó",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "\"TikTok Sans\", system-ui, -apple-system, sans-serif",
+      "font-size": "72px",
+      "font-weight": "400",
+      "line-height": "75.6px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(255, 255, 255)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "h2-seccion": {
+      "descripcion": "Titular de seccion (fondo claro)",
+      "selector": "h2.stocks-title",
+      "texto": "Acciones tokenizadas, la nueva forma de ",
+      "color": "rgb(15, 34, 61)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "\"TikTok Sans\", sans-serif",
+      "font-size": "42px",
+      "font-weight": "400",
+      "line-height": "44.94px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(15, 34, 61)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "h2-seccion-oscura": {
+      "descripcion": "Titular de seccion (fondo oscuro)",
+      "selector": "h2.crypto-title",
+      "texto": "Invertir en cripto es solo el comienzo",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "\"TikTok Sans\", sans-serif",
+      "font-size": "42px",
+      "font-weight": "400",
+      "line-height": "48.3px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(255, 255, 255)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "h2-tarjeta": {
+      "descripcion": "Titular dentro de tarjeta",
+      "selector": "h2.card-title",
+      "texto": "Ganancias todos los días",
+      "color": "rgb(15, 34, 61)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "\"TikTok Sans\", sans-serif",
+      "font-size": "42px",
+      "font-weight": "400",
+      "line-height": "44.94px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(15, 34, 61)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "h2-que-es": {
+      "descripcion": "Titular de bloque de texto",
+      "selector": "section.what-is h2",
+      "texto": "¿Qué es Skipo?",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "\"TikTok Sans\", Poppins, \"Poppins Fallback\", sans-serif",
+      "font-size": "40px",
+      "font-weight": "400",
+      "line-height": "60px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(255, 255, 255)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "h3": {
+      "descripcion": "Subtitulo",
+      "selector": "h3",
+      "texto": "Empieza por lo que buscas",
+      "color": "rgb(0, 216, 174)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "600",
+      "line-height": "24px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(0, 216, 174)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "p-hero": {
+      "descripcion": "Bajada del hero",
+      "selector": ".hero-section p",
+      "texto": "Ahora puedes invertir en cripto, stocks ",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "\"TikTok Sans\", system-ui, -apple-system, sans-serif",
+      "font-size": "16px",
+      "font-weight": "300",
+      "line-height": "20.8px",
+      "letter-spacing": "normal",
+      "border-radius": "8px",
+      "padding": "8px 16px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(255, 255, 255)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "p-seccion": {
+      "descripcion": "Parrafo de seccion (es un div)",
+      "selector": "div.stocks-text",
+      "texto": "Invierte en acciones y ETFs de EE.UU. to",
+      "color": "rgb(11, 16, 29)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "\"TikTok Sans\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "normal",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(11, 16, 29)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "p-que-es": {
+      "descripcion": "Parrafo largo",
+      "selector": "section.what-is p",
+      "texto": "Skipo (Skipo Chile SpA, RUT 77.554.238-1",
+      "color": "rgb(230, 237, 245)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "300",
+      "line-height": "20.8px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(230, 237, 245)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "enlace-nav": {
+      "descripcion": "Enlace de navegacion",
+      "selector": ".navbar-content a, .navbar-content button",
+      "texto": "Empresas",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\", sans-serif",
+      "font-size": "14px",
+      "font-weight": "300",
+      "line-height": "20.8px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(255, 255, 255)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "enlace-acento": {
+      "descripcion": "Enlace de acento (Iniciar sesion)",
+      "selector": ".navbar-content a.text-turquoise",
+      "texto": "Iniciar sesión",
+      "color": "rgb(0, 216, 174)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\", sans-serif",
+      "font-size": "14px",
+      "font-weight": "300",
+      "line-height": "20.8px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(0, 216, 174)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "enlace-chip": {
+      "descripcion": "Chip/enlace de \"Empieza por lo que buscas\"",
+      "selector": "section.what-is a",
+      "texto": "Acciones de EE.UU.",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\", sans-serif",
+      "font-size": "14.4px",
+      "font-weight": "400",
+      "line-height": "21.6px",
+      "letter-spacing": "normal",
+      "border-radius": "999px",
+      "padding": "9.6px 17.6px",
+      "box-shadow": "none",
+      "border": "1px solid rgba(255, 255, 255, 0.5)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "enlace-footer": {
+      "descripcion": "Enlace del footer",
+      "selector": "footer a",
+      "texto": "Personas",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\"",
+      "font-size": "14px",
+      "font-weight": "400",
+      "line-height": "20px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(255, 255, 255)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "boton-primario": {
+      "descripcion": "CTA primario (Registrarse)",
+      "selector": ".navbar-content a.bg-turquoise",
+      "texto": "Registrarse",
+      "color": "rgb(15, 34, 61)",
+      "background-color": "rgb(0, 216, 174)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\", sans-serif",
+      "font-size": "14px",
+      "font-weight": "300",
+      "line-height": "20.8px",
+      "letter-spacing": "normal",
+      "border-radius": "8px",
+      "padding": "12px 24px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(15, 34, 61)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "boton-solido": {
+      "descripcion": "Boton solido oscuro (tarjeta clara)",
+      "selector": "a.btn.btn-solid",
+      "texto": "Conoce más",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgb(15, 34, 61)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\", sans-serif",
+      "font-size": "14px",
+      "font-weight": "400",
+      "line-height": "21px",
+      "letter-spacing": "normal",
+      "border-radius": "32px",
+      "padding": "16px 24px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(255, 255, 255)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "boton-secundario": {
+      "descripcion": "Boton secundario de vidrio",
+      "selector": "a.btn.btn-glass",
+      "texto": "Conoce más",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(255, 255, 255, 0.1)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\", sans-serif",
+      "font-size": "14px",
+      "font-weight": "400",
+      "line-height": "21px",
+      "letter-spacing": "normal",
+      "border-radius": "32px",
+      "padding": "16px 24px",
+      "box-shadow": "rgba(0, 0, 0, 0.1) 0px 4px 30px 0px",
+      "border": "0px solid rgb(255, 255, 255)",
+      "backdrop-filter": "blur(5px)",
+      "text-transform": "none"
+    },
+    "boton-pildora-hero": {
+      "descripcion": "Pildoras del hero (Cripto/Stocks/Stablecoins)",
+      "selector": "a.apple-glass-button",
+      "texto": "Cripto",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(255, 255, 255, 0.1)",
+      "background-image": "none",
+      "font-family": "\"TikTok Sans\", system-ui, -apple-system, sans-serif",
+      "font-size": "18px",
+      "font-weight": "700",
+      "line-height": "27px",
+      "letter-spacing": "0.5px",
+      "border-radius": "11px",
+      "padding": "16px 24px",
+      "box-shadow": "none",
+      "border": "1px solid rgba(255, 255, 255, 0.7)",
+      "backdrop-filter": "blur(24px) saturate(1.2)",
+      "text-transform": "none"
+    },
+    "tarjeta-stocks": {
+      "descripcion": "Tarjeta oscura de stocks",
+      "selector": "div.rounded-\\[1rem\\].bg-blue-20",
+      "texto": "Conoce más",
+      "color": "rgb(0, 0, 0)",
+      "background-color": "rgb(10, 23, 40)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\"",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "24px",
+      "letter-spacing": "normal",
+      "border-radius": "16px",
+      "padding": "0px 0px 32px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(0, 0, 0)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "tarjeta-clara": {
+      "descripcion": "Tarjeta clara (earn)",
+      "selector": ".content-wrapper.theme-light",
+      "texto": "earn\nGanancias todos los días\nHaz que tu",
+      "color": "rgb(15, 34, 61)",
+      "background-color": "rgb(255, 255, 255)",
+      "background-image": "none",
+      "font-family": "\"TikTok Sans\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "24px",
+      "letter-spacing": "normal",
+      "border-radius": "12px",
+      "padding": "32px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(15, 34, 61)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "tarjeta-oscura": {
+      "descripcion": "Tarjeta oscura (business)",
+      "selector": ".content-wrapper.theme-dark",
+      "texto": "business\nOTC, compras masivas, API y muc",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgb(17, 40, 73)",
+      "background-image": "none",
+      "font-family": "\"TikTok Sans\", sans-serif",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "24px",
+      "letter-spacing": "normal",
+      "border-radius": "12px",
+      "padding": "32px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(255, 255, 255)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "nav-contenedor": {
+      "descripcion": "Contenedor fijo del header",
+      "selector": "div.fixed.z-\\[49\\]",
+      "texto": "Empieza a invertir\nEmpresas\nAyuda\nInicia",
+      "color": "rgb(0, 0, 0)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\"",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "24px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "16px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(0, 0, 0)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "nav-barra": {
+      "descripcion": "Barra de navegacion",
+      "selector": ".navbar-content",
+      "texto": "Empieza a invertir\nEmpresas\nAyuda\nInicia",
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgb(11, 27, 51)",
+      "background-image": "none",
+      "font-family": "Tiktok, sans-serif",
+      "font-size": "18.276px",
+      "font-weight": "700",
+      "line-height": "27.414px",
+      "letter-spacing": "normal",
+      "border-radius": "12px",
+      "padding": "12px 12px 12px 24px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(255, 255, 255)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    },
+    "footer": {
+      "descripcion": "Footer",
+      "selector": "footer",
+      "texto": "© 2026 Skipo\n\nCompañía\nPersonas\nEmpresas",
+      "color": "rgb(0, 0, 0)",
+      "background-color": "rgba(0, 0, 0, 0)",
+      "background-image": "none",
+      "font-family": "Poppins, \"Poppins Fallback\"",
+      "font-size": "16px",
+      "font-weight": "400",
+      "line-height": "24px",
+      "letter-spacing": "normal",
+      "border-radius": "0px",
+      "padding": "0px",
+      "box-shadow": "none",
+      "border": "0px solid rgb(0, 0, 0)",
+      "backdrop-filter": "none",
+      "text-transform": "none"
+    }
+  },
+  "fuentes": [
+    "Poppins Fallback | 400 | normal",
+    "Montserrat | 300 | normal",
+    "Montserrat | 700 | normal",
+    "poppins | 300 | normal",
+    "poppins | 400 | normal",
+    "poppins | 500 | normal",
+    "poppins | 600 | normal",
+    "poppins | 700 | normal",
+    "Instrument Serif | 400 | normal",
+    "Instrument Serif | 400 | italic",
+    "IBM Plex Mono | 400 | normal",
+    "TikTok Sans | 700 | normal",
+    "TikTok Sans | 500 | normal",
+    "TikTok Sans | 400 | normal",
+    "TikTok Sans | 300 | normal"
+  ],
+  "keyframes": [
+    {
+      "nombre": "slide-in-from-bottom",
+      "css": "@keyframes slide-in-from-bottom { 0% { transform: translateY(100%); } 100% { transform: translateY(0px); } }"
+    },
+    {
+      "nombre": "slide-in-from-top",
+      "css": "@keyframes slide-in-from-top { 0% { transform: translateY(-100%); } 100% { transform: translateY(0px); } }"
+    },
+    {
+      "nombre": "slide-in-from-left",
+      "css": "@keyframes slide-in-from-left { 0% { transform: translate(-100%); } 100% { transform: translate(0px); } }"
+    },
+    {
+      "nombre": "slide-in-from-right",
+      "css": "@keyframes slide-in-from-right { 0% { transform: translate(100%); } 100% { transform: translate(0px); } }"
+    },
+    {
+      "nombre": "text-from-top",
+      "css": "@keyframes text-from-top { 0% { margin-top: -4rem; padding-bottom: 4rem; } 100% { margin-top: 0rem; margin-bottom: 0rem; } }"
+    },
+    {
+      "nombre": "moveUpDown",
+      "css": "@keyframes moveUpDown { 0% { transform: translateY(0px); } 50% { transform: translateY(-35px); } 100% { transform: translateY(0px); } }"
+    },
+    {
+      "nombre": "moveUpDownPhone",
+      "css": "@keyframes moveUpDownPhone { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }"
+    },
+    {
+      "nombre": "fadeInUp",
+      "css": "@keyframes fadeInUp { 0% { opacity: 0; transform: translateY(10vh); } 100% { opacity: 1; transform: translateY(0px); } }"
+    },
+    {
+      "nombre": "fadeInUpMobile",
+      "css": "@keyframes fadeInUpMobile { 0% { opacity: 0; transform: translateY(5vh); } 100% { opacity: 1; transform: translateY(0px); } }"
+    },
+    {
+      "nombre": "fadeInOnly",
+      "css": "@keyframes fadeInOnly { 0% { opacity: 0; } 100% { opacity: 1; } }"
+    },
+    {
+      "nombre": "fadeInUpCentered",
+      "css": "@keyframes fadeInUpCentered { 0% { opacity: 0; transform: translate(-50%, -40%); } 100% { opacity: 1; transform: translate(-50%, -50%); } }"
+    },
+    {
+      "nombre": "skipo-dot-bounce-cd3800a8",
+      "css": "@keyframes skipo-dot-bounce-cd3800a8 { 0%, 60%, 100% { transform: translateY(0px); opacity: 0.5; } 30% { transform: translateY(-8px); opacity: 1; } }"
+    },
+    {
+      "nombre": "skipo-contact-spin-927d636b",
+      "css": "@keyframes skipo-contact-spin-927d636b { 100% { transform: rotate(360deg); } }"
+    },
+    {
+      "nombre": "skipo-bounce-dac3fdca",
+      "css": "@keyframes skipo-bounce-dac3fdca { 0%, 60%, 100% { transform: translateY(1px); } 30% { transform: translateY(-3px); } }"
+    },
+    {
+      "nombre": "skipo-blink-dac3fdca",
+      "css": "@keyframes skipo-blink-dac3fdca { 50% { opacity: 0; } }"
+    },
+    {
+      "nombre": "skipo-bounce-67e2c5c3",
+      "css": "@keyframes skipo-bounce-67e2c5c3 { 0%, 60%, 100% { transform: translateY(0px); } 30% { transform: translateY(-6px); } }"
+    },
+    {
+      "nombre": "skipo-spin-07619a0c",
+      "css": "@keyframes skipo-spin-07619a0c { 100% { transform: rotate(360deg); } }"
+    }
+  ],
+  "clases_animacion": [
+    {
+      "selector": ".transition-bottom",
+      "animation": "1s ease 0s 1 normal none running slide-in-from-bottom"
+    },
+    {
+      "selector": ".transition-top",
+      "animation": "1s ease 0s 1 normal none running slide-in-from-top"
+    },
+    {
+      "selector": ".transition-left",
+      "animation": "1s ease 0s 1 normal none running slide-in-from-left"
+    },
+    {
+      "selector": ".transition-right",
+      "animation": "1s ease 0s 1 normal none running slide-in-from-right"
+    },
+    {
+      "selector": ".transition-text",
+      "animation": "1s ease 0s 1 normal none running text-from-top"
+    },
+    {
+      "selector": ".transition-fade-in-up",
+      "animation": "0.6s ease-out 0s 1 normal forwards running fadeInUp"
+    },
+    {
+      "selector": ".transition-fade-in-up-mobile",
+      "animation": "0.6s ease-out 0s 1 normal forwards running fadeInUpMobile"
+    },
+    {
+      "selector": ".transition-opacity-fade-in",
+      "animation": "0.5s ease-out 0s 1 normal forwards running fadeInOnly"
+    },
+    {
+      "selector": ".fade-in-absolute",
+      "animation": "0.5s ease-out 0s 1 normal forwards running fadeInUpCentered"
+    },
+    {
+      "selector": ".transition-text-left",
+      "animation": "1s ease 0s 1 normal none running slide-in-from-left"
+    },
+    {
+      "selector": ".transition-text-right",
+      "animation": "1s ease 0s 1 normal none running slide-in-from-right"
+    },
+    {
+      "selector": ".transition-text-top",
+      "animation": "1s ease 0s 1 normal none running text-from-top"
+    },
+    {
+      "selector": ".transition-text-bottom",
+      "animation": "1s ease 0s 1 normal none running slide-in-from-bottom"
+    },
+    {
+      "selector": ".loader-button__dot",
+      "animation": "1.2s ease-in-out 0s infinite normal none running skipo-dot-bounce-cd3800a8"
+    },
+    {
+      "selector": ".skipo-contact-card__spinner",
+      "animation": "0.7s linear 0s infinite normal none running skipo-contact-spin-927d636b"
+    },
+    {
+      "selector": ".skipo-message__cursor",
+      "animation": "0.8s step-end 0s infinite normal none running skipo-blink-dac3fdca"
+    },
+    {
+      "selector": ".skipo-message__dots span",
+      "animation": "1.4s ease-in-out 0s infinite normal none running skipo-bounce-dac3fdca"
+    },
+    {
+      "selector": ".skipo-typing__dots span",
+      "animation": "1.4s ease-in-out 0s infinite normal none running skipo-bounce-67e2c5c3"
+    },
+    {
+      "selector": ".skipo-messages__spinner",
+      "animation": "0.7s linear 0s infinite normal none running skipo-spin-07619a0c"
+    }
+  ],
+  "transiciones": [
+    {
+      "valor": "color, background-color, border-color, text-decoration-color, fill, stroke | 0.5s | cubic-bezier(0.4, 0, 0.2, 1) | delay 0s",
+      "ejemplos": [
+        "div.h-100.fixed.z-[49].flex"
+      ]
+    },
+    {
+      "valor": "color, background-color, border-color, text-decoration-color, fill, stroke | 0.15s | cubic-bezier(0.4, 0, 0.2, 1) | delay 0s",
+      "ejemplos": [
+        "button.flex.justify-center.items-center.gap-[0.5rem]",
+        "button.dropdown-button.flex.justify-center.items-center",
+        "a.mega-menu-item.flex.cursor-pointer.items-center",
+        "a.mega-menu-item.flex.cursor-pointer.items-center"
+      ]
+    },
+    {
+      "valor": "transform | 0.3s | cubic-bezier(0.4, 0, 0.2, 1) | delay 0s",
+      "ejemplos": [
+        "div.flex.h-full.min-w-[10px].items-center"
+      ]
+    },
+    {
+      "valor": "transform | 0.3s | ease-in-out | delay 0s",
+      "ejemplos": [
+        "div.w-full.h-full.flex.justify-center"
+      ]
+    },
+    {
+      "valor": "fill | 0.3s | ease | delay 0s",
+      "ejemplos": [
+        "div.flex.h-full.w-full.items-center",
+        "div.flex.h-full.w-full.items-center",
+        "div.flex.h-full.w-full.items-center",
+        "div.flex.h-full.w-full.items-center"
+      ]
+    },
+    {
+      "valor": "all | 0.5s | cubic-bezier(0.25, 1, 0.5, 1) | delay 0s",
+      "ejemplos": [
+        "a.apple-glass-button",
+        "a.apple-glass-button",
+        "a.apple-glass-button"
+      ]
+    },
+    {
+      "valor": "all | 0.3s | cubic-bezier(0.25, 1, 0.5, 1) | delay 0s",
+      "ejemplos": [
+        "a.btn.btn-glass.w-full.max-w-[20rem]",
+        "a.btn.btn-glass.w-full.max-w-[20rem]",
+        "a.btn.btn-solid.w-full.max-w-[20rem]",
+        "a.btn.btn-glass.w-full.max-w-[20rem]"
+      ]
+    },
+    {
+      "valor": "border-color, color | 0.2s, 0.2s | ease, ease | delay 0s, 0s",
+      "ejemplos": [
+        "a",
+        "a",
+        "a",
+        "a"
+      ]
+    },
+    {
+      "valor": "color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter | 0.15s | cubic-bezier(0.4, 0, 0.2, 1) | delay 0s",
+      "ejemplos": [
+        "a.transition.hover:text-white",
+        "a.transition.hover:text-white"
+      ]
+    },
+    {
+      "valor": "transform, background | 0.2s, 0.2s | ease, ease | delay 0s, 0s",
+      "ejemplos": [
+        "button.skipo-chat-fab"
+      ]
+    },
+    {
+      "valor": "right | 0.3s | ease | delay 0s",
+      "ejemplos": [
+        "div.grecaptcha-badge"
+      ]
+    }
+  ],
+  "animaciones": [],
+  "videos": [
+    {
+      "archivo": "flamingo-7f1d2644.webm",
+      "autoplay": false,
+      "loop": true,
+      "muted": true,
+      "tamano": "1440x900"
+    },
+    {
+      "archivo": "xstocks-a0979416.mp4",
+      "autoplay": false,
+      "loop": true,
+      "muted": true,
+      "tamano": "768x320"
+    },
+    {
+      "archivo": "crypto-animation-7d58b95e.webm",
+      "autoplay": false,
+      "loop": true,
+      "muted": true,
+      "tamano": "468x674"
+    },
+    {
+      "archivo": "earn-animation-fallback-113d7bd9.mp4",
+      "autoplay": false,
+      "loop": true,
+      "muted": true,
+      "tamano": "400x500"
+    },
+    {
+      "archivo": "business-animation-c762a0ff.webm",
+      "autoplay": false,
+      "loop": true,
+      "muted": true,
+      "tamano": "400x500"
+    }
+  ],
+  "header_con_scroll": {
+    "div.fixed.z-\\[49\\]": {
+      "background-color": "rgba(0, 0, 0, 0)",
+      "box-shadow": "none",
+      "backdrop-filter": "none",
+      "padding": "16px"
+    },
+    ".navbar-content": {
+      "background-color": "rgb(11, 27, 51)",
+      "box-shadow": "none",
+      "backdrop-filter": "none",
+      "padding": "12px 12px 12px 24px"
+    }
+  },
+  "hover": {
+    "boton-primario": {
+      "color": "rgb(15, 34, 61)",
+      "background-color": "rgb(0, 216, 174)",
+      "background-image": "none",
+      "box-shadow": "none",
+      "border": "0px solid rgb(15, 34, 61)",
+      "transform": "none",
+      "opacity": "1"
+    },
+    "boton-solido": {
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgb(15, 34, 61)",
+      "background-image": "none",
+      "box-shadow": "none",
+      "border": "0px solid rgb(255, 255, 255)",
+      "transform": "none",
+      "opacity": "1"
+    },
+    "boton-secundario": {
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(0, 216, 174, 0.2)",
+      "background-image": "none",
+      "box-shadow": "rgba(0, 0, 0, 0.1) 0px 4px 30px 0px",
+      "border": "0px solid rgb(255, 255, 255)",
+      "transform": "none",
+      "opacity": "1"
+    },
+    "boton-pildora-hero": {
+      "color": "rgb(255, 255, 255)",
+      "background-color": "rgba(0, 216, 174, 0.1)",
+      "background-image": "none",
+      "box-shadow": "none",
+      "border": "1px solid rgba(255, 255, 255, 0.7)",
+      "transform": "matrix(1.01, 0, 0, 1.01, 0, 0)",
+      "opacity": "1"
+    }
+  },
+  "meta": {
+    "url": "https://skipo.com/es/",
+    "viewport": "1440x900",
+    "capturado": "2026-11-05"
+  }
+}

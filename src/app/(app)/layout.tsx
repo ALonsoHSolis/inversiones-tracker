@@ -29,7 +29,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <ExportarDatos className={ITEM_MENU} />
             <PrintButton className={ITEM_MENU} />
             <FeedbackLink className={ITEM_MENU}>Escríbenos</FeedbackLink>
-            <div className="h-px bg-white/[0.07] my-1.5" />
+            <div className="h-px bg-tint/[0.07] my-1.5" />
             <form action={logout}>
               <button type="submit" className={ITEM_MENU}>
                 Cerrar sesión

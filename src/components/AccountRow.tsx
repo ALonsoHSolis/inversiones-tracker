@@ -36,6 +36,8 @@ interface AccountRowProps {
   // valores en pesos de los ultimos registros (valor_diario_por_cuenta), para
   // el mini-grafico. opcional.
   serie?: number[];
+  // color de la plataforma en el reparto (mismo del anillo del inicio)
+  color?: string;
 }
 
 // el símbolo de moneda importa: rendimiento.valor y aportes_netos vienen en
@@ -64,6 +66,7 @@ export function AccountRow({
   ultimaFechaFallback,
   ahoraMs,
   serie = [],
+  color,
 }: AccountRowProps) {
   const valor = rendimiento?.valor ?? valorActualFallback;
   const valorClp = rendimiento?.valor_clp ?? valorClpFallback;
@@ -97,7 +100,10 @@ export function AccountRow({
   return (
     <li className="py-1">
       <details className="group">
-        <summary className="fila-cuenta list-none [&::-webkit-details-marker]:hidden grid cursor-pointer grid-cols-[40px_minmax(0,1fr)_auto_20px] sm:grid-cols-[40px_minmax(0,1fr)_72px_auto_20px] items-center gap-x-3 rounded-xl px-2 py-2.5 -mx-2 transition-colors duration-150 hover:bg-white/[0.035] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+        <summary className="fila-cuenta relative list-none [&::-webkit-details-marker]:hidden grid cursor-pointer grid-cols-[40px_minmax(0,1fr)_auto_20px] sm:grid-cols-[40px_minmax(0,1fr)_72px_auto_20px] items-center gap-x-3 rounded-xl px-2 py-2.5 -mx-2 transition-colors duration-150 hover:bg-tint/[0.035] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink">
+          {color && (
+            <span aria-hidden="true" className="absolute -left-1.5 inset-y-3.5 w-[3px] rounded-full" style={{ background: color }} />
+          )}
           <Monograma institucion={cuenta.plataforma} />
           <span className="min-w-0">
             <span className="block break-words text-small font-semibold leading-snug text-fg">{cuenta.nombre}</span>
@@ -144,7 +150,7 @@ export function AccountRow({
           </span>
         </summary>
 
-        <div className="mb-2 ml-[52px] mt-1 rounded-xl bg-white/[0.025] p-3 shadow-[inset_0_0_0_1px_var(--color-edge)]">
+        <div className="mb-2 ml-[52px] mt-1 rounded-xl bg-tint/[0.025] p-3 shadow-[inset_0_0_0_1px_var(--color-edge)]">
           {hayDetalle && (
             <dl className="grid grid-cols-1 gap-2 text-micro sm:grid-cols-2">
               {rendimientoAnualizado != null && (
@@ -183,7 +189,7 @@ export function AccountRow({
       </details>
       {tieneAporte && rendimiento && (
         <p className="mb-2 ml-[52px] flex flex-wrap items-center gap-x-2 gap-y-1 text-micro text-fg-muted">
-          <span className="money-value rounded-md bg-accent/12 px-1.5 py-0.5 font-mono-tabular font-semibold text-accent-hi">
+          <span className="money-value rounded-md bg-accent/12 px-1.5 py-0.5 font-mono-tabular font-semibold text-accent-ink">
             {/* aportes_netos siempre cae a 0 via coalesce en la vista sql, nunca null */}
             {rendimiento.aportes_netos! > 0 ? "Aporte " : "Retiro −"}
             {formatoValor(Math.abs(rendimiento.aportes_netos!), cuenta.moneda as Moneda)}

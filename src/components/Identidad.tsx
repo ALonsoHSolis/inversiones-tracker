@@ -2,12 +2,12 @@
 // mini-grafico de su valor. solo presentacion.
 
 const COLORES = [
-  { bg: "rgba(224,188,120,0.16)", fg: "#ead3a2" },
-  { bg: "rgba(159,176,200,0.16)", fg: "#c3cfdf" },
-  { bg: "rgba(211,154,106,0.16)", fg: "#e2b48e" },
-  { bg: "rgba(169,155,192,0.18)", fg: "#cbbfe0" },
-  { bg: "rgba(127,147,174,0.18)", fg: "#aebdd2" },
-  { bg: "rgba(185,139,115,0.18)", fg: "#d7b09c" },
+  { bg: "rgba(212,175,55,0.16)", fg: "#6b540f" },
+  { bg: "rgba(94,124,163,0.14)", fg: "#3f5d82" },
+  { bg: "rgba(176,112,64,0.14)", fg: "#85502a" },
+  { bg: "rgba(127,104,166,0.14)", fg: "#5f4887" },
+  { bg: "rgba(21,34,56,0.08)", fg: "#152238" },
+  { bg: "rgba(154,106,85,0.14)", fg: "#744c3a" },
 ];
 
 // color estable por institucion (el mismo nombre siempre da el mismo tono);
@@ -54,7 +54,7 @@ export function MiniGrafico({ valores, ancho = 72, alto = 28 }: { valores: numbe
     .join(" ");
   return (
     <svg width={ancho} height={alto} viewBox={`0 0 ${ancho} ${alto}`} aria-hidden="true" className="shrink-0 overflow-visible">
-      <path d={d} fill="none" stroke="rgba(195,207,223,0.55)" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+      <path d={d} fill="none" stroke="var(--color-fg-subtle)" strokeOpacity="0.7" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
     </svg>
   );
 }

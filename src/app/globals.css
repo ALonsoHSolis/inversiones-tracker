@@ -10,51 +10,136 @@
    contraste verificado (WCAG) contra --color-ink y --color-surface:
    fg 16:1 - fg-soft 12.7:1 - fg-muted 7.6:1 - fg-subtle 5.1:1 - accent 8.5:1. */
 @theme static {
-  /* "Midnight Portfolio": superficies azul-noche con acento champan.
-     contraste (WCAG 2.2) medido sobre ink / surface / raised:
-     fg 18,1 / 16,3 / 14,4 - fg-soft 13,8 / 12,4 / 11,0 - fg-muted 9,3 / 8,3 / 7,4
-     fg-subtle 6,3 / 5,7 / 5,0 - accent 10,4 / 9,3 / 8,3 - pos 10,7 / 9,6 / 8,5
-     neg 7,7 / 6,9 / 6,1. todos los colores de texto superan AA (4,5). */
-  --color-ink: #090d15;
-  --color-surface: #17202d;
-  --color-surface-raised: #1f2a3a;
+  /* "Navy & Gold" (tema claro premium, inspirado en la estructura de apps de
+     inversion como Skipo, sin copiar su identidad):
+     fondo blanco roto, titulos y estructura en azul marino, parrafos gris
+     carbon y dorado como unico acento. contraste WCAG 2.2 medido sobre
+     fondo #F8F9FA / superficie #FFFFFF / elevada #F2F4F7:
+     fg 15,1 / 15,9 / 14,4 - fg-soft 12,0 / 12,6 / 11,4 - fg-muted 6,0 / 6,4 / 5,7
+     fg-subtle 5,0 / 5,3 / 4,8 - accent-ink 5,3 / 5,6 / 5,1 - pos 5,4 / 5,7 / 5,1
+     neg 5,9 / 6,2 / 5,6. el dorado #D4AF37 (2,0:1 sobre blanco) va SOLO como
+     relleno (botones con texto navy, 7,6:1), linea y marcador; nunca como
+     texto: para eso existe --color-accent-ink. */
+  --color-ink: #f8f9fa;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f2f4f7;
+  --color-navy: #152238;
+  --color-navy-soft: #1c2c46;
 
-  --color-fg: #f5f7fb;
-  --color-fg-soft: #d3dae6;
-  --color-fg-muted: #a8b4c5;
-  --color-fg-subtle: #8794a8;
+  --color-fg: #152238;
+  --color-fg-soft: #333333;
+  --color-fg-muted: #566070;
+  --color-fg-subtle: #616a79;
 
-  --color-accent: #e0bc78;
-  --color-accent-hi: #ead3a2;
+  /* dorado: relleno de acciones, linea del patrimonio, marcadores */
+  --color-accent: #d4af37;
+  --color-accent-hi: #e0c160;
+  /* dorado legible como texto, icono o anillo de foco sobre claro */
+  --color-accent-ink: #7d6213;
+  /* texto sobre un relleno dorado */
+  --color-on-accent: #152238;
+  /* tinte neutro para fondos y bordes translucidos (bg-tint/[0.04]) */
+  --color-tint: #152238;
 
-  --color-pos: #42d7b0;
-  --color-pos-soft: #7ee8c4;
-  --color-neg: #f07b85;
-  --color-neg-soft: #f2a6a6;
+  --color-pos: #0a7553;
+  --color-pos-soft: #3e9c7c;
+  --color-neg: #b42f3a;
+  --color-neg-soft: #c95860;
 
-  --color-warn: #e8a857;
-  --color-copper: #d39a6a;
-  --color-slate: #9fb0c8;
-  /* categoricos para graficos y chips: ninguno es verde ni rojo */
-  --color-mauve: #a99bc0;
-  --color-steel: #7f93ae;
-  --color-clay: #b98b73;
-  --color-stone: #8e8a80;
+  --color-warn: #995a00;
+  --color-copper: #b07040;
+  --color-slate: #5e7ca3;
+  /* categoricos para graficos y chips: ninguno es verde, rojo ni dorado */
+  --color-mauve: #7f68a6;
+  --color-steel: #3f5d82;
+  --color-clay: #9a6a55;
+  --color-stone: #7a7468;
+  --color-cat-navy: #152238;
+  --color-cat-arena: #a8875c;
 
-  /* borde de controles interactivos (inputs, selects): 3:1 contra la
-     superficie, exigido por WCAG 1.4.11. el borde decorativo de las
-     tarjetas es mas suave a proposito (--line). */
-  --color-control: #66758c;
+  /* borde de controles interactivos (inputs, selects): >= 3:1 (WCAG 1.4.11) */
+  --color-control: #7c8594;
 
-  /* cantos: el de tarjetas y divisores es casi invisible (solo define la
-     forma); el "strong" es para controles secundarios. los inputs usan
-     --color-control (3:1, WCAG 1.4.11). */
-  --color-edge: rgba(148, 170, 200, 0.1);
-  --color-edge-strong: rgba(148, 170, 200, 0.18);
+  --color-edge: rgba(21, 34, 56, 0.08);
+  --color-edge-strong: rgba(21, 34, 56, 0.14);
 
   /* escala tipografica */
   --text-micro: 0.75rem;
   --text-small: 0.8125rem;
+}
+
+/* bloques en azul marino (menu lateral, barra movil, pie, secciones de la
+   landing, panel de acceso): redefine los mismos tokens, asi cualquier
+   componente se ve bien adentro sin variantes. contraste sobre #152238 /
+   #1C2C46: fg 14,9 / 13,1 - soft 11,6 / 10,2 - muted 7,6 / 6,7 -
+   subtle 5,7 / 5,0 - accent-ink 9,2 / 8,1 - pos 8,9 / 7,9 - neg 6,8 / 6,0. */
+.tema-navy {
+  /* los alias se resuelven donde se declaran: se repiten aca */
+  --accent: var(--color-accent);
+  --pos: var(--color-pos);
+  --neg: var(--color-neg);
+  --line: var(--color-edge-strong);
+  --color-ink: #152238;
+  --color-surface: #1c2c46;
+  --color-surface-raised: #243654;
+  --color-fg: #f5f7fb;
+  --color-fg-soft: #d6dce6;
+  --color-fg-muted: #a9b4c4;
+  --color-fg-subtle: #8f9bae;
+  --color-accent-ink: #e2c25a;
+  --color-tint: #ffffff;
+  --color-pos: #4fd8ae;
+  --color-neg: #f38c95;
+  --color-warn: #f0b35e;
+  --color-control: #6b7c97;
+  --color-edge: rgba(255, 255, 255, 0.08);
+  --color-edge-strong: rgba(255, 255, 255, 0.14);
+  /* categoricos en su version clara, legibles sobre azul marino */
+  --color-slate: #9fb0c8;
+  --color-copper: #d39a6a;
+  --color-mauve: #a99bc0;
+  --color-steel: #7f93ae;
+  --color-clay: #b98b73;
+  --color-stone: #a29e94;
+  --color-cat-navy: #c3cfdf;
+  --color-cat-arena: #e2b48e;
+  background-color: var(--color-ink);
+  color: var(--color-fg);
+}
+
+/* bloque claro dentro de uno navy (p. ej. la lista de cuentas dentro del
+   celular de la portada): vuelve a los tokens del tema claro. */
+.tema-claro {
+  /* los alias se resuelven donde se declaran: se repiten aca */
+  --accent: var(--color-accent);
+  --pos: var(--color-pos);
+  --neg: var(--color-neg);
+  --line: var(--color-edge-strong);
+  --color-ink: #f8f9fa;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f2f4f7;
+  --color-fg: #152238;
+  --color-fg-soft: #333333;
+  --color-fg-muted: #566070;
+  --color-fg-subtle: #616a79;
+  --color-accent-ink: #7d6213;
+  --color-tint: #152238;
+  --color-pos: #0a7553;
+  --color-neg: #b42f3a;
+  --color-warn: #995a00;
+  --color-control: #7c8594;
+  --color-edge: rgba(21, 34, 56, 0.08);
+  --color-edge-strong: rgba(21, 34, 56, 0.14);
+  --color-slate: #5e7ca3;
+  --color-copper: #b07040;
+  --color-mauve: #7f68a6;
+  --color-steel: #3f5d82;
+  --color-clay: #9a6a55;
+  --color-stone: #7a7468;
+  --color-cat-navy: #152238;
+  --color-cat-arena: #a8875c;
+  background-color: var(--color-surface);
+  color: var(--color-fg);
 }
 
 :root {
@@ -63,6 +148,7 @@
   --pos: var(--color-pos);
   --neg: var(--color-neg);
   --line: var(--color-edge-strong);
+  color-scheme: light;
 }
 
 body {
@@ -81,15 +167,15 @@ body {
     background-color: var(--color-surface);
     border: 1px solid var(--color-edge);
     border-radius: 16px;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.035) inset, 0 12px 32px -20px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 1px 2px rgba(21, 34, 56, 0.04), 0 12px 32px -22px rgba(21, 34, 56, 0.18);
   }
 
   /* panel: superficie suave SIN borde ni sombra. el titulo de la seccion vive
      afuera (.titulo-seccion), asi la pagina se lee como secciones con
      contenido y no como una pila de cajas iguales. */
   .panel {
-    background-color: rgba(23, 32, 45, 0.88);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+    background-color: var(--color-surface);
+    box-shadow: 0 0 0 1px var(--color-edge), 0 18px 40px -30px rgba(21, 34, 56, 0.22);
     border-radius: 20px;
   }
 
@@ -131,7 +217,7 @@ body {
     gap: 2px;
     padding: 3px;
     border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.04);
+    background-color: color-mix(in srgb, var(--color-tint) 5%, transparent);
     box-shadow: 0 0 0 1px var(--color-edge) inset;
   }
   .segmentado > button {
@@ -152,10 +238,10 @@ body {
   .segmentado > button[aria-selected="true"] {
     background-color: var(--color-surface-raised);
     color: var(--color-fg);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+    box-shadow: 0 1px 2px rgba(21, 34, 56, 0.14), 0 0 0 1px var(--color-edge) inset;
   }
   .segmentado > button:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-accent-ink);
     outline-offset: 1px;
   }
 
@@ -169,7 +255,7 @@ body {
     padding: 0 16px;
     border-radius: 10px;
     background-color: var(--color-accent);
-    color: var(--color-ink);
+    color: var(--color-on-accent);
     font-size: var(--text-small);
     font-weight: 600;
     transition: background-color 150ms ease-out, transform 120ms ease-out;
@@ -189,7 +275,7 @@ body {
     min-height: 40px;
     padding: 0 14px;
     border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.04);
+    background-color: var(--color-surface);
     box-shadow: 0 0 0 1px var(--color-edge-strong) inset;
     color: var(--color-fg-soft);
     font-size: var(--text-small);
@@ -197,12 +283,12 @@ body {
     transition: background-color 150ms ease-out, color 150ms ease-out, transform 120ms ease-out;
   }
   .boton-secundario:hover {
-    background-color: rgba(255, 255, 255, 0.07);
+    background-color: color-mix(in srgb, var(--color-tint) 5%, transparent);
     color: var(--color-fg);
   }
   .boton-primario:focus-visible,
   .boton-secundario:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-accent-ink);
     outline-offset: 2px;
   }
 }
@@ -212,8 +298,7 @@ body {
    texto siempre queda sobre --color-surface o mas oscuro: contraste intacto. */
 .card-hero {
   background-image:
-    radial-gradient(120% 80% at 85% -20%, rgba(224, 188, 120, 0.14), transparent 60%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 40%);
+    radial-gradient(120% 80% at 85% -20%, rgba(212, 175, 55, 0.12), transparent 60%);
   border-color: rgba(234, 211, 162, 0.2);
 }
 
@@ -237,14 +322,14 @@ body {
 
 /* superficies del navegador: tambien llevan la marca */
 ::selection {
-  background-color: rgba(224, 188, 120, 0.32);
+  background-color: rgba(212, 175, 55, 0.3);
   color: var(--color-fg);
 }
 
 html {
-  scrollbar-color: rgba(148, 170, 200, 0.22) transparent;
-  accent-color: var(--color-accent);
-  caret-color: var(--color-accent);
+  scrollbar-color: rgba(21, 34, 56, 0.22) transparent;
+  accent-color: var(--color-accent-ink);
+  caret-color: var(--color-accent-ink);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -363,7 +448,7 @@ html {
 /* bloque generico de skeleton (loading.tsx) -- pulso de opacidad, no de
    posicion/tamaño, para que sea barato de animar y no cause layout shift. */
 .skeleton {
-  background-color: rgba(255, 255, 255, 0.07);
+  background-color: color-mix(in srgb, var(--color-tint) 7%, transparent);
   border-radius: 6px;
   animation: skeletonPulse 1.6s ease-in-out infinite;
 }
@@ -433,12 +518,12 @@ html {
 .contenido-post blockquote {
   margin-top: 0.75rem;
   padding-left: 1rem;
-  border-left: 3px solid rgba(255, 255, 255, 0.14);
+  border-left: 3px solid var(--color-edge-strong);
   color: var(--color-fg-muted);
 }
 
 .contenido-post code {
-  background: rgba(255, 255, 255, 0.06);
+  background: color-mix(in srgb, var(--color-tint) 6%, transparent);
   border-radius: 4px;
   padding: 0.1rem 0.35rem;
   font-size: 0.9em;
@@ -513,14 +598,14 @@ html {
   mask-image: linear-gradient(to right, transparent, #000 18%, #000 60%, transparent),
     linear-gradient(to bottom, #000 30%, transparent);
   mask-composite: intersect;
-  background: radial-gradient(60% 70% at 18% 0%, rgba(224, 188, 120, 0.11), transparent 70%),
-    radial-gradient(50% 60% at 90% 30%, rgba(127, 147, 174, 0.08), transparent 70%);
+  background: radial-gradient(60% 70% at 18% 0%, rgba(212, 175, 55, 0.12), transparent 70%),
+    radial-gradient(50% 60% at 90% 30%, rgba(255, 255, 255, 0.04), transparent 70%);
 }
 
 .cifra-hero {
   font-size: clamp(2.75rem, 11vw, 4.5rem);
   line-height: 0.95;
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: -0.045em;
 }
 /* cifras de 12+ caracteres (decenas de miles de millones): escala menor para
@@ -531,6 +616,11 @@ html {
 .cifra-hero-simbolo {
   font-size: clamp(1.375rem, 5.5vw, 2.25rem);
   line-height: 1;
+}
+
+/* segmentos del anillo: entran con un fundido corto al cambiar de vista */
+.anillo-segmento {
+  animation: lineaEntra 320ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
 /* periodos como texto (estilo apps de inversion), el activo con fondo champan suave */
@@ -546,20 +636,20 @@ html {
 }
 .periodos > button:hover {
   color: var(--color-fg);
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: color-mix(in srgb, var(--color-tint) 5%, transparent);
 }
 .periodos > button[aria-pressed="true"] {
-  color: var(--color-accent-hi);
-  background-color: rgba(224, 188, 120, 0.14);
+  color: var(--color-on-accent);
+  background-color: var(--color-accent);
 }
 .periodos > button:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-accent-ink);
   outline-offset: 2px;
 }
 
 /* al cambiar de periodo la linea entra con un fundido corto (estado, no adorno) */
 .linea-patrimonio {
-  filter: drop-shadow(0 0 6px rgba(224, 188, 120, 0.35));
+  filter: none;
   animation: lineaEntra 260ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 @keyframes lineaEntra {
@@ -573,16 +663,16 @@ html {
 
 /* el ultimo registro "respira": senala que es el dato vigente */
 .punto-vivo {
-  box-shadow: 0 0 0 0 rgba(224, 188, 120, 0.45);
+  box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5);
   animation: puntoVivo 2.4s ease-out infinite;
 }
 @keyframes puntoVivo {
   0% {
-    box-shadow: 0 0 0 0 rgba(224, 188, 120, 0.45);
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5);
   }
   70%,
   100% {
-    box-shadow: 0 0 0 10px rgba(224, 188, 120, 0);
+    box-shadow: 0 0 0 10px rgba(212, 175, 55, 0);
   }
 }
 
@@ -606,8 +696,93 @@ html {
 }
 
 .landing-titular {
-  font-size: clamp(2.625rem, 8.2vw, 8.25rem);
+  font-size: clamp(2.75rem, 7.4vw, 6rem);
+  font-weight: 400;
+}
+
+/* banda navy de la portada: degradado vertical hacia un azul mas claro y un
+   brillo dorado muy tenue; se mete bajo la navegacion flotante */
+.landing-hero {
+  margin-top: -84px;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 50% at 80% 30%, rgba(212, 175, 55, 0.12), transparent 70%),
+    linear-gradient(180deg, #152238 0%, #1b2f50 55%, #2a4470 100%);
+}
+.landing-banda {
+  margin-top: clamp(80px, 11vw, 168px);
+  padding-block: clamp(72px, 9vw, 128px);
+  background: linear-gradient(180deg, #152238 0%, #1b2f50 100%);
+}
+
+/* vidrio: solo en elementos interactivos o etiquetas sobre fondos navy */
+.vidrio {
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 4px 30px rgba(0, 0, 0, 0.1);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  backdrop-filter: blur(24px) saturate(1.2);
+  color: #ffffff;
+}
+.pildora-vidrio {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 11px;
+  font-size: 15px;
   font-weight: 600;
+}
+.boton-vidrio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 500;
+  transition: background-color 300ms cubic-bezier(0.25, 1, 0.5, 1), transform 120ms ease-out;
+}
+.boton-vidrio:hover {
+  background-color: rgba(212, 175, 55, 0.22);
+}
+.boton-vidrio:active {
+  transform: scale(0.98);
+}
+.boton-vidrio:focus-visible {
+  outline: 2px solid var(--color-accent-ink);
+  outline-offset: 2px;
+}
+
+/* el celular con la app: marco oscuro, isla y pantalla navy */
+.telefono {
+  margin: 0;
+  border-radius: 46px;
+  padding: 10px;
+  background: #0b1220;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.14), 0 40px 80px -30px rgba(0, 0, 0, 0.55);
+}
+.telefono-pantalla {
+  overflow: hidden;
+  border-radius: 37px;
+  padding-bottom: 18px;
+  background: linear-gradient(180deg, #152238 0%, #172742 100%);
+}
+.telefono-isla {
+  width: 76px;
+  height: 22px;
+  border-radius: 999px;
+  background: #05080f;
+}
+/* flotacion suave del celular */
+.flotar {
+  animation: flotar 6s ease-in-out infinite;
+}
+@keyframes flotar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
 }
 /* cada linea del titular sube desde detras de su propia linea base */
 .landing-linea {
@@ -658,33 +833,35 @@ html {
   padding: clamp(20px, 3.5vw, 48px);
 }
 
-/* las tres etapas como una sola barra: segmentos de color plano */
+/* las tres etapas: tarjetas que suben de tono, de registrar a ver el resultado */
 .landing-etapas {
   display: flex;
-  gap: 6px;
-  min-height: 22vh;
+  gap: 12px;
 }
 .landing-etapa {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  padding: 20px;
-  border-radius: 14px;
-  min-height: 200px;
+  gap: 16px;
+  padding: 28px;
+  border-radius: 20px;
+  min-height: 260px;
+  color: var(--color-fg);
 }
 /* superficies oscuras del sistema (antes pastel, con champan como categoria);
    la escala de tono sube con cada etapa: de registrar a ver el resultado */
 .landing-etapa:nth-child(1) {
-  flex: 1.2;
+  flex: 1;
   background: var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-edge);
 }
 .landing-etapa:nth-child(2) {
   flex: 1;
-  background: var(--color-surface-raised);
+  background: #e9edf3;
 }
 .landing-etapa:nth-child(3) {
-  flex: 1.6;
-  background: #26334a;
+  flex: 1;
+  background: var(--color-navy);
+  color: #f5f7fb;
 }
 @media (max-width: 767px) {
   .landing-etapas {
@@ -695,19 +872,31 @@ html {
   }
 }
 
-/* filas: texto sobre un eje, el fragmento de la interfaz a la derecha */
+/* filas en tarjetas grandes que alternan claro y navy, con el texto y el
+   fragmento de la interfaz invirtiendo su orden */
 .landing-fila {
   display: grid;
   gap: 28px;
+  padding: clamp(24px, 4vw, 56px);
+  border-radius: 28px;
+  background: var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-edge);
+}
+.landing-fila-navy {
+  background: linear-gradient(160deg, #1c2c46 0%, #152238 100%);
+  box-shadow: none;
 }
 @media (min-width: 1024px) {
   .landing-fila {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 48px;
-    align-items: start;
+    gap: 56px;
+    align-items: center;
   }
-  .landing-fila:nth-child(even) .landing-fragmento {
-    max-width: 560px;
+  .landing-fila-navy {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+  .landing-fila-navy .landing-texto {
+    order: 2;
   }
 }
 
@@ -744,7 +933,9 @@ html {
   padding-block: clamp(80px, 12vw, 160px);
   margin-top: clamp(80px, 11vw, 168px);
   border-radius: 28px;
-  background: var(--color-surface);
+  background:
+    radial-gradient(50% 60% at 50% 0%, rgba(212, 175, 55, 0.16), transparent 70%),
+    linear-gradient(180deg, #1c2c46 0%, #152238 100%);
 }
 .landing-cierre-titular {
   font-size: clamp(2.5rem, 7vw, 6.5rem);
@@ -755,12 +946,12 @@ html {
 /* entrada de secciones (Revelar): solo con js; sin js todo queda visible */
 .revelar-pendiente [data-revelar] {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(40px);
 }
 .revelar-visto [data-revelar] {
   opacity: 1;
   transform: none;
-  transition: opacity 600ms cubic-bezier(0.23, 1, 0.32, 1), transform 600ms cubic-bezier(0.23, 1, 0.32, 1);
+  transition: opacity 700ms ease-out, transform 700ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .revelar-visto [data-revelar]:nth-child(2) {
   transition-delay: 70ms;
@@ -771,7 +962,9 @@ html {
 
 @media (prefers-reduced-motion: reduce) {
   .landing-linea > span,
-  .landing-sube {
+  .landing-sube,
+  .flotar,
+  .anillo-segmento {
     animation: none;
   }
   .revelar-pendiente [data-revelar] {
@@ -787,7 +980,7 @@ html {
   gap: 6px;
   padding: 14px 16px;
   border-radius: 14px;
-  background: var(--color-surface-raised);
+  background: var(--color-surface);
   box-shadow: inset 0 0 0 1px var(--color-control);
   cursor: text;
   transition: box-shadow 150ms ease-out;
@@ -797,12 +990,22 @@ html {
   font-weight: 600;
 }
 .calculo-campo:focus-within {
-  box-shadow: inset 0 0 0 2px var(--color-accent);
+  box-shadow: inset 0 0 0 2px var(--color-accent-ink);
+}
+
+/* navegacion publica flotante: barra navy dentro de un marco de vidrio */
+.nav-marco {
+  padding: 5px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4), 0 10px 30px -18px rgba(21, 34, 56, 0.5);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
 }
 
 /* menu publico movil (popover nativo): anclado arriba a la derecha */
 .menu-publico {
   position: fixed;
-  inset: 64px 16px auto auto;
+  inset: 84px 16px auto auto;
   border: 0;
 }

@@ -11,7 +11,7 @@ interface EditarCuentaFormProps {
 }
 
 const inputClass =
-  "h-11 px-3 rounded-[10px] border border-control text-[14px] text-fg bg-white/[0.04] focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+  "h-11 px-3 rounded-[10px] border border-control text-[14px] text-fg bg-tint/[0.04] focus:outline-none focus:border-accent-ink focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
 const labelClass = "text-micro font-semibold text-fg-muted";
 
 // mismo criterio que CuentaForm: nunca mostrar error.message crudo de
@@ -132,7 +132,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
 
         <div className="flex flex-col gap-[7px]">
           <span className={labelClass}>Moneda</span>
-          <p className="h-11 px-3 rounded-[10px] border border-white/[0.08] bg-white/[0.02] flex items-center text-[14px] text-fg-muted">
+          <p className="h-11 px-3 rounded-[10px] border border-tint/[0.08] bg-tint/[0.02] flex items-center text-[14px] text-fg-muted">
             {cuenta.moneda}
           </p>
           <span className="text-micro text-fg-subtle">
@@ -146,7 +146,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
           type="button"
           onClick={guardarCambios}
           disabled={accion !== null}
-          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-ink text-[14px] font-semibold disabled:opacity-50"
+          className="mt-2 h-11 w-full rounded-[10px] bg-[var(--accent)] text-on-accent text-[14px] font-semibold disabled:opacity-50"
         >
           {accion === "guardar" ? "Guardando…" : "Guardar cambios"}
         </button>
@@ -170,7 +170,7 @@ export function EditarCuentaForm({ cuenta }: EditarCuentaFormProps) {
                 type="button"
                 onClick={darDeBaja}
                 disabled={accion !== null}
-                className="h-10 px-4 rounded-[10px] bg-[var(--neg)] text-ink text-small font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                className="h-10 px-4 rounded-[10px] bg-[var(--neg)] text-white text-small font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
               >
                 {accion === "baja" ? "Dando de baja…" : "Sí, dar de baja"}
               </button>

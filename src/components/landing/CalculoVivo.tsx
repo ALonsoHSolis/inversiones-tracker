@@ -67,7 +67,7 @@ export function CalculoVivo() {
       </div>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2" aria-live="polite">
-        <div className="rounded-2xl bg-white/[0.03] p-5">
+        <div className="rounded-2xl bg-tint/[0.03] p-5">
           <p className="text-small font-medium text-fg-muted">Mirando solo el saldo</p>
           <p className="mt-2 font-mono-tabular text-[clamp(1.75rem,4vw,2.5rem)] font-medium leading-none tracking-[-0.03em] text-fg-soft">
             {faltaAnterior ? "—" : formatoPesosSigned(aparente)}
@@ -79,7 +79,7 @@ export function CalculoVivo() {
           </p>
         </div>
         <div className="rounded-2xl bg-surface-raised p-5">
-          <p className="text-small font-medium text-accent-hi">Con Mi portafolio</p>
+          <p className="text-small font-medium text-accent-ink">Con Mi portafolio</p>
           <p
             className="mt-2 font-mono-tabular text-[clamp(1.75rem,4vw,2.5rem)] font-semibold leading-none tracking-[-0.03em]"
             style={{ color: faltaAnterior ? "var(--color-fg-muted)" : colorReal }}

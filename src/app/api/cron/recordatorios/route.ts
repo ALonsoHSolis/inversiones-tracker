@@ -7,7 +7,7 @@ function construirCorreo(origin: string) {
   const linkCarga = `${origin}/dashboard#carga-rapida`;
   const linkPerfil = `${origin}/perfil`;
   return `
-    <div style="font-family: sans-serif; font-size: 14px; border-top: 3px solid #e0bc78; padding-top: 18px; color: #090d15; line-height: 1.6;">
+    <div style="font-family: sans-serif; font-size: 14px; border-top: 3px solid #d4af37; padding-top: 18px; color: #152238; line-height: 1.6;">
       <p>Hola,</p>
       <p>Van unos días desde tu última actualización. Registra el valor de hoy de tus cuentas
       para que tu rendimiento real siga siendo preciso.</p>

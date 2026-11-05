@@ -20,7 +20,7 @@ export default async function PerfilPage() {
         <h1 className="text-[19px] font-semibold tracking-[-0.02em] text-fg">Perfil</h1>
         <p className="mt-1 text-small text-fg-muted">{user.email}</p>
 
-        <div className="mt-6 pt-6 border-t border-white/[0.07] flex items-center justify-between gap-4">
+        <div className="mt-6 pt-6 border-t border-tint/[0.07] flex items-center justify-between gap-4">
           <div>
             <p className="text-small font-semibold text-fg">Recordatorios semanales</p>
             <p className="mt-1 text-micro text-fg-muted max-w-[320px]">
@@ -33,8 +33,8 @@ export default async function PerfilPage() {
               type="submit"
               className={
                 recordatoriosActivos
-                  ? "h-9 px-4 rounded-[9px] border border-white/[0.14] bg-white/[0.04] text-micro font-semibold text-fg whitespace-nowrap"
-                  : "h-9 px-4 rounded-[9px] bg-[var(--accent)] text-ink text-micro font-semibold whitespace-nowrap"
+                  ? "h-9 px-4 rounded-[9px] border border-tint/[0.14] bg-tint/[0.04] text-micro font-semibold text-fg whitespace-nowrap"
+                  : "h-9 px-4 rounded-[9px] bg-[var(--accent)] text-on-accent text-micro font-semibold whitespace-nowrap"
               }
             >
               {recordatoriosActivos ? "Desactivar" : "Activar"}
@@ -42,7 +42,7 @@ export default async function PerfilPage() {
           </form>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-white/[0.07] flex items-center justify-between gap-4">
+        <div className="mt-4 pt-4 border-t border-tint/[0.07] flex items-center justify-between gap-4">
           <div>
             <p className="text-small font-semibold text-fg">Reporte mensual de rendimiento</p>
             <p className="mt-1 text-micro text-fg-muted max-w-[320px]">
@@ -56,8 +56,8 @@ export default async function PerfilPage() {
               type="submit"
               className={
                 reporteMensualActivo
-                  ? "h-9 px-4 rounded-[9px] border border-white/[0.14] bg-white/[0.04] text-micro font-semibold text-fg whitespace-nowrap"
-                  : "h-9 px-4 rounded-[9px] bg-[var(--accent)] text-ink text-micro font-semibold whitespace-nowrap"
+                  ? "h-9 px-4 rounded-[9px] border border-tint/[0.14] bg-tint/[0.04] text-micro font-semibold text-fg whitespace-nowrap"
+                  : "h-9 px-4 rounded-[9px] bg-[var(--accent)] text-on-accent text-micro font-semibold whitespace-nowrap"
               }
             >
               {reporteMensualActivo ? "Desactivar" : "Activar"}

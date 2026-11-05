@@ -12,6 +12,7 @@ import { Revelar } from "@/components/landing/Revelar";
 import { serieEjemplo } from "@/lib/demo-landing";
 import type { Cuenta, RendimientoActual } from "@/types/database";
 import { SiteNav } from "@/components/SiteNav";
+import { TelefonoApp } from "@/components/landing/TelefonoApp";
 
 export const metadata: Metadata = {
   title: "Mi portafolio — ¿cuánto ganaste de verdad?",
@@ -86,7 +87,12 @@ const CUENTAS_EJEMPLO = [
   { c: cuentaEjemplo("e3", "Depósito en UF", "Banco C", "deposito_plazo", "UF"), r: rendEjemplo("e3", 72.4, 2_760_000, 0.1), serie: [2.7, 2.71, 2.72, 2.73, 2.74, 2.75, 2.755, 2.76] },
 ];
 
-const ENCABEZADO = "font-semibold tracking-[-0.035em] leading-[1.02] text-fg";
+// titulares en peso regular con la palabra clave destacada (dorado legible
+// sobre claro con --color-accent-ink; sobre navy el mismo token es dorado claro)
+const ENCABEZADO = "font-normal tracking-[-0.03em] leading-[1.05] text-fg";
+const CLAVE = "font-semibold text-accent-ink";
+
+const PILDORAS = ["Pesos, dólares y UF", "Sin conectar tu banco", "Gratis"];
 
 export default function LandingPage() {
   const serie = serieEjemplo();
@@ -98,51 +104,61 @@ export default function LandingPage() {
       <SiteNav />
 
       <main id="contenido">
-        {/* HERO: la frase es la composicion; la palabra "patrimonio" lleva al
-            lado un fragmento vivo del producto (su linea real, en ejemplo). */}
-        <section className="landing-marco flex min-h-[88svh] flex-col justify-center pt-16 pb-20" aria-labelledby="titulo-landing">
-          <h1 id="titulo-landing" className={`landing-titular ${ENCABEZADO}`}>
-            <span className="landing-linea">
-              <span>¿Cuánto ganaste</span>
-            </span>
-            <span className="landing-linea">
-              <span>
-                de verdad?
-                <span data-ui aria-hidden="true" className="landing-ventana">
-                  <svg viewBox="0 0 120 40" preserveAspectRatio="none">
-                    <path d="M0 33 L20 33 L20 26 L52 26 L52 17 L86 17 L86 11 L120 11" fill="none" stroke="rgba(211,218,230,.55)" strokeWidth="1.6" strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
-                    <path d="M0 31 L12 29 L20 24 L34 22 L46 20 L52 14 L66 12 L78 13 L86 8 L100 6 L120 3" fill="none" stroke="#e0bc78" strokeWidth="2.2" vectorEffect="non-scaling-stroke" />
-                  </svg>
+        {/* HERO: banda navy con el titular, pildoras de vidrio y la app real
+            (con datos de ejemplo) dentro de un celular */}
+        <section className="tema-navy landing-hero" aria-labelledby="titulo-landing">
+          <div className="landing-marco grid items-center gap-14 pt-36 pb-0 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:pt-44">
+            <div className="text-center lg:text-left">
+              <h1 id="titulo-landing" className={`landing-titular ${ENCABEZADO}`}>
+                <span className="landing-linea">
+                  <span>¿Cuánto ganaste</span>
                 </span>
-              </span>
-            </span>
-          </h1>
-          <div className="landing-sube mt-10 grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-            <p className="max-w-[46ch] text-[clamp(1.0625rem,1.6vw,1.25rem)] leading-relaxed text-fg-soft">
-              Sigue tus inversiones, comprende tu rentabilidad y visualiza cómo evoluciona tu dinero desde un solo lugar.
-              Un aporte nunca se cuenta como ganancia.
-            </p>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-              <Link href="/signup" className="boton-primario h-12 px-6 text-base no-underline">
-                Crear cuenta gratis
-              </Link>
-              <Link href="/login" className="text-base font-medium text-fg-soft underline decoration-white/25 underline-offset-[6px] hover:text-fg">
-                Ya tengo cuenta
-              </Link>
+                <span className="landing-linea">
+                  <span>
+                    <strong className={CLAVE}>de verdad</strong>?
+                  </span>
+                </span>
+              </h1>
+              <ul className="landing-sube mt-8 flex flex-wrap justify-center gap-2.5 lg:justify-start" aria-label="En resumen">
+                {PILDORAS.map((p) => (
+                  <li key={p} className="vidrio pildora-vidrio">
+                    {p}
+                  </li>
+                ))}
+              </ul>
+              <p className="landing-sube mx-auto mt-7 max-w-[46ch] text-[clamp(1.0625rem,1.6vw,1.25rem)] leading-relaxed text-fg-soft lg:mx-0">
+                Sigue tus inversiones de distintas plataformas, comprende tu rentabilidad y mira cómo evoluciona tu
+                dinero desde un solo lugar. Un aporte nunca se cuenta como ganancia.
+              </p>
+              <div className="landing-sube mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+                <Link href="/signup" className="boton-primario h-12 px-6 text-base no-underline">
+                  Crear cuenta gratis
+                </Link>
+                <Link href="/login" className="vidrio boton-vidrio h-12 px-6 text-base no-underline">
+                  Ya tengo cuenta
+                </Link>
+              </div>
+            </div>
+            <div className="relative mx-auto w-full max-w-[340px] lg:max-w-[360px]">
+              <TelefonoApp puntos={serie} className="flotar" />
+              <p className="mt-3 pb-10 text-center text-micro text-fg-muted">Datos de ejemplo</p>
             </div>
           </div>
         </section>
 
-        {/* LA PRUEBA: el producto en vivo, con datos de ejemplo */}
-        <Revelar as="section" className="landing-marco landing-seccion" >
-          <div data-revelar className="mb-8 flex flex-wrap items-end justify-between gap-4">
-            <h2 className={`max-w-[18ch] text-[clamp(2.25rem,5vw,4.25rem)] ${ENCABEZADO}`}>Tu patrimonio, día por día.</h2>
-            <p className="max-w-[38ch] text-base text-fg-muted">
-              Así se ve tu inicio. Recorre el gráfico con el dedo o el mouse: la cifra cambia a la de ese día.
-              <span className="ml-1 rounded-full bg-white/[0.06] px-2 py-0.5 text-small font-medium text-fg-soft">Datos de ejemplo</span>
+        {/* LA PRUEBA: el inicio real, interactivo, con datos de ejemplo */}
+        <Revelar as="section" className="landing-marco landing-seccion">
+          <div data-revelar className="mb-10 text-center">
+            <p className="text-small font-semibold text-accent-ink">Tu inicio</p>
+            <h2 className={`mx-auto mt-3 max-w-[20ch] text-[clamp(2.25rem,4.6vw,3.5rem)] ${ENCABEZADO}`}>
+              Tu patrimonio, <strong className={CLAVE}>día por día</strong>.
+            </h2>
+            <p className="mx-auto mt-4 max-w-[52ch] text-base text-fg-muted">
+              Recorre el gráfico con el dedo o el mouse: la cifra cambia a la de ese día y cada aporte queda marcado.
+              <span className="ml-1 whitespace-nowrap rounded-full bg-tint/[0.06] px-2 py-0.5 text-small font-medium text-fg-soft">Datos de ejemplo</span>
             </p>
           </div>
-          <div data-revelar data-ui className="landing-producto">
+          <div data-revelar data-ui>
             <PatrimonioHero
               puntos={serie}
               valorTotal={ultimo.totalClp}
@@ -156,50 +172,64 @@ export default function LandingPage() {
           </div>
         </Revelar>
 
-        {/* EL ARGUMENTO: un aporte no es ganancia, con el calculo vivo */}
-        <Revelar as="section" className="landing-marco landing-seccion grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
-          <div data-revelar>
-            <h2 className={`text-[clamp(2.25rem,5vw,4.25rem)] ${ENCABEZADO}`}>Un aporte no es ganancia.</h2>
-            <p className="mt-6 max-w-[40ch] text-lg leading-relaxed text-fg-soft">
-              Si depositas un millón y tu saldo sube un millón, no ganaste nada. Tu banco te muestra el saldo; Mi
-              portafolio te muestra lo que tu dinero produjo de verdad. Prueba con tus números.
-            </p>
-          </div>
-          <div data-revelar>
-            <CalculoVivo />
-          </div>
-        </Revelar>
+        {/* EL ARGUMENTO: banda navy con el calculo vivo */}
+        <section className="tema-navy landing-banda" aria-labelledby="titulo-aporte">
+          <Revelar className="landing-marco grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center">
+            <div data-revelar>
+              <p className="text-small font-semibold text-accent-ink">La diferencia</p>
+              <h2 id="titulo-aporte" className={`mt-3 text-[clamp(2.25rem,4.6vw,3.5rem)] ${ENCABEZADO}`}>
+                Un aporte <strong className={CLAVE}>no es ganancia</strong>.
+              </h2>
+              <p className="mt-6 max-w-[40ch] text-lg leading-relaxed text-fg-soft">
+                Si depositas un millón y tu saldo sube un millón, no ganaste nada. Tu banco te muestra el saldo; Mi
+                portafolio te muestra lo que tu dinero produjo de verdad. Prueba con tus números.
+              </p>
+            </div>
+            <div data-revelar className="tema-claro rounded-[24px] p-4 sm:p-6">
+              <CalculoVivo />
+            </div>
+          </Revelar>
+        </section>
 
-        {/* COMO FUNCIONA: las tres etapas como una sola barra */}
-        <Revelar as="section" className="landing-marco landing-seccion" >
-          <h2 data-revelar className={`max-w-[16ch] text-[clamp(2.25rem,5vw,4.25rem)] ${ENCABEZADO}`}>Sin conectar tu banco.</h2>
-          <div data-revelar className="landing-etapas mt-12">
+        {/* COMO FUNCIONA: tres pasos en tarjetas */}
+        <Revelar as="section" className="landing-marco landing-seccion">
+          <div data-revelar className="text-center">
+            <p className="text-small font-semibold text-accent-ink">Cómo funciona</p>
+            <h2 className={`mx-auto mt-3 max-w-[18ch] text-[clamp(2.25rem,4.6vw,3.5rem)] ${ENCABEZADO}`}>
+              Sin <strong className={CLAVE}>conectar tu banco</strong>.
+            </h2>
+          </div>
+          <ol data-revelar className="landing-etapas mt-12">
             {[
               { tiempo: "Un minuto", texto: "Agregas una cuenta con su valor de hoy. Ese monto queda como capital aportado." },
               { tiempo: "Segundos", texto: "Cuando quieras, anotas el valor que ves en tu banco o corredora y marcas si hubo un aporte o retiro." },
               { tiempo: "Al instante", texto: "Ves tu patrimonio en pesos, tu ganancia real y cómo se compara con la UF y el mercado." },
-            ].map((e) => (
-              <div key={e.tiempo} className="landing-etapa">
-                <p className="text-[clamp(1.25rem,2vw,1.875rem)] font-semibold tracking-[-0.02em] text-accent-hi">{e.tiempo}</p>
-                <p className="mt-auto max-w-[30ch] text-base leading-snug text-fg-soft">{e.texto}</p>
-              </div>
+            ].map((e, i) => (
+              <li key={e.tiempo} className="landing-etapa">
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-accent text-small font-semibold text-on-accent">{i + 1}</span>
+                <p className="text-[clamp(1.25rem,2vw,1.75rem)] font-normal tracking-[-0.02em]">{e.tiempo}</p>
+                <p className="mt-auto max-w-[30ch] text-base leading-snug opacity-90">{e.texto}</p>
+              </li>
             ))}
-          </div>
-          <p data-revelar className="mt-6 max-w-[60ch] text-base text-fg-muted">
+          </ol>
+          <p data-revelar className="mx-auto mt-8 max-w-[60ch] text-center text-base text-fg-muted">
             Nunca te pedimos claves bancarias. Tú escribes los valores; la tasa del dólar y de la UF se completa sola con
             el dato del Banco Central.
           </p>
         </Revelar>
 
-        {/* LO QUE VES: filas con fragmentos reales de la interfaz */}
+        {/* LO QUE VES: filas que alternan texto y fragmento real de la interfaz */}
         <section className="landing-marco landing-seccion" aria-labelledby="titulo-vista">
-          <h2 id="titulo-vista" className={`landing-eje max-w-[14ch] text-[clamp(2.25rem,5vw,4.25rem)] ${ENCABEZADO}`}>
-            Todo en un solo lugar.
-          </h2>
-          <div className="mt-16 flex flex-col gap-24">
+          <div className="text-center">
+            <p className="text-small font-semibold text-accent-ink">La app</p>
+            <h2 id="titulo-vista" className={`mx-auto mt-3 max-w-[16ch] text-[clamp(2.25rem,4.6vw,3.5rem)] ${ENCABEZADO}`}>
+              Todo en <strong className={CLAVE}>un solo lugar</strong>.
+            </h2>
+          </div>
+          <div className="mt-16 flex flex-col gap-6">
             <Revelar className="landing-fila">
-              <div data-revelar className="landing-eje">
-                <h3 className="text-[clamp(1.5rem,2.6vw,2.5rem)] font-semibold tracking-[-0.025em] text-fg">Tus cuentas, en pesos</h3>
+              <div data-revelar className="landing-texto">
+                <h3 className="text-[clamp(1.5rem,2.4vw,2.25rem)] font-normal tracking-[-0.025em] text-fg">Tus cuentas, en pesos</h3>
                 <p className="mt-3 max-w-[38ch] text-base leading-relaxed text-fg-soft">
                   Fondos, acciones, depósitos y cripto de distintas plataformas, cada una en su moneda y consolidada en
                   pesos con la tasa de cada registro.
@@ -207,7 +237,7 @@ export default function LandingPage() {
               </div>
               <div data-revelar data-ui className="panel landing-fragmento px-4 py-2">
                 <ul className="lista-filas">
-                  {CUENTAS_EJEMPLO.map(({ c, r, serie: s }) => (
+                  {CUENTAS_EJEMPLO.map(({ c, r, serie: s }, i) => (
                     <AccountRow
                       key={c.id}
                       cuenta={c}
@@ -218,26 +248,27 @@ export default function LandingPage() {
                       ultimaFechaFallback="2026-10-30"
                       ahoraMs={AHORA}
                       serie={s.map((v) => v * 1_000_000)}
+                      color={["var(--color-slate)", "var(--color-copper)", "var(--color-mauve)"][i]}
                     />
                   ))}
                 </ul>
               </div>
             </Revelar>
-            <Revelar className="landing-fila">
-              <div data-revelar className="landing-eje">
-                <h3 className="text-[clamp(1.5rem,2.6vw,2.5rem)] font-semibold tracking-[-0.025em] text-fg">Rentabilidad que se explica</h3>
+            <Revelar className="landing-fila landing-fila-navy tema-navy">
+              <div data-revelar className="landing-texto">
+                <h3 className="text-[clamp(1.5rem,2.4vw,2.25rem)] font-normal tracking-[-0.025em] text-fg">Rentabilidad que se explica</h3>
                 <p className="mt-3 max-w-[38ch] text-base leading-relaxed text-fg-soft">
                   Rendimiento sin aportes (TWR), retorno anualizado (XIRR) y peor caída, cada uno con su nombre y su
                   explicación. Ninguno se presenta como si fuera el otro.
                 </p>
               </div>
-              <div data-revelar data-ui className="landing-fragmento">
+              <div data-revelar data-ui className="tema-claro landing-fragmento rounded-[18px] p-1">
                 <MetricasSecundarias twr={6.2} xirr={7.4} drawdown={-3.1} />
               </div>
             </Revelar>
             <Revelar className="landing-fila">
-              <div data-revelar className="landing-eje">
-                <h3 className="text-[clamp(1.5rem,2.6vw,2.5rem)] font-semibold tracking-[-0.025em] text-fg">Dónde está tu dinero</h3>
+              <div data-revelar className="landing-texto">
+                <h3 className="text-[clamp(1.5rem,2.4vw,2.25rem)] font-normal tracking-[-0.025em] text-fg">Dónde está tu dinero</h3>
                 <p className="mt-3 max-w-[38ch] text-base leading-relaxed text-fg-soft">
                   Por plataforma, tipo de activo o categoría propia, con un aviso cuando una sola parte concentra más del
                   40 % de tu patrimonio.
@@ -254,15 +285,15 @@ export default function LandingPage() {
                 />
               </div>
             </Revelar>
-            <Revelar className="landing-fila">
-              <div data-revelar className="landing-eje">
-                <h3 className="text-[clamp(1.5rem,2.6vw,2.5rem)] font-semibold tracking-[-0.025em] text-fg">Metas con progreso real</h3>
+            <Revelar className="landing-fila landing-fila-navy tema-navy">
+              <div data-revelar className="landing-texto">
+                <h3 className="text-[clamp(1.5rem,2.4vw,2.25rem)] font-normal tracking-[-0.025em] text-fg">Metas con progreso real</h3>
                 <p className="mt-3 max-w-[38ch] text-base leading-relaxed text-fg-soft">
                   Asocia cuentas a una meta (el pie de un departamento, un fondo de emergencia) y ve cuánto te falta con su
                   valor actual.
                 </p>
               </div>
-              <div data-revelar data-ui className="panel landing-fragmento px-5 py-2">
+              <div data-revelar data-ui className="tema-claro landing-fragmento rounded-[18px] px-5 py-2">
                 <MetasList
                   compacta
                   metas={[
@@ -273,7 +304,7 @@ export default function LandingPage() {
               </div>
             </Revelar>
           </div>
-          <p className="landing-eje mt-12 text-small text-fg-muted">Los montos de estas pantallas son de ejemplo.</p>
+          <p className="mt-8 text-center text-small text-fg-muted">Los montos de estas pantallas son de ejemplo.</p>
         </section>
 
         {/* PREGUNTAS: todas abiertas, la pregunta grande y la respuesta al lado */}
@@ -294,23 +325,22 @@ export default function LandingPage() {
           </dl>
         </section>
 
-        {/* CIERRE: la pregunta en los dos bordes, la decision al centro */}
+        {/* CIERRE: tarjeta navy con degradado, titular y boton de vidrio */}
         <div className="landing-marco">
-          <section className="landing-cierre px-4" aria-labelledby="titulo-cierre">
+          <section className="tema-navy landing-cierre px-6" aria-labelledby="titulo-cierre">
             <h2 id="titulo-cierre" className={`landing-cierre-titular ${ENCABEZADO}`}>
-              Empieza a medirlo hoy.
+              Empieza a medirlo <strong className={CLAVE}>hoy</strong>.
             </h2>
-            <div className="flex flex-col items-center gap-4">
-              <Link href="/signup" className="boton-primario h-14 px-8 text-lg no-underline">
-                Crear cuenta gratis
-              </Link>
-              <p className="text-center text-base text-fg-muted">
-                Gratis y sin conectar tu banco. ¿Primero quieres probar?{" "}
-                <Link href="/calculadora" className="text-fg-soft underline decoration-white/25 underline-offset-4 hover:text-fg">
-                  Usa la calculadora sin cuenta
+            <div className="flex flex-col items-center gap-5">
+              <div className="flex flex-wrap justify-center gap-3">
+                <Link href="/signup" className="boton-primario h-14 px-8 text-lg no-underline">
+                  Crear cuenta gratis
                 </Link>
-                .
-              </p>
+                <Link href="/calculadora" className="vidrio boton-vidrio h-14 px-7 text-lg no-underline">
+                  Probar la calculadora
+                </Link>
+              </div>
+              <p className="text-center text-base text-fg-muted">Gratis y sin conectar tu banco. La calculadora no pide cuenta.</p>
             </div>
           </section>
         </div>

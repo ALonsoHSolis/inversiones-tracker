@@ -39,11 +39,11 @@ export function MenuCuenta({ email, children }: { email: string; children: React
         onClick={() => setAbierto((v) => !v)}
         aria-expanded={abierto}
         aria-controls={idMenu}
-        className="inline-flex items-center gap-2 h-10 pl-1.5 pr-3 rounded-full border border-white/[0.1] bg-white/[0.03] text-small font-medium text-fg-soft hover:border-white/[0.2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="inline-flex items-center gap-2 h-10 pl-1.5 pr-3 rounded-full border border-tint/[0.1] bg-tint/[0.03] text-small font-medium text-fg-soft hover:border-tint/[0.2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
       >
         <span
           aria-hidden="true"
-          className="grid place-items-center w-6 h-6 rounded-full bg-accent/20 text-accent text-micro font-semibold"
+          className="grid place-items-center w-6 h-6 rounded-full bg-accent/20 text-accent-ink text-micro font-semibold"
         >
           {inicial}
         </span>
@@ -58,13 +58,13 @@ export function MenuCuenta({ email, children }: { email: string; children: React
       {abierto && (
         <div
           id={idMenu}
-          className="absolute right-0 top-[calc(100%+8px)] z-30 w-[240px] card p-1.5 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.8)]"
+          className="absolute right-0 top-[calc(100%+8px)] z-30 w-[240px] card p-1.5 shadow-[0_24px_60px_-20px_rgba(21,34,56,0.16)]"
           onClick={(e) => {
             // cierra al elegir un enlace; los botones de accion manejan su propio estado
             if ((e.target as HTMLElement).closest("a")) setAbierto(false);
           }}
         >
-          <p className="px-3 pt-2 pb-2.5 text-micro text-fg-muted truncate border-b border-white/[0.07] mb-1.5">
+          <p className="px-3 pt-2 pb-2.5 text-micro text-fg-muted truncate border-b border-tint/[0.07] mb-1.5">
             {email}
           </p>
           <div className="flex flex-col">{children}</div>
@@ -77,4 +77,4 @@ export function MenuCuenta({ email, children }: { email: string; children: React
 // clase comun de cada fila del menu, para que enlaces, botones y el form de
 // cerrar sesion se vean identicos.
 export const ITEM_MENU =
-  "w-full text-left px-3 py-2 rounded-lg text-small text-fg-soft hover:bg-white/[0.06] hover:text-fg focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-50";
+  "w-full text-left px-3 py-2 rounded-lg text-small text-fg-soft hover:bg-tint/[0.06] hover:text-fg focus-visible:outline-2 focus-visible:outline-accent-ink disabled:opacity-50";

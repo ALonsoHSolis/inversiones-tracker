@@ -64,14 +64,14 @@ function TooltipPersonalizado({
   const punto = payload[0].payload;
 
   return (
-    <div className="min-w-[180px] rounded-xl bg-surface-raised px-3.5 py-3 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.85),0_0_0_1px_rgba(148,170,200,0.16)]">
+    <div className="min-w-[180px] rounded-xl bg-surface-raised px-3.5 py-3 shadow-[0_18px_40px_-12px_rgba(21,34,56,0.16),0_0_0_1px_rgba(21,34,56,0.16)]">
       <p className="text-micro text-fg-muted mb-1.5">{formatoFechaCorta(punto.fecha)}</p>
       <div className="flex flex-col gap-1">
         {grupos.map((g) => (
           <div key={g.nombre} className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-[2px] shrink-0" style={{ background: g.color }} />
             <span className="text-micro text-fg-muted truncate max-w-[90px]">{g.nombre}</span>
-            <span className="font-mono-tabular text-micro font-semibold text-white ml-auto">
+            <span className="font-mono-tabular text-micro font-semibold text-fg ml-auto">
               {formatoPesos(Number(punto[g.nombre]) || 0)}
             </span>
           </div>

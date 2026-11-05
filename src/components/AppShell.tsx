@@ -78,7 +78,7 @@ function guardarSidebar(colapsado: boolean) {
   window.dispatchEvent(new Event(EVENTO_SIDEBAR));
 }
 
-const FOCO = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+const FOCO = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink";
 
 interface AppShellProps {
   email: string;
@@ -101,14 +101,14 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
     <div className="min-h-dvh">
       <a
         href="#contenido"
-        className="no-print sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-small focus:font-semibold focus:text-ink"
+        className="no-print sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-small focus:font-semibold focus:text-on-accent"
       >
         Saltar al contenido
       </a>
       {activa === "resumen" && (
         <a
           href="#cuentas-titulo"
-          className="no-print sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-small focus:font-semibold focus:text-ink"
+          className="no-print sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-small focus:font-semibold focus:text-on-accent"
         >
           Ir a tus cuentas
         </a>
@@ -117,7 +117,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
       {/* sidebar de escritorio */}
       <aside
         aria-label="Navegación principal"
-        className={`no-print hidden lg:flex fixed inset-y-0 left-0 z-30 flex-col border-r border-[var(--color-edge)] bg-[#0a101b] transition-[width] duration-200 ease-out motion-reduce:transition-none ${
+        className={`no-print hidden lg:flex fixed inset-y-0 left-0 z-30 flex-col tema-navy border-r border-[var(--color-edge)] transition-[width] duration-200 ease-out motion-reduce:transition-none ${
           colapsado ? "w-[72px]" : "w-[248px]"
         }`}
       >
@@ -143,11 +143,11 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
                       colapsado ? "justify-center" : "gap-3 px-3"
                     } ${
                       esActiva
-                        ? "bg-white/[0.06] text-fg"
-                        : "text-fg-muted hover:bg-white/[0.04] hover:text-fg"
+                        ? "bg-tint/[0.08] text-fg"
+                        : "text-fg-muted hover:bg-tint/[0.04] hover:text-fg"
                     }`}
                   >
-                    <Icono size={18} strokeWidth={esActiva ? 2.1 : 1.8} aria-hidden="true" className={`shrink-0 ${esActiva ? "text-accent" : ""}`} />
+                    <Icono size={18} strokeWidth={esActiva ? 2.1 : 1.8} aria-hidden="true" className={`shrink-0 ${esActiva ? "text-accent-ink" : ""}`} />
                     {colapsado ? <span className="sr-only">{s.etiqueta}</span> : s.etiqueta}
                   </Link>
                 </li>
@@ -163,7 +163,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
             aria-pressed={colapsado}
             aria-label={colapsado ? "Expandir la barra lateral" : "Contraer la barra lateral"}
             title={colapsado ? "Expandir" : "Contraer"}
-            className={`flex items-center h-10 w-full rounded-xl text-small text-fg-muted transition-colors duration-150 hover:bg-white/[0.05] hover:text-fg ${FOCO} ${
+            className={`flex items-center h-10 w-full rounded-xl text-small text-fg-muted transition-colors duration-150 hover:bg-tint/[0.05] hover:text-fg ${FOCO} ${
               colapsado ? "justify-center" : "gap-3 px-3"
             }`}
           >
@@ -187,7 +187,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
               <Link
                 href={padre.href}
                 aria-label={`Volver a ${padre.etiqueta}`}
-                className={`inline-flex items-center justify-center w-10 h-10 -ml-2 rounded-full text-fg-soft hover:bg-white/[0.06] lg:hidden ${FOCO}`}
+                className={`inline-flex items-center justify-center w-10 h-10 -ml-2 rounded-full text-fg-soft hover:bg-tint/[0.06] lg:hidden ${FOCO}`}
               >
                 <ArrowLeft size={20} strokeWidth={1.8} aria-hidden="true" />
               </Link>
@@ -239,7 +239,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
         aria-label="Navegación principal"
         className="no-print lg:hidden fixed inset-x-0 bottom-0 z-30 px-3 pb-[calc(12px+env(safe-area-inset-bottom))] pointer-events-none"
       >
-        <ul className="pointer-events-auto mx-auto grid max-w-[480px] grid-cols-5 rounded-full border border-white/[0.1] bg-surface-raised/92 px-1.5 py-1.5 shadow-[0_18px_40px_-12px_rgba(0,0,0,0.75)] backdrop-blur-xl">
+        <ul className="tema-navy pointer-events-auto mx-auto grid max-w-[480px] grid-cols-5 rounded-full border border-tint/[0.1] px-1.5 py-1.5 shadow-[0_18px_40px_-12px_rgba(21,34,56,0.45)]">
           {secciones(SECCIONES_MOVIL).map((s) => {
             const Icono = ICONOS[s.id];
             const esActiva = s.id === activa;
@@ -254,7 +254,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
                 >
                   <span
                     className={`grid h-8 w-11 place-items-center rounded-full transition-colors duration-200 motion-reduce:transition-none ${
-                      esActiva ? "bg-accent text-ink" : ""
+                      esActiva ? "bg-accent text-on-accent" : ""
                     }`}
                   >
                     <Icono size={19} strokeWidth={esActiva ? 2.1 : 1.8} aria-hidden="true" />
@@ -276,7 +276,7 @@ export function AppShell({ email, acciones, children }: AppShellProps) {
             >
               <span
                 className={`grid h-8 w-11 place-items-center rounded-full transition-colors duration-200 motion-reduce:transition-none ${
-                  SECCIONES_MAS.includes(activa as SeccionId) ? "bg-accent text-ink" : ""
+                  SECCIONES_MAS.includes(activa as SeccionId) ? "bg-accent text-on-accent" : ""
                 }`}
               >
                 <Ellipsis size={19} strokeWidth={1.8} aria-hidden="true" />
@@ -339,7 +339,7 @@ function HojaMas({
             type="button"
             onClick={alCerrar}
             aria-label="Cerrar"
-            className={`grid h-10 w-10 shrink-0 place-items-center rounded-full text-fg-soft hover:bg-white/[0.06] ${FOCO}`}
+            className={`grid h-10 w-10 shrink-0 place-items-center rounded-full text-fg-soft hover:bg-tint/[0.06] ${FOCO}`}
           >
             <X size={20} aria-hidden="true" />
           </button>
@@ -355,7 +355,7 @@ function HojaMas({
                   href={s.href}
                   aria-current={esActiva ? "page" : undefined}
                   className={`flex h-12 items-center gap-3 rounded-xl px-3 text-small font-medium ${FOCO} ${
-                    esActiva ? "bg-accent/12 text-accent-hi" : "text-fg-soft hover:bg-white/[0.05]"
+                    esActiva ? "bg-accent/12 text-accent-ink" : "text-fg-soft hover:bg-tint/[0.05]"
                   }`}
                 >
                   <Icono size={18} strokeWidth={1.8} aria-hidden="true" />

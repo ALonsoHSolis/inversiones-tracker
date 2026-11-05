@@ -40,7 +40,7 @@ export default async function RegistrarPage({
             cuentaInicialId={cuentaInicialId}
           />
           <details className="group">
-            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-xl bg-white/[0.03] px-4 text-small font-semibold text-fg shadow-[inset_0_0_0_1px_var(--color-edge)] hover:bg-white/[0.05] [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 rounded-xl bg-tint/[0.03] px-4 text-small font-semibold text-fg shadow-[inset_0_0_0_1px_var(--color-edge)] hover:bg-tint/[0.05] [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink">
               Actualizar varias cuentas de una vez
               <ChevronDown size={16} aria-hidden="true" className="text-fg-muted transition-transform duration-200 group-open:rotate-180" />
             </summary>
@@ -54,7 +54,7 @@ export default async function RegistrarPage({
           </details>
           <p className="text-micro text-fg-muted">
             ¿Corregir un registro antiguo? Entra a una cuenta desde{" "}
-            <Link href="/cuentas" className="text-accent underline underline-offset-2">
+            <Link href="/cuentas" className="text-accent-ink underline underline-offset-2">
               Cuentas
             </Link>{" "}
             y abre su historial.

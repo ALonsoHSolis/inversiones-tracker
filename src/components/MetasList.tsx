@@ -61,8 +61,8 @@ export function MetasList({ metas, compacta = false }: MetasListProps) {
 
   if (metas.length === 0) {
     return (
-      <div className="rounded-2xl bg-white/[0.025] px-5 py-8 text-center shadow-[inset_0_0_0_1px_var(--color-edge)]">
-        <span aria-hidden="true" className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-accent/12 text-accent-hi">
+      <div className="rounded-2xl bg-tint/[0.025] px-5 py-8 text-center shadow-[inset_0_0_0_1px_var(--color-edge)]">
+        <span aria-hidden="true" className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-accent/12 text-accent-ink">
           <Target size={22} strokeWidth={1.8} />
         </span>
         <p className="mt-4 text-base font-semibold text-fg">Todavía no tienes metas</p>
@@ -115,7 +115,7 @@ export function MetasList({ metas, compacta = false }: MetasListProps) {
               aria-valuemax={100}
               aria-valuenow={Math.round(pctVisual)}
               aria-valuetext={`${Math.floor(pct)}% alcanzado${cumplida ? ", meta cumplida" : ""}`}
-              className="my-2.5 h-1.5 overflow-hidden rounded-full bg-white/[0.07]"
+              className="my-2.5 h-1.5 overflow-hidden rounded-full bg-tint/[0.07]"
             >
               <div
                 className="h-full rounded-full"
@@ -128,7 +128,7 @@ export function MetasList({ metas, compacta = false }: MetasListProps) {
                 {formatoPesos(meta.montoActualClp)}
               </span>
               <span className="inline-flex items-center gap-1 font-mono-tabular font-medium" style={{ color: cumplida ? "var(--color-fg)" : "var(--color-fg-muted)" }}>
-                {cumplida ? <><Check size={13} strokeWidth={2.4} aria-hidden="true" className="text-accent" />Cumplida</> : <><span className="money-value">{formatoPesos(faltante)}</span> por llegar</>}
+                {cumplida ? <><Check size={13} strokeWidth={2.4} aria-hidden="true" className="text-accent-ink" />Cumplida</> : <><span className="money-value">{formatoPesos(faltante)}</span> por llegar</>}
               </span>
             </div>
 
@@ -161,7 +161,7 @@ export function MetasList({ metas, compacta = false }: MetasListProps) {
                     onClick={() => setConfirmandoId(meta.id)}
                     disabled={eliminandoId === meta.id}
                     aria-label={`Eliminar la meta ${meta.nombre}`}
-                    className="min-h-10 rounded-lg px-2 text-small font-medium text-fg-muted hover:bg-white/[0.06] hover:text-fg disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-accent"
+                    className="min-h-10 rounded-lg px-2 text-small font-medium text-fg-muted hover:bg-tint/[0.06] hover:text-fg disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-accent-ink"
                   >
                     {eliminandoId === meta.id ? "Eliminando…" : "Eliminar"}
                   </button>

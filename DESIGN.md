@@ -1,40 +1,47 @@
 ---
 name: Mi portafolio
-northStar: Obsidian & Champagne — Premium Financial Intelligence
+northStar: Navy & Gold — Premium Financial Clarity
 colors:
-  obsidian: "#090d15"
-  surface: "#17202d"
-  surface-raised: "#1f2a3a"
-  ink: "#f5f7fb"
-  ink-soft: "#d3dae6"
-  ink-muted: "#a8b4c5"
-  ink-subtle: "#8794a8"
-  champagne: "#e0bc78"
-  champagne-light: "#ead3a2"
-  gain: "#42d7b0"
-  loss: "#f07b85"
-  warning: "#e8a857"
-  control-border: "#66758c"
-  category-slate: "#9fb0c8"
-  category-copper: "#d39a6a"
-  category-mauve: "#a99bc0"
-  category-steel: "#7f93ae"
-  category-slate-light: "#c3cfdf"
-  category-copper-light: "#e2b48e"
+  background: "#F8F9FA"
+  surface: "#FFFFFF"
+  surface-raised: "#F2F4F7"
+  navy: "#152238"
+  navy-soft: "#1C2C46"
+  ink: "#152238"
+  paragraph: "#333333"
+  ink-muted: "#566070"
+  ink-subtle: "#616A79"
+  gold: "#D4AF37"
+  gold-hover: "#E0C160"
+  gold-ink: "#7D6213"
+  gain: "#0A7553"
+  loss: "#B42F3A"
+  warning: "#995A00"
+  control-border: "#7C8594"
+  category-slate: "#5E7CA3"
+  category-copper: "#B07040"
+  category-mauve: "#7F68A6"
+  category-steel: "#3F5D82"
+  category-clay: "#9A6A55"
+  category-stone: "#7A7468"
+  navy-scope-ink: "#F5F7FB"
+  navy-scope-gold-ink: "#E2C25A"
+  navy-scope-gain: "#4FD8AE"
+  navy-scope-loss: "#F38C95"
 typography:
   display:
     fontFamily: "Geist, system-ui, sans-serif"
     fontSize: "clamp(2.75rem, 11vw, 4.5rem)"
-    fontWeight: 500
+    fontWeight: 400
     lineHeight: 0.95
     letterSpacing: "-0.045em"
     fontFeature: "tnum"
   headline:
     fontFamily: "Geist, system-ui, sans-serif"
-    fontSize: "clamp(2.25rem, 5vw, 4.25rem)"
-    fontWeight: 600
-    lineHeight: 1.02
-    letterSpacing: "-0.035em"
+    fontSize: "clamp(2.25rem, 4.6vw, 3.5rem)"
+    fontWeight: 400
+    lineHeight: 1.05
+    letterSpacing: "-0.03em"
   title:
     fontFamily: "Geist, system-ui, sans-serif"
     fontSize: "18px"
@@ -49,10 +56,10 @@ typography:
   label:
     fontFamily: "Geist, system-ui, sans-serif"
     fontSize: "13px"
+    fontWeight: 500
   micro:
     fontFamily: "Geist, system-ui, sans-serif"
     fontSize: "12px"
-    fontWeight: 500
     fontWeight: 500
     lineHeight: 1.35
   figure:
@@ -64,7 +71,7 @@ rounded:
   control: "10px"
   card: "16px"
   panel: "20px"
-  showcase: "28px"
+  hero: "28px"
   pill: "999px"
 spacing:
   xs: "4px"
@@ -77,36 +84,37 @@ spacing:
   section-landing: "clamp(80px, 11vw, 168px)"
 components:
   button-primary:
-    backgroundColor: "{colors.champagne}"
-    textColor: "{colors.obsidian}"
+    backgroundColor: "{colors.gold}"
+    textColor: "{colors.navy}"
     rounded: "{rounded.control}"
     height: "40px"
     padding: "0 16px"
   button-primary-hover:
-    backgroundColor: "{colors.champagne-light}"
+    backgroundColor: "{colors.gold-hover}"
   button-secondary:
-    backgroundColor: "rgba(255,255,255,0.04)"
-    textColor: "{colors.ink-soft}"
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.paragraph}"
     rounded: "{rounded.control}"
     height: "40px"
+  button-glass:
+    backgroundColor: "rgba(255,255,255,0.10)"
+    textColor: "#FFFFFF"
+    rounded: "{rounded.pill}"
+    backdropFilter: "blur(24px) saturate(1.2)"
   panel:
-    backgroundColor: "rgba(23,32,45,0.88)"
-    rounded: "{rounded.panel}"
-  card:
     backgroundColor: "{colors.surface}"
-    rounded: "{rounded.card}"
+    rounded: "{rounded.panel}"
+  hero-card:
+    backgroundColor: "{colors.navy}"
+    rounded: "{rounded.hero}"
   input:
-    backgroundColor: "rgba(255,255,255,0.04)"
+    backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
     rounded: "{rounded.control}"
     height: "44px"
-  segmented-active:
-    backgroundColor: "{colors.surface-raised}"
-    textColor: "{colors.ink}"
-    rounded: "7px"
   period-active:
-    backgroundColor: "rgba(224,188,120,0.14)"
-    textColor: "{colors.champagne-light}"
+    backgroundColor: "{colors.gold}"
+    textColor: "{colors.navy}"
     rounded: "{rounded.pill}"
 ---
 
@@ -114,107 +122,98 @@ components:
 
 ## Overview
 
-**Obsidian & Champagne — Premium Financial Intelligence.** Un producto oscuro, sereno y preciso para alguien que
-revisa su patrimonio en el celular y lo analiza en el computador. La cifra del patrimonio y su gráfico son la
-pantalla; todo lo demás (desempeño, cuentas, distribución, metas, actividad) es contexto que se abre cuando se
-necesita. La belleza sale de la precisión: cifras tabulares, jerarquía por tamaño y peso, superficies que se
-separan por un escalón de tono, y movimiento solo cuando comunica estado.
+**Navy & Gold — Premium Financial Clarity.** Tema claro, minimalista y sobrio: fondo blanco roto que da amplitud,
+azul marino para la estructura (menú lateral, barra móvil, navegación pública, pie y la tarjeta del patrimonio) y
+los títulos, gris carbón para leer y dorado como único acento. La estructura de pantallas toma principios de las
+apps de inversión (referencia revisada: Skipo, en `design-reference/skipo/`), sin copiar su identidad: tarjeta de
+balance oscura con selector gráfico/anillo, cuatro acciones rápidas en cuadrados, lista de cuentas con barra de
+color, titulares en peso regular con la palabra clave destacada, vidrio en elementos interactivos sobre navy y
+secciones que alternan claro y navy en la landing.
 
-Antirreferencias confirmadas: dashboards de tarjetas iguales apiladas, etiquetas en MAYÚSCULAS espaciadas,
-monoespaciado como disfraz técnico, gradientes violetas, vidrio esmerilado, sombras pesadas y anillos de
-progreso decorativos.
-
-Definido para modo oscuro. El modo claro está evaluado y pendiente (ver Do's and Don'ts).
+Antirreferencias: dashboards de tarjetas iguales apiladas, etiquetas en MAYÚSCULAS espaciadas, gradientes violetas,
+sombras pesadas, anillos de progreso decorativos (el anillo del inicio muestra datos reales), objetos 3D o
+ilustraciones genéricas y cualquier logo, texto o fuente de otra marca.
 
 ## Colors
 
 ### Primary
-- **Champán** (#e0bc78): marca, acción primaria (un solo botón primario por vista), línea del patrimonio,
-  estado seleccionado de navegación y períodos. Nunca como color de categoría ni de ganancia.
-- **Champán claro** (#ead3a2): texto sobre fondos champán suaves y hover del botón primario.
+- **Dorado** (#D4AF37): botones de acción (texto navy encima, 7,6:1), línea del patrimonio, marcadores de aporte,
+  período activo. **Nunca como texto sobre claro** (2,0:1): para texto, íconos y anillos de foco se usa
+  **dorado tinta** (#7D6213, 5,3:1). Dentro de bloques navy el dorado tinta pasa a #E2C25A (9,2:1).
+- **Azul marino** (#152238): títulos y cifras (15:1), estructura y fondos de los bloques `.tema-navy`.
 
 ### Neutral
-- **Obsidiana** (#090d15): fondo de la aplicación y de la landing.
-- **Superficie** (#17202d) y **superficie elevada** (#1f2a3a): paneles, formularios, menús, popovers.
-- **Tinta** (#f5f7fb, 18:1): cifras y títulos. **Tinta suave** (#d3dae6), **apagada** (#a8b4c5) y
-  **tenue** (#8794a8, ≥5,2:1 sobre superficie) para jerarquía de texto secundario.
-- **Borde de control** (#66758c, ≥3:1): solo inputs y selects (WCAG 1.4.11). Los paneles no llevan borde.
+- **Blanco roto** (#F8F9FA): fondo. **Blanco** (#FFFFFF): paneles y tarjetas. **Elevada** (#F2F4F7): campos y
+  zonas rellenas.
+- **Gris carbón** (#333333, 12:1): párrafos. **Apagado** (#566070, 6:1) y **tenue** (#616A79, ≥4,8:1) para
+  texto secundario.
+- **Borde de control** (#7C8594, ≥3:1): inputs y selects (WCAG 1.4.11).
 
 ### Semantic
-- **Ganancia** (#42d7b0) y **pérdida** (#f07b85): exclusivamente para resultados de inversión. Siempre con signo,
+- **Ganancia** (#0A7553) y **pérdida** (#B42F3A) sobre claro; #4FD8AE / #F38C95 dentro de navy. Siempre con signo,
   ícono o texto además del color.
-- **Advertencia** (#e8a857): datos atrasados (más de 14 días sin registro) y concentración (≥40 %).
-- **Categóricos** (pizarra, cobre, malva, acero, arcilla, piedra, y sus tonos claros #c3cfdf / #e2b48e para
-  texto de monogramas y segmentos de la landing): distribuciones y monogramas. Ninguno es verde ni rojo.
+- **Advertencia** (#995A00): datos atrasados (más de 14 días) y concentración (≥40 %).
+- **Categóricos** (pizarra, cobre, malva, navy, acero, arena, arcilla, piedra; versión clara dentro de navy):
+  distribuciones, anillo y barra de color de cada cuenta. Ninguno es verde, rojo ni dorado.
+
+### Temas por bloque
+- `.tema-navy` redefine los mismos tokens para un bloque azul marino; `.tema-claro` vuelve al tema claro dentro de
+  un bloque navy. Cualquier componente se ve bien en ambos sin variantes.
 
 ### Named Rules
-- **Un aporte nunca es verde.** Aportes y retiros se muestran en champán o neutro, nunca con "+" verde: no son
-  ganancia.
-- **Un acento por pantalla.** El champán aparece en la acción principal y en el dato vivo; no se reparte.
+- **Un aporte nunca es verde.** Aportes y retiros en dorado o neutro, nunca con "+" verde: no son ganancia.
+- **El dorado no es texto sobre claro.** Relleno, línea o marcador; para texto, `text-accent-ink`.
 
 ## Typography
 
-Una sola familia, **Geist**, para todo: títulos, interfaz y cifras. Las cifras usan números tabulares
-(`.font-mono-tabular`, que ya no es monoespaciado) para que las columnas se alineen.
+Una sola familia, **Geist**. Cifras con números tabulares (`.font-mono-tabular`).
 
-### Hierarchy
-- **Display** (500, clamp(2.75rem, 11vw, 4.5rem), 0.95): la cifra del patrimonio; "$" a la mitad del tamaño y
-  en tinta apagada. Escala menor sobre 11 caracteres para no desbordar a 320 px.
-- **Headline** (600, clamp(2.25rem, 5vw, 4.25rem), 1.02): titulares de la landing; dos líneas como máximo.
-- **Title** (600, 18 px, 1.25): títulos de sección de la app (`.titulo-seccion`), fuera de los paneles.
-- **Body** (400, 15 px, 1.55): texto de lectura; 16–20 px en la landing; medida de 40–75 caracteres.
-- **Label** (500, 13 px): etiquetas de métricas (`.etiqueta`). Piso absoluto: 12 px (`text-micro`) para
-  metadatos, leyendas y etiquetas de la barra móvil; nada que se lea va por debajo.
-
-### Named Rules
-- **Montos en notación chilena.** Pesos con punto de miles ($17.751.007); porcentajes con coma decimal (+2,9 %);
-  USD como US$ y UF con decimales. La entrada acepta "1.234,56" y "1.234.567".
-- **Sin mayúsculas espaciadas** en etiquetas de producto.
+- **Display** (400, clamp(2.75rem, 11vw, 4.5rem)): la cifra del patrimonio, en peso regular; "$" a la mitad y apagado.
+- **Headline** (400, clamp(2.25rem, 4.6vw, 3.5rem), 1.05): titulares de la landing en peso regular; la palabra
+  clave va en semibold y dorado tinta (`<strong>`), nunca todo el titular en negrita.
+- **Title** (600, 18 px), **Body** (400, 15 px), **Label** (500, 13 px), **Micro** (500, 12 px, piso absoluto).
+- **Montos en notación chilena:** $17.751.007, +2,9 %, US$ y UF con decimales. La entrada acepta "1.234,56".
 
 ## Layout
 
-- **App:** sidebar contraíble (248/72 px) en escritorio; barra inferior flotante en móvil con safe areas
-  (`env(safe-area-inset-bottom)`) y relleno inferior en `main` para que nunca tape contenido (verificado a 390,
-  320 y 844×390 px). Inicio en dos niveles: hero a todo el ancho; debajo, columna principal y riel de 360 px
-  desde 1280 px.
-- **Landing:** un solo par de márgenes (`.landing-marco`, clamp(16px, 4vw, 48px), máx. 1320 px) para navegación,
-  secciones y pie. Secciones separadas por clamp(80px, 11vw, 168px).
-- Escala de espaciado 4 · 8 · 12 · 16 · 24 · 32. Más espacio sobre un título que debajo.
+- **App:** menú lateral navy contraíble (248/72 px) en escritorio; barra inferior navy flotante en celular con safe
+  areas. Inicio: tarjeta navy del patrimonio (gráfico ↔ anillo por plataforma), acciones rápidas en celular y tablet,
+  y debajo columna principal + riel de 360 px desde 1280 px.
+- **Landing:** navegación navy flotante en un marco de vidrio; hero navy con degradado, titular, píldoras de vidrio,
+  CTA y la app en un celular (datos de ejemplo); secciones que alternan claro y navy; filas en tarjetas grandes que
+  invierten texto e interfaz; cierre navy y pie navy redondeado.
 
 ## Elevation & Depth
 
-Plano y por capas de tono: obsidiana → superficie → superficie elevada. Sin sombras en lo que está en reposo.
-Sombras solo en lo que flota: popovers de ayuda, menús, la barra móvil y el tooltip. Un único brillo champán muy
-tenue detrás del hero del patrimonio, enmascarado para que no tenga cantos.
+Capas por tono: blanco roto → blanco con borde casi invisible → navy. Sombras suaves y azuladas solo en lo que
+flota (popovers, menús, barra móvil, celular). Un brillo dorado muy tenue en la tarjeta del patrimonio y en el hero.
 
 ## Shapes
 
-Radios: 10 px controles, 16 px tarjetas, 20 px paneles, 28 px vitrina de la landing, píldora para períodos y
-chips. Monogramas circulares de institución. Gráfico: línea de patrimonio con rectas entre registros reales;
-capital aportado en escalones punteados; puntos sobre los escalones para aportes y retiros.
+10 px controles, 16 px tarjetas, 20 px paneles, 24–28 px tarjeta del patrimonio y filas de la landing, 46 px el
+celular, píldora para períodos y botones de vidrio. Monogramas circulares.
 
 ## Components
 
-- **Botones:** `.boton-primario` (champán, 40 px) y `.boton-secundario` (tono + borde suave). `:active` escala a
-  0,98 en 120 ms.
-- **Control segmentado** (`.segmentado`) con `aria-pressed`/`aria-selected`; **períodos** (`.periodos`) como texto
-  con píldora champán en el activo.
-- **Ayuda** (`Ayuda.tsx`): popover nativo, cierra con Escape o tocando fuera, entra en 160 ms.
-- **Fila de cuenta** (`AccountRow`): monograma, nombre completo, institución · tipo · antigüedad, mini-gráfico
-  neutro del valor, valor en CLP y rendimiento real en su moneda; detalle y acciones en un desplegable.
-- **Patrimonio** (`PatrimonioHero`): cifra + gráfico SVG recorrible con mouse, dedo (`touch-action: pan-y`) y
-  flechas (`role="slider"`, `aria-valuetext` con fecha, patrimonio, ganancia y aporte del día).
-- **Paneles** (`.panel`) sin borde; listas con divisores (`.lista-filas`), nunca tarjetas dentro de tarjetas.
+- **Botones:** `.boton-primario` (dorado, texto navy), `.boton-secundario` (blanco con borde), `.boton-vidrio`
+  (solo sobre navy). `:active` escala a 0,98.
+- **Patrimonio** (`PatrimonioHero`): tarjeta navy con la cifra, ganancia real, selector gráfico/anillo y gráfico
+  recorrible (mouse, dedo, flechas).
+- **Acciones rápidas:** cuatro cuadrados redondeados con ícono y etiqueta; el primero dorado.
+- **Fila de cuenta** (`AccountRow`): barra del color de su plataforma (el mismo del anillo), monograma, nombre,
+  mini-gráfico neutro, valor en CLP y rendimiento real en su moneda.
+- **Celular de la portada** (`TelefonoApp`): maqueta estática del inicio con datos de ejemplo, rotulada.
+
+## Motion
+
+150–260 ms ease-out en la interfaz; en la landing, entradas de 700 ms (fundido y subida de 40 px) y una flotación
+lenta del celular (6 s). Todo se anula con `prefers-reduced-motion`.
 
 ## Do's and Don'ts
 
-- **Do:** mostrar siempre por separado patrimonio, capital aportado, ganancia real y cambio vs. registro
-  anterior ("incluye aportes").
-- **Do:** rotular como "Datos de ejemplo" toda cifra que no sea del usuario (solo en la landing).
-- **Do:** movimiento de 150–260 ms con ease-out fuerte (cubic-bezier(0.23, 1, 0.32, 1)), solo transform y
-  opacity, y anulado con `prefers-reduced-motion`.
-- **Don't:** suavizar curvas, truncar el eje para dramatizar ni ocultar pérdidas.
-- **Don't:** inventar testimonios, cifras de usuarios, integraciones bancarias ni certificaciones.
-- **Pendiente (evaluado):** modo claro. Requiere un segundo juego de tokens con contraste propio (el champán
-  #e0bc78 no llega a 3:1 sobre blanco; necesitaría un tono más oscuro, ~#8a6a2c, para texto) y revisar gráficos
-  y correos. No se implementó en esta iteración.
+- **Do:** mostrar siempre por separado patrimonio, capital aportado, ganancia real y cambio vs. registro anterior.
+- **Do:** rotular "Datos de ejemplo" toda cifra que no sea del usuario.
+- **Don't:** dorado como texto sobre fondo claro; suavizar curvas; truncar el eje; ocultar pérdidas.
+- **Don't:** inventar testimonios, cifras de usuarios, integraciones bancarias ni certificaciones; copiar logos,
+  textos, fuentes o ilustraciones de Skipo u otra marca.
+- **Modo oscuro completo:** no existe como opción del usuario; el navy se usa por bloques.

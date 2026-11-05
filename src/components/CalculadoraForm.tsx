@@ -8,7 +8,7 @@ import { formatoPesos, formatoPesosSigned, formatoPct } from "@/lib/formato";
 import type { TipoMovimiento } from "@/types/database";
 
 const inputClass =
-  "h-11 px-3 rounded-[10px] border border-control text-right text-[14px] font-mono-tabular bg-white/[0.04] text-fg focus:outline-none focus:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
+  "h-11 px-3 rounded-[10px] border border-control text-right text-[14px] font-mono-tabular bg-tint/[0.04] text-fg focus:outline-none focus:border-accent-ink focus-visible:ring-2 focus-visible:ring-[var(--accent)]/30";
 
 export function CalculadoraForm() {
   const [valorInicial, setValorInicial] = useState("");
@@ -41,12 +41,12 @@ export function CalculadoraForm() {
       <div className="flex flex-col gap-1 mt-3">
         <span className="text-micro font-semibold text-fg-muted">Aportes / retiros</span>
         <div className="flex flex-wrap gap-1.5">
-          <div className="flex rounded-[10px] border border-white/[0.14] overflow-hidden shrink-0">
+          <div className="flex rounded-[10px] border border-tint/[0.14] overflow-hidden shrink-0">
             <button
               type="button"
               onClick={() => setTipoMovimiento("aporte")}
               className={`h-11 px-3 text-micro font-semibold ${
-                tipoMovimiento === "aporte" ? "bg-[var(--accent)] text-ink" : "bg-transparent text-fg-muted"
+                tipoMovimiento === "aporte" ? "bg-[var(--accent)] text-on-accent" : "bg-transparent text-fg-muted"
               }`}
             >
               Aporté
@@ -54,8 +54,8 @@ export function CalculadoraForm() {
             <button
               type="button"
               onClick={() => setTipoMovimiento("retiro")}
-              className={`h-11 px-3 text-micro font-semibold border-l border-white/[0.14] ${
-                tipoMovimiento === "retiro" ? "bg-[var(--accent)] text-ink" : "bg-transparent text-fg-muted"
+              className={`h-11 px-3 text-micro font-semibold border-l border-tint/[0.14] ${
+                tipoMovimiento === "retiro" ? "bg-[var(--accent)] text-on-accent" : "bg-transparent text-fg-muted"
               }`}
             >
               Retiré
@@ -70,7 +70,7 @@ export function CalculadoraForm() {
         </div>
       </div>
 
-      <div className="h-px bg-white/[0.07] my-5" />
+      <div className="h-px bg-tint/[0.07] my-5" />
 
       {!hayDatos ? (
         <p className="text-small text-fg-muted text-center py-2">
@@ -120,11 +120,11 @@ export function CalculadoraForm() {
         </>
       )}
 
-      <div className="mt-6 pt-5 border-t border-white/[0.07] flex items-center justify-between gap-4 flex-wrap">
+      <div className="mt-6 pt-5 border-t border-tint/[0.07] flex items-center justify-between gap-4 flex-wrap">
         <p className="text-small text-fg-muted">Haz esto automático con todas tus cuentas.</p>
         <Link
           href="/signup"
-          className="inline-flex items-center h-10 px-5 rounded-[9px] bg-[var(--accent)] text-ink text-small font-semibold no-underline whitespace-nowrap"
+          className="inline-flex items-center h-10 px-5 rounded-[9px] bg-[var(--accent)] text-on-accent text-small font-semibold no-underline whitespace-nowrap"
         >
           Crear cuenta gratis →
         </Link>

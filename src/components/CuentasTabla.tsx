@@ -19,9 +19,9 @@ import {
   type Filtros,
 } from "@/lib/cuentas-tabla";
 
-const FOCO = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+const FOCO = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink";
 const CAMPO =
-  "h-10 rounded-[10px] border border-control bg-surface-raised px-3 text-small text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+  "h-10 rounded-[10px] border border-control bg-surface-raised px-3 text-small text-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink";
 
 const OPCIONES_ORDEN: { clave: ClaveOrden; etiqueta: string }[] = [
   { clave: "valor", etiqueta: "Valor" },
@@ -56,7 +56,7 @@ function Rendimiento({ fila }: { fila: FilaCuenta }) {
 function Antiguo({ fila }: { fila: FilaCuenta }) {
   if (!fila.datoAntiguo || fila.diasSinActualizar == null) return null;
   return (
-    <span className="rounded-md bg-white/[0.08] px-1.5 py-px text-micro font-medium text-fg-soft">
+    <span className="rounded-md bg-tint/[0.08] px-1.5 py-px text-micro font-medium text-fg-soft">
       hace {Math.floor(fila.diasSinActualizar)} días
     </span>
   );
@@ -70,7 +70,7 @@ function ChipMovimiento({ fila }: { fila: FilaCuenta }) {
   return (
     <span
       title="Hubo un movimiento de capital en el último período; no se cuenta como rendimiento."
-      className="rounded-md bg-accent/12 px-1.5 py-px text-micro font-semibold text-accent-hi"
+      className="rounded-md bg-accent/12 px-1.5 py-px text-micro font-semibold text-accent-ink"
     >
       {esAporte ? "Aporte" : "Retiro"}
     </span>
@@ -78,12 +78,12 @@ function ChipMovimiento({ fila }: { fila: FilaCuenta }) {
 }
 
 function Acciones({ fila }: { fila: FilaCuenta }) {
-  const icono = `grid h-9 w-9 place-items-center rounded-lg text-fg-muted no-underline hover:bg-white/[0.06] hover:text-fg ${FOCO}`;
+  const icono = `grid h-9 w-9 place-items-center rounded-lg text-fg-muted no-underline hover:bg-tint/[0.06] hover:text-fg ${FOCO}`;
   return (
     <div className="flex items-center justify-end gap-0.5">
       <Link
         href={`/registrar?cuenta=${fila.id}`}
-        className={`mr-1 rounded-lg px-2.5 py-2 text-small font-semibold text-accent no-underline hover:bg-white/[0.06] hover:text-accent-hi ${FOCO}`}
+        className={`mr-1 rounded-lg px-2.5 py-2 text-small font-semibold text-accent-ink no-underline hover:bg-tint/[0.06] hover:text-accent-ink ${FOCO}`}
       >
         Registrar<span className="sr-only"> valor de {fila.nombre}</span>
       </Link>
@@ -136,13 +136,13 @@ function CabeceraOrdenable({
 
 function FilaEscritorio({ fila }: { fila: FilaCuenta }) {
   return (
-    <tr className="border-t border-[var(--color-edge)] transition-colors duration-150 hover:bg-white/[0.02]">
+    <tr className="border-t border-[var(--color-edge)] transition-colors duration-150 hover:bg-tint/[0.02]">
       <td className="px-3 py-3">
         <div className="flex items-center gap-3">
         <Monograma institucion={fila.plataforma} tamano={34} />
         <div className="min-w-0">
         <p className="flex flex-wrap items-center gap-2 text-small font-semibold text-fg">
-          <Link href={`/cuentas/${fila.id}/historial`} className={`rounded text-fg no-underline hover:text-accent-hi ${FOCO}`}>
+          <Link href={`/cuentas/${fila.id}/historial`} className={`rounded text-fg no-underline hover:text-accent-ink ${FOCO}`}>
             {fila.nombre}
           </Link>
           <ChipMovimiento fila={fila} />
@@ -216,7 +216,7 @@ function FilaMovil({ fila }: { fila: FilaCuenta }) {
       <Link
         href={`/cuentas/${fila.id}/editar`}
         aria-label={`Editar ${fila.nombre}`}
-        className={`grid w-11 shrink-0 place-items-center self-center rounded-lg text-fg-muted hover:bg-white/[0.06] hover:text-fg ${FOCO}`}
+        className={`grid w-11 shrink-0 place-items-center self-center rounded-lg text-fg-muted hover:bg-tint/[0.06] hover:text-fg ${FOCO}`}
         style={{ minHeight: 44 }}
       >
         <Pencil size={16} aria-hidden="true" />
@@ -357,7 +357,7 @@ export function CuentasTabla({ filas }: { filas: FilaCuenta[] }) {
               <button
                 type="button"
                 onClick={() => setFiltros(FILTROS_VACIOS)}
-                className={`inline-flex min-h-10 items-center gap-1 rounded-lg px-2 text-small font-medium text-accent hover:text-accent-hi ${FOCO}`}
+                className={`inline-flex min-h-10 items-center gap-1 rounded-lg px-2 text-small font-medium text-accent-ink hover:text-accent-ink ${FOCO}`}
               >
                 <X size={14} aria-hidden="true" />
                 Limpiar filtros
@@ -374,7 +374,7 @@ export function CuentasTabla({ filas }: { filas: FilaCuenta[] }) {
           <button
             type="button"
             onClick={() => setFiltros(FILTROS_VACIOS)}
-            className={`mt-4 h-10 rounded-full border border-control px-4 text-small font-semibold text-fg hover:bg-white/[0.05] ${FOCO}`}
+            className={`mt-4 h-10 rounded-full border border-control px-4 text-small font-semibold text-fg hover:bg-tint/[0.05] ${FOCO}`}
           >
             Limpiar filtros
           </button>
@@ -404,7 +404,7 @@ export function CuentasTabla({ filas }: { filas: FilaCuenta[] }) {
               {agrupar ? (
                 grupos.map((g) => (
                   <tbody key={g.clave}>
-                    <tr className="border-t border-[var(--line)] bg-white/[0.025]">
+                    <tr className="border-t border-[var(--line)] bg-tint/[0.025]">
                       <th scope="rowgroup" colSpan={1} className="px-3 py-2 text-left text-small font-semibold text-fg">
                         {g.plataforma}
                         <span className="ml-2 text-micro font-medium text-fg-muted">

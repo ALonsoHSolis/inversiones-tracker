@@ -27,7 +27,7 @@ interface CargaRapidaProps {
 }
 
 const CAMPO =
-  "h-11 px-3 rounded-[10px] border bg-surface-raised text-fg text-right text-small font-mono-tabular focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
+  "h-11 px-3 rounded-[10px] border bg-surface-raised text-fg text-right text-small font-mono-tabular focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink";
 const borde = (invalido: boolean) => (invalido ? "border-[var(--neg)]" : "border-control");
 
 // version de una sola cuenta de SnapshotForm: para cuando actualizar TODAS
@@ -323,7 +323,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
       <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-3 mt-4">
         <div>
           <span className="text-micro font-semibold text-fg-muted">Fecha</span>
-          <p className="mt-1 h-11 px-3 rounded-[10px] bg-white/[0.03] flex items-center text-small text-fg-muted font-mono-tabular">
+          <p className="mt-1 h-11 px-3 rounded-[10px] bg-tint/[0.03] flex items-center text-small text-fg-muted font-mono-tabular">
             Hoy · {formatoFecha(fechaHoyChile())}
           </p>
         </div>
@@ -419,12 +419,12 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
         <button
           type="button"
           onClick={() => cambiarMovimiento({ incluyeMovimiento: true })}
-          className="mt-3 min-h-10 text-small font-semibold text-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded"
+          className="mt-3 min-h-10 text-small font-semibold text-accent-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink rounded"
         >
           + Añadir aporte o retiro
         </button>
       ) : (
-        <fieldset className="mt-3 rounded-[10px] bg-white/[0.03] p-3 flex flex-col gap-2">
+        <fieldset className="mt-3 rounded-[10px] bg-tint/[0.03] p-3 flex flex-col gap-2">
           <legend className="sr-only">Aporte o retiro</legend>
           <div className="flex items-center justify-between gap-2">
             <span className="text-micro font-medium text-fg-muted">Esto incluye un aporte o retiro</span>
@@ -437,7 +437,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
             </button>
           </div>
           {tieneMovimientoOriginal && (
-            <span className="self-start text-micro font-medium text-fg-muted bg-white/[0.04] border border-white/[0.12] rounded px-1.5 py-px">
+            <span className="self-start text-micro font-medium text-fg-muted bg-tint/[0.04] border border-tint/[0.12] rounded px-1.5 py-px">
               ya registrado hoy
             </span>
           )}
@@ -446,7 +446,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
               aria-label="Tipo de movimiento"
               value={movimientoTipo}
               onChange={(e) => cambiarMovimiento({ movimientoTipo: e.target.value as TipoMovimiento })}
-              className="h-11 px-2 rounded-lg border border-control text-small bg-surface-raised text-fg shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="h-11 px-2 rounded-lg border border-control text-small bg-surface-raised text-fg shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
             >
               <option value="aporte">Aporte</option>
               <option value="retiro">Retiro</option>
@@ -485,7 +485,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
             <button
               type="button"
               onClick={() => setAdvertencia(null)}
-              className="h-11 flex-1 min-w-[140px] rounded-[10px] border border-control text-small font-semibold text-fg hover:bg-white/[0.05] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="h-11 flex-1 min-w-[140px] rounded-[10px] border border-control text-small font-semibold text-fg hover:bg-tint/[0.05] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
             >
               Revisar el valor
             </button>
@@ -493,7 +493,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
               type="button"
               onClick={() => guardar(true)}
               disabled={guardando}
-              className="h-11 flex-1 min-w-[140px] rounded-[10px] bg-[var(--accent)] text-small font-semibold text-ink disabled:opacity-50 hover:brightness-[1.08] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              className="h-11 flex-1 min-w-[140px] rounded-[10px] bg-[var(--accent)] text-small font-semibold text-on-accent disabled:opacity-50 hover:brightness-[1.08] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
             >
               {guardando ? "Guardando…" : "Guardar igual"}
             </button>
@@ -504,7 +504,7 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
           type="button"
           onClick={() => guardar()}
           disabled={guardando || cargandoTasa}
-          className="w-full h-12 mt-4 rounded-[11px] bg-[var(--accent)] text-ink text-small font-semibold transition-[transform,filter] duration-150 active:scale-[0.99] disabled:opacity-50 hover:brightness-[1.08] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className="w-full h-12 mt-4 rounded-[11px] bg-[var(--accent)] text-on-accent text-small font-semibold transition-[transform,filter] duration-150 active:scale-[0.99] disabled:opacity-50 hover:brightness-[1.08] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ink"
         >
           {guardando ? "Guardando…" : cargandoTasa ? "Buscando la tasa…" : "Guardar registro"}
         </button>
@@ -512,13 +512,13 @@ function FormularioCargaRapida({ cuenta, movimientoSemilla, valorAnterior, ultim
 
       <div aria-live="polite">
         {resultado === "ok" && (
-          <div className="animate-fade-up mt-4 rounded-2xl border border-dashed border-white/[0.18] bg-white/[0.03] px-4 py-4">
+          <div className="animate-fade-up mt-4 rounded-2xl border border-dashed border-tint/[0.18] bg-tint/[0.03] px-4 py-4">
             <p className="flex items-center gap-2 text-small font-semibold text-fg">
-              <CheckCircle2 size={18} aria-hidden="true" className="text-accent" />
+              <CheckCircle2 size={18} aria-hidden="true" className="text-accent-ink" />
               Registro guardado
             </p>
             {comprobante && (
-              <dl className="mt-3 flex flex-col gap-2 border-t border-dashed border-white/[0.14] pt-3 text-small">
+              <dl className="mt-3 flex flex-col gap-2 border-t border-dashed border-tint/[0.14] pt-3 text-small">
                 <div className="flex items-baseline justify-between gap-3">
                   <dt className="text-fg-muted">Cuenta</dt>
                   <dd className="min-w-0 truncate text-right font-medium text-fg">{cuenta.nombre}</dd>

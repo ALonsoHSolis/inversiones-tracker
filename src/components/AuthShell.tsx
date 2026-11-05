@@ -11,24 +11,24 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen md:grid md:grid-cols-[46%_54%]">
       <div
-        className="hidden md:flex flex-col justify-between overflow-hidden relative px-11 py-10 border-r border-white/[0.06]"
-        style={{ background: "linear-gradient(160deg, var(--color-surface-raised) 0%, var(--color-ink) 70%)" }}
+        className="tema-navy hidden md:flex flex-col justify-between overflow-hidden relative px-11 py-10"
+        style={{ background: "linear-gradient(160deg, #1c2c46 0%, #152238 70%)" }}
       >
         <div
           className="absolute -top-[120px] -right-[100px] w-[420px] h-[420px] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(224,188,120,.22), transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, rgba(212,175,55,.22), transparent 70%)" }}
         />
         <Logo href="/" light />
 
         <div className="relative max-w-[380px]">
           <h2 className="text-white text-[30px] leading-[1.18] font-semibold tracking-[-0.02em]">
             Un aporte no es ganancia. Tu portafolio debería saber{" "}
-            <span className="text-[var(--accent)]">la diferencia</span>.
+            <span className="text-accent-ink">la diferencia</span>.
           </h2>
           <div className="flex flex-col gap-3 mt-[26px]">
             {FEATURES.map((texto) => (
               <span key={texto} className="inline-flex items-center gap-2.5 text-small text-fg-soft">
-                <span className="w-[18px] h-[18px] rounded-md bg-[rgba(224,188,120,0.18)] inline-flex items-center justify-center text-micro text-accent-hi shrink-0">
+                <span className="w-[18px] h-[18px] rounded-md bg-[rgba(212,175,55,0.18)] inline-flex items-center justify-center text-micro text-accent-ink shrink-0">
                   ✓
                 </span>
                 {texto}
@@ -37,9 +37,9 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <div className="relative bg-white/[0.05] border border-white/[0.1] rounded-2xl px-[18px] py-4">
+        <div className="relative bg-tint/[0.05] border border-tint/[0.1] rounded-2xl px-[18px] py-4">
           <div className="flex items-center justify-between">
-            <span className="text-micro uppercase tracking-[0.09em] text-white/65 font-semibold">
+            <span className="text-micro uppercase tracking-[0.09em] text-tint/65 font-semibold">
               Valor total · ejemplo ilustrativo
             </span>
             <span className="font-mono-tabular text-micro font-semibold text-[var(--pos)]">▲ +10,0%</span>
@@ -75,7 +75,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <div
           aria-hidden="true"
           className="md:hidden pointer-events-none absolute -top-[180px] left-1/2 h-[360px] w-[520px] -translate-x-1/2 rounded-full"
-          style={{ background: "radial-gradient(closest-side, rgba(224,188,120,.20), transparent)" }}
+          style={{ background: "radial-gradient(closest-side, rgba(212,175,55,.20), transparent)" }}
         />
         <div className="md:hidden relative flex flex-col items-center gap-3 pt-4 pb-4">
           <LogoMark size={44} />

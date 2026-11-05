@@ -40,7 +40,7 @@ export function Ayuda({ children, etiqueta = "Qué significa esto" }: AyudaProps
         type="button"
         popoverTarget={id}
         aria-label={etiqueta}
-        className="no-print inline-grid h-6 w-6 shrink-0 place-items-center rounded-full text-fg-subtle transition-colors duration-150 hover:bg-white/[0.06] hover:text-fg-soft focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+        className="no-print inline-grid h-6 w-6 shrink-0 place-items-center rounded-full text-fg-subtle transition-colors duration-150 hover:bg-tint/[0.06] hover:text-fg-soft focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent-ink"
       >
         <CircleHelp size={15} strokeWidth={1.8} aria-hidden="true" />
       </button>
@@ -52,7 +52,7 @@ export function Ayuda({ children, etiqueta = "Qué significa esto" }: AyudaProps
         onToggle={(e) => {
           if ((e as unknown as ToggleEvent).newState === "open") ubicar();
         }}
-        className="ayuda-panel m-0 rounded-xl bg-surface-raised p-3.5 text-small leading-relaxed text-fg-soft shadow-[0_18px_40px_-12px_rgba(0,0,0,0.8),0_0_0_1px_rgba(148,170,200,0.16)]"
+        className="ayuda-panel m-0 rounded-xl bg-surface-raised p-3.5 text-small leading-relaxed text-fg-soft shadow-[0_18px_40px_-12px_rgba(21,34,56,0.16),0_0_0_1px_rgba(21,34,56,0.16)]"
       >
         {children}
       </div>

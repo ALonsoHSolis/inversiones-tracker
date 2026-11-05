@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PatrimonioHero } from "@/components/PatrimonioHero";
 import { formatoFecha, formatoPct, formatoPesos, formatoPesosSigned } from "@/lib/formato";
 import { DistribucionDetalle } from "@/components/DistribucionCard";
+import { calcularParticipaciones } from "@/lib/distribucion";
 import { PestanasDistribucion, type PanelDistribucion } from "@/components/PestanasDistribucion";
 import { ArrowRight, ChevronDown, Plus } from "lucide-react";
 import { MarketBenchmark } from "@/components/MarketBenchmark";
@@ -144,6 +145,10 @@ export default async function DashboardPage() {
   const plataformas = agruparCapital(cuentasActivas, capitalPorCuentaMap, porPlataforma);
   const tipos = agruparCapital(cuentasActivas, capitalPorCuentaMap, porTipo(etiquetaPorTipo));
   const categorias = agruparCapital(cuentasActivas, capitalPorCuentaMap, porCategoria);
+  // mismo reparto (y mismos colores) que la pestaña "Plataforma": alimenta el
+  // anillo del hero y la barra de color de cada cuenta.
+  const participacionPlataformas = calcularParticipaciones(plataformas);
+  const colorPorPlataforma = new Map(participacionPlataformas.map((p) => [p.nombre.trim().toLowerCase(), p.color]));
 
   const hoyMs = new Date(hoy).getTime();
 
@@ -275,6 +280,7 @@ export default async function DashboardPage() {
         valorActualClp={valorActualClp}
         sinCuentas={!hayCuentas}
         pie={pieHero}
+        distribucion={participacionPlataformas}
       />
 
       <div className="lg:hidden">
@@ -291,7 +297,7 @@ export default async function DashboardPage() {
                 </h2>
                 <Link
                   href="/analisis"
-                  className="inline-flex min-h-11 items-center gap-1 whitespace-nowrap text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent rounded"
+                  className="inline-flex min-h-11 items-center gap-1 whitespace-nowrap text-small font-semibold text-accent-ink no-underline hover:text-accent-ink focus-visible:outline-2 focus-visible:outline-accent-ink rounded"
                 >
                   Ver análisis
                   <ArrowRight size={14} aria-hidden="true" />
@@ -327,14 +333,14 @@ export default async function DashboardPage() {
                 {hayCuentas && (
                   <Link
                     href="/cuentas"
-                    className="inline-flex min-h-11 items-center rounded-lg px-2 text-small font-semibold text-fg-soft no-underline hover:text-fg focus-visible:outline-2 focus-visible:outline-accent"
+                    className="inline-flex min-h-11 items-center rounded-lg px-2 text-small font-semibold text-fg-soft no-underline hover:text-fg focus-visible:outline-2 focus-visible:outline-accent-ink"
                   >
                     Ver tabla
                   </Link>
                 )}
                 <Link
                   href="/cuentas/nueva"
-                  className="inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent"
+                  className="inline-flex min-h-11 items-center gap-1 rounded-lg px-2 text-small font-semibold text-accent-ink no-underline hover:text-accent-ink focus-visible:outline-2 focus-visible:outline-accent-ink"
                 >
                   <Plus size={15} strokeWidth={2.2} aria-hidden="true" />
                   Agregar
@@ -355,6 +361,7 @@ export default async function DashboardPage() {
                       ultimaFechaFallback={capitalPorCuentaMap.get(cuenta.id)?.ultima_fecha ?? null}
                       ahoraMs={hoyMs}
                       serie={seriePorCuenta.get(cuenta.id)}
+                      color={colorPorPlataforma.get(cuenta.plataforma.trim().toLowerCase())}
                     />
                   ))}
                 </ul>
@@ -367,7 +374,7 @@ export default async function DashboardPage() {
             {(cuentasInactivasCount ?? 0) > 0 && (
               <Link
                 href="/cuentas/inactivas"
-                className="inline-flex min-h-11 items-center self-start text-micro text-fg-muted underline decoration-white/20 underline-offset-4 hover:text-fg-soft"
+                className="inline-flex min-h-11 items-center self-start text-micro text-fg-muted underline decoration-tint/20 underline-offset-4 hover:text-fg-soft"
               >
                 Ver cuentas dadas de baja
               </Link>
@@ -389,7 +396,7 @@ export default async function DashboardPage() {
                 )}
               />
               <details className="group">
-                <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-lg px-1 text-small font-semibold text-accent hover:text-accent-hi [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-accent">
+                <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-lg px-1 text-small font-semibold text-accent-ink hover:text-accent-ink [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-accent-ink">
                   <ChevronDown size={15} aria-hidden="true" className="transition-transform duration-200 group-open:rotate-180" />
                   Actualizar varias cuentas a la vez
                 </summary>
@@ -411,7 +418,7 @@ export default async function DashboardPage() {
               </h2>
               <Link
                 href={metasConProgreso.length > 0 ? "/metas" : "/metas/nueva"}
-                className="no-print inline-flex min-h-11 items-center text-small font-semibold text-accent no-underline hover:text-accent-hi focus-visible:outline-2 focus-visible:outline-accent"
+                className="no-print inline-flex min-h-11 items-center text-small font-semibold text-accent-ink no-underline hover:text-accent-ink focus-visible:outline-2 focus-visible:outline-accent-ink"
               >
                 {metasConProgreso.length > 0 ? "Gestionar" : "Crear"}
               </Link>
